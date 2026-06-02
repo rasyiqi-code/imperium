@@ -77,31 +77,31 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="w-full max-w-md relative z-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center mb-6">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center mb-4">
               <img 
                 src="/logo.png" 
                 alt="Imperium Crypto Logo" 
-                className="h-16 w-auto object-contain" 
+                className="h-12 w-auto object-contain" 
               />
             </div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight uppercase">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight uppercase">
               WELCOME <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">BACK</span>
             </h1>
-            <p className="text-neutral-500 text-sm mt-3">Masuk ke portal eksklusif Imperium Crypto.</p>
+            <p className="text-neutral-500 text-xs mt-2">Masuk ke portal eksklusif Imperium Crypto.</p>
           </div>
 
-          <div className="rounded-3xl bg-neutral-900/50 p-8 shadow-2xl border border-neutral-800 backdrop-blur-xl">
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-400 tracking-widest ml-1">
+          <div className="rounded-3xl bg-neutral-900/50 p-6 md:p-7 shadow-2xl border border-neutral-800 backdrop-blur-xl">
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-neutral-400 tracking-widest ml-1 uppercase">
                   Email Anda
                 </label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={16} />
                   <input
                     type="email"
-                    className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                    className="w-full rounded-2xl bg-neutral-950 p-3 pl-11 text-sm text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
                     placeholder="nama@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -110,20 +110,20 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center ml-1">
-                  <label className="text-xs font-bold text-neutral-400 tracking-widest">
+                  <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">
                     Password
                   </label>
-                  <a href="https://wa.me/6281995100401?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition">
+                  <a href="https://wa.me/6281995100401?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-[10px] text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition uppercase">
                     Lupa?
                   </a>
                 </div>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={16} />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 pr-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                    className="w-full rounded-2xl bg-neutral-950 p-3 pl-11 pr-11 text-sm text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -134,13 +134,13 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition"
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
               {errorMsg && (
-                <div className="rounded-xl bg-red-950/20 border border-red-900/50 p-3 text-center text-xs text-red-400 animate-pulse">
+                <div className="rounded-xl bg-red-950/20 border border-red-900/50 p-2.5 text-center text-[11px] text-red-400 animate-pulse">
                   {errorMsg}
                 </div>
               )}
@@ -148,22 +148,22 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-yellow-400 to-amber-500 p-4 font-bold text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] disabled:opacity-50 overflow-hidden"
+                className="group relative w-full flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-yellow-400 to-amber-500 p-3 text-sm font-bold text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] disabled:opacity-50 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                {loading ? <RefreshCw className="animate-spin" size={20} /> : (
+                {loading ? <RefreshCw className="animate-spin" size={18} /> : (
                   <>
                     <span>Masuk Sekarang</span>
-                    <LogIn size={18} />
+                    <LogIn size={16} />
                   </>
                 )}
               </button>
             </form>
 
-            <div className="mt-8 text-center pt-6 border-t border-neutral-800">
-              <p className="text-sm text-neutral-500 font-bold">
+            <div className="mt-6 text-center pt-5 border-t border-neutral-800">
+              <p className="text-xs text-neutral-500 font-bold uppercase">
                 Belum menjadi bagian VIP?{' '}
-                <Link href="/register" className="text-yellow-500 hover:text-yellow-400 transition">
+                <Link href="/register" className="text-yellow-500 hover:text-yellow-400 transition normal-case">
                   Daftar Member
                 </Link>
               </p>
