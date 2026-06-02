@@ -69,98 +69,132 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-yellow-500/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-600/5 rounded-full blur-[120px]" />
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans overflow-hidden">
+      {/* Kolom Kiri: Formulir Login */}
+      <div className="flex flex-col justify-center items-center px-6 md:px-12 py-12 relative overflow-hidden">
+        {/* Dekorasi latar belakang bercahaya */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-yellow-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md relative">
-        <div className="text-center mb-10">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-900 border border-neutral-800 mb-4 shadow-2xl">
-            <LogIn className="text-yellow-500" size={32} />
-          </div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">
-            Welcome <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">Back</span>
-          </h1>
-          <p className="text-neutral-500 text-sm mt-3">Masuk ke portal eksklusif Imperium Crypto.</p>
-        </div>
-
-        <div className="rounded-3xl bg-neutral-900/50 p-8 shadow-2xl border border-neutral-800 backdrop-blur-xl">
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-400 tracking-widest ml-1">
-                Your Email
-              </label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
-                <input
-                  type="email"
-                  className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
-                  placeholder="nama@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+        <div className="w-full max-w-md relative z-10">
+          <div className="text-center mb-10">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-900 border border-neutral-800 mb-4 shadow-2xl">
+              <LogIn className="text-yellow-500" size={32} />
             </div>
+            <h1 className="text-4xl font-extrabold text-white tracking-tight uppercase">
+              WELCOME <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">BACK</span>
+            </h1>
+            <p className="text-neutral-500 text-sm mt-3">Masuk ke portal eksklusif Imperium Crypto.</p>
+          </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-xs font-bold text-neutral-400 tracking-widest">
-                  Password
+          <div className="rounded-3xl bg-neutral-900/50 p-8 shadow-2xl border border-neutral-800 backdrop-blur-xl">
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-neutral-400 tracking-widest ml-1">
+                  Email Anda
                 </label>
-                <a href="https://wa.me/62812345678?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition">
-                  Lupa?
-                </a>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
+                  <input
+                    type="email"
+                    className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                    placeholder="nama@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 pr-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
 
-            {errorMsg && (
-              <div className="rounded-xl bg-red-950/20 border border-red-900/50 p-3 text-center text-xs text-red-400 animate-pulse">
-                {errorMsg}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-xs font-bold text-neutral-400 tracking-widest">
+                    Password
+                  </label>
+                  <a href="https://wa.me/6281995100401?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition">
+                    Lupa?
+                  </a>
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full rounded-2xl bg-neutral-950 p-4 pl-12 pr-12 text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-yellow-400 to-amber-500 p-4 font-bold text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] disabled:opacity-50 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              {loading ? <RefreshCw className="animate-spin" size={20} /> : (
-                <>
-                  <span>Masuk Sekarang</span>
-                  <LogIn size={18} />
-                </>
+              {errorMsg && (
+                <div className="rounded-xl bg-red-950/20 border border-red-900/50 p-3 text-center text-xs text-red-400 animate-pulse">
+                  {errorMsg}
+                </div>
               )}
-            </button>
-          </form>
 
-          <div className="mt-8 text-center pt-6 border-t border-neutral-800">
-            <p className="text-sm text-neutral-500 font-bold">
-              Belum menjadi bagian VIP?{' '}
-              <Link href="/register" className="text-yellow-500 hover:text-yellow-400 transition">
-                Daftar Member
-              </Link>
-            </p>
+              <button
+                type="submit"
+                disabled={loading}
+                className="group relative w-full flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-yellow-400 to-amber-500 p-4 font-bold text-black transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] disabled:opacity-50 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {loading ? <RefreshCw className="animate-spin" size={20} /> : (
+                  <>
+                    <span>Masuk Sekarang</span>
+                    <LogIn size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center pt-6 border-t border-neutral-800">
+              <p className="text-sm text-neutral-500 font-bold">
+                Belum menjadi bagian VIP?{' '}
+                <Link href="/register" className="text-yellow-500 hover:text-yellow-400 transition">
+                  Daftar Member
+                </Link>
+              </p>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sisi Kanan: Panel Gambar Visual Kripto Premium */}
+      <div className="hidden lg:flex relative overflow-hidden items-center justify-center bg-neutral-900 border-l border-neutral-800">
+        {/* Gambar background premium */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 hover:scale-105"
+          style={{ backgroundImage: `url('/crypto_login.png')` }}
+        />
+        {/* Overlay gelap mewah untuk menyatukan gambar dengan tema website */}
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-neutral-950/20" />
+        
+        {/* Glow efek tambahan */}
+        <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-yellow-500/10 rounded-full blur-[100px] pointer-events-none" />
+        
+        {/* Konten Text Promosi di atas gambar */}
+        <div className="relative z-10 max-w-lg px-8 text-center">
+          <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold tracking-widest uppercase">
+            Platform Crypto Terpercaya
+          </div>
+          <h2 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight uppercase">
+            KUASAI PASAR DENGAN <br />
+            <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+              SINYAL AKURAT
+            </span>
+          </h2>
+          <p className="text-neutral-400 text-base leading-relaxed max-w-md mx-auto">
+            Bergabunglah dengan ribuan trader elit Imperium Crypto. Dapatkan analisis premium, sinyal real-time, dan strategi profit konsisten setiap hari.
+          </p>
         </div>
       </div>
     </div>
