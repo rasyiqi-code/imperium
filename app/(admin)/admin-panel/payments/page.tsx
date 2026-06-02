@@ -103,8 +103,16 @@ export default function PaymentAdmin() {
   })
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left">
-      <div className="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-black/40 backdrop-blur-md py-4 border-b border-neutral-900 mb-6">
+    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left animate-in fade-in duration-300">
+      
+      {/* Title */}
+      <div className="border-b border-neutral-800 pb-4 mb-6">
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Konfirmasi pembayaran manual member dan sinkronisasi gateway Midtrans</p>
+      </div>
+
+      {/* Filter & Search Bar */}
+      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 shadow-lg mb-6">
         <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
           <Search className="text-neutral-500 mr-3" size={16} />
           <input 

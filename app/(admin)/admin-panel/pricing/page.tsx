@@ -153,10 +153,10 @@ export default function PricingEditor() {
   )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans">
+    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
       
       {/* Header Editor */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-900 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
         <div>
           <h1 className="text-xl font-black uppercase tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
           <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
