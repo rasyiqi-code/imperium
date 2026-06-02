@@ -7,7 +7,6 @@ import StatusCard from '@/components/StatusCard'
 import DiscordCard from '@/components/DiscordCard'
 import { Crown, Lock, TrendingUp, AlertCircle, RefreshCw, Zap, ShieldCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 // Samakan dengan interface di lib/types.ts agar tidak bentrok
 import { StatusAktif } from '@/lib/types'

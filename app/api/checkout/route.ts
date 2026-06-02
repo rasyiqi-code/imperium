@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { paymentManager } from '@crediblemark/buayar';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 import { prisma } from '@/lib/prisma';
+import { calculateProratedPrice } from '@/lib/payment';
 
 export async function POST(request: Request) {
   try {
@@ -44,33 +45,11 @@ export async function POST(request: Request) {
     const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
     const paketHargaNum = Number(paket.harga);
-    let finalAmount = paketHargaNum;
+    const currentMember = upgradeMode === 'proration'
+      ? await prisma.data_member_vip.findUnique({ where: { id_user_auth: user.id } })
+      : null;
 
-    if (upgradeMode === 'proration') {
-      const currentMember = await prisma.data_member_vip.findUnique({
-        where: { id_user_auth: user.id }
-      });
-
-      if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-        const today = new Date();
-        const expiry = new Date(currentMember.tanggal_berakhir);
-        
-        if (expiry > today) {
-          const created = currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-          
-          let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
-          if (totalDays <= 0) totalDays = 30;
-
-          let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
-          if (remainingDays < 0) remainingDays = 0;
-
-          const oldPaidAmount = Number(currentMember.harga_bayar) || 0;
-          const remainingValue = oldPaidAmount * (remainingDays / totalDays);
-
-          finalAmount = Math.max(10000, paketHargaNum - remainingValue);
-        }
-      }
-    }
+    const finalAmount = calculateProratedPrice(currentMember, paketHargaNum, upgradeMode);
 
     const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
     const orderId = `IMP-${Date.now()}-${randomSuffix}`;
@@ -88,8 +67,9 @@ export async function POST(request: Request) {
           status_pembayaran: 'pending'
         }
       });
-    } catch (insertError: any) {
-      console.error("Gagal mencatat transaksi pending:", insertError.message || insertError);
+    } catch (insertError: unknown) {
+      const err = insertError as Error;
+      console.error("Gagal mencatat transaksi pending:", err.message || err);
       return NextResponse.json({ error: "Gagal memproses pendaftaran transaksi" }, { status: 500 });
     }
 
@@ -125,8 +105,9 @@ export async function POST(request: Request) {
     // Send token reference to frontend
     return NextResponse.json({ token: response.reference });
     
-  } catch (error: any) {
-    console.error("Checkout Error:", error);
-    return NextResponse.json({ error: error.message || "Gagal membuat transaksi" }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Checkout Error:", err);
+    return NextResponse.json({ error: err.message || "Gagal membuat transaksi" }, { status: 500 });
   }
 }

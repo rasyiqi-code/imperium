@@ -149,8 +149,9 @@ export async function POST() {
 
     return NextResponse.json({ message: `Checked pending payments. Updated ${updatedCount} transactions.` });
 
-  } catch (err: any) {
-    console.error("Check Pending Payment Error:", err);
-    return NextResponse.json({ error: err.message || "Failed to check payments" }, { status: 500 });
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error("Check Pending Payment Error:", error);
+    return NextResponse.json({ error: error.message || "Failed to check payments" }, { status: 500 });
   }
 }

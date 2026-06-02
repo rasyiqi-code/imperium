@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function run() {
   // We can query postgrest to see functions in the public schema
-  const { data, error } = await supabase.from('admin_settings').select('*');
+  const { data } = await supabase.from('admin_settings').select('*');
   console.log('admin_settings columns:');
   if (data && data.length > 0) {
     console.log(Object.keys(data[0]));
@@ -19,7 +19,7 @@ async function run() {
     console.log('No data in admin_settings');
   }
 
-  const { data: support, error: err2 } = await supabase.from('support_config').select('*');
+  const { data: support } = await supabase.from('support_config').select('*');
   console.log('support_config columns:');
   if (support && support.length > 0) {
     console.log(Object.keys(support[0]));

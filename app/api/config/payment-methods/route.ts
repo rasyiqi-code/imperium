@@ -53,8 +53,9 @@ export async function GET() {
       .filter(Boolean);
 
     return NextResponse.json({ methods, needsSync: false });
-  } catch (error: any) {
-    console.error('Payment Methods Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Payment Methods Error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

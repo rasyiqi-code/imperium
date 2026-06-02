@@ -3,13 +3,9 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, LogIn, RefreshCw } from 'lucide-react'
-
-// Definisikan tipe data biar gak pake ANY
-interface UserProfile {
-  plan: string | null
-}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -79,9 +75,11 @@ export default function LoginPage() {
         <div className="w-full max-w-md relative z-10">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center mb-4">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="Imperium Crypto Logo" 
+                width={180}
+                height={48}
                 className="h-12 w-auto object-contain" 
               />
             </div>

@@ -32,8 +32,9 @@ export async function GET() {
       isProduction: settings?.midtrans_is_production || false,
       upgradeMode: settings?.midtrans_upgrade_mode || 'stacking'
     });
-  } catch (err: any) {
-    console.error('Error in config/midtrans GET:', err);
-    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error('Error in config/midtrans GET:', error);
+    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
 }

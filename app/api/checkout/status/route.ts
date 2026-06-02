@@ -51,8 +51,9 @@ export async function GET(request: Request) {
       paymentType: statusResult.payment_type,
       statusCode: statusResult.status_code,
     });
-  } catch (error: any) {
-    console.error('Status Check Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Status Check Error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

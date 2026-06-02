@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { 
   Upload, CheckCircle2, RefreshCw, 
   ArrowLeft, Info, ChevronDown 
@@ -262,7 +263,14 @@ function ConfirmContent() {
             <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
             {preview ? (
               <div className="space-y-4 w-full flex flex-col items-center">
-                <img src={preview} alt="Preview" className="h-40 rounded-lg object-contain border border-neutral-800" />
+                <Image 
+                  src={preview} 
+                  alt="Preview" 
+                  width={320}
+                  height={160}
+                  unoptimized
+                  className="h-40 rounded-lg object-contain border border-neutral-800" 
+                />
                 <p className="text-xs font-bold text-yellow-500 tracking-widest">Ganti Foto</p>
               </div>
             ) : (

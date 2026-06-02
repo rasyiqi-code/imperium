@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function run() {
   const { data, error } = await supabase
-    .from('pg_namespace' as any)
+    .from('pg_namespace' as never)
     .select('*');
   console.log('Query pg_namespace:', { data, error });
 }

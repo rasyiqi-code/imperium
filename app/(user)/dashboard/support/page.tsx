@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MessageSquare, Send, Mail, RefreshCw, Headphones, Clock, ChevronDown, ChevronUp } from 'lucide-react'
+import { MessageSquare, Send, Mail, RefreshCw, Clock, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface SupportConfig {
   whatsapp_number: string
