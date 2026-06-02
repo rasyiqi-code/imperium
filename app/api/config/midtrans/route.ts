@@ -15,7 +15,7 @@ export async function GET() {
     // 2. Fetch public Midtrans settings using service role client
     const { data: settings, error } = await supabaseServer
       .from('admin_settings')
-      .select('midtrans_client_key, midtrans_is_production')
+      .select('midtrans_client_key, midtrans_is_production, midtrans_upgrade_mode')
       .eq('id', 1)
       .maybeSingle() as any;
 
@@ -26,7 +26,8 @@ export async function GET() {
 
     return NextResponse.json({
       clientKey: settings?.midtrans_client_key || '',
-      isProduction: settings?.midtrans_is_production || false
+      isProduction: settings?.midtrans_is_production || false,
+      upgradeMode: settings?.midtrans_upgrade_mode || 'stacking'
     });
   } catch (err: any) {
     console.error('Error in config/midtrans GET:', err);

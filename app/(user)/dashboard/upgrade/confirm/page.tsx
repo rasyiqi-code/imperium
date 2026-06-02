@@ -32,10 +32,10 @@ function ConfirmContent() {
       try {
         setFetching(true)
         // Ambil User & Paket sekaligus
-        const [authRes, pricingRes, settingsRes] = await Promise.all([
+        const [authRes, pricingRes, configData] = await Promise.all([
           supabase.auth.getUser(),
           (supabase.from('data_paket_vip') as any).select('*'),
-          supabase.from('admin_settings').select('midtrans_upgrade_mode').eq('id', 1).maybeSingle()
+          fetch('/api/config/midtrans').then(res => res.json()).catch(() => ({ upgradeMode: 'stacking' }))
         ])
 
         if (!isMounted) return
@@ -47,9 +47,8 @@ function ConfirmContent() {
           if (data) setCurrentMember(data)
         }
         
-        const settingsData = settingsRes.data as any
-        if (settingsData) {
-          setUpgradeMode(settingsData.midtrans_upgrade_mode || 'stacking')
+        if (configData && configData.upgradeMode) {
+          setUpgradeMode(configData.upgradeMode)
         }
 
         if (pricingRes.data && pricingRes.data.length > 0) {

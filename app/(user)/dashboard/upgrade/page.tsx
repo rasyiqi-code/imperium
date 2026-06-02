@@ -17,10 +17,10 @@ export default function UpgradePage() {
 
   useEffect(() => {
     async function loadPaket() {
-      const [authRes, paketRes, settingsRes] = await Promise.all([
+      const [authRes, paketRes, configData] = await Promise.all([
         supabase.auth.getUser(),
         supabase.from('data_paket_vip').select('*').order('harga', { ascending: true }),
-        supabase.from('admin_settings').select('midtrans_upgrade_mode').eq('id', 1).maybeSingle()
+        fetch('/api/config/midtrans').then(res => res.json()).catch(() => ({ upgradeMode: 'stacking' }))
       ])
 
       const user = authRes.data?.user;
@@ -30,9 +30,8 @@ export default function UpgradePage() {
         memberData = data;
       }
 
-      const settingsData = settingsRes.data as any
-      if (settingsData) {
-        setUpgradeMode(settingsData.midtrans_upgrade_mode || 'stacking')
+      if (configData && configData.upgradeMode) {
+        setUpgradeMode(configData.upgradeMode)
       }
       if (memberData) {
         setCurrentMember(memberData)
