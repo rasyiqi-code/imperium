@@ -122,133 +122,153 @@ export default function ProfilePage() {
   )
 
   return (
-    <div className="p-6 pb-32 max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
-      {/* Header Profile */}
-      <div className="text-center space-y-4">
-        <div className="relative w-24 h-24 mx-auto">
-          <div className="w-full h-full bg-neutral-900 border-2 border-yellow-500/20 rounded-full flex items-center justify-center text-yellow-500 shadow-xl shadow-yellow-500/5">
-            <User size={40} />
-          </div>
-          <button 
-            onClick={() => {
-              if (isEditing) setTempProfile({ ...profile });
-              setIsEditing(!isEditing);
-            }}
-            className={`absolute bottom-0 right-0 p-2.5 rounded-full border border-neutral-800 transition-all shadow-lg ${
-              isEditing ? 'bg-red-500 text-white' : 'bg-yellow-500 text-black hover:scale-110'
-            }`}
-          >
-            {isEditing ? <X size={16} /> : <Edit3 size={16} />}
-          </button>
-        </div>
-        <div>
-          <h1 className="text-2xl font-black text-white italic uppercase tracking-tight">Profil Saya</h1>
-          <p className="text-neutral-500 text-[10px] font-black tracking-[0.2em] mt-1">ID: {profile.id_user_auth.slice(0,8)}</p>
-        </div>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-extrabold text-white tracking-tight uppercase">Profil Saya</h1>
+        <p className="text-neutral-400 text-sm mt-1">Kelola informasi akun dan data membership kamu.</p>
       </div>
 
-      {/* Subscription Card */}
-      <div className={`p-6 rounded-3xl border flex items-center justify-between transition-all duration-500 ${
-        profile.status_vip === 'VIP MEMBER' 
-        ? 'bg-yellow-500/10 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.05)]' 
-        : 'bg-neutral-900 border-neutral-800'
-      }`}>
-        <div className="flex items-center gap-4">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-            profile.status_vip === 'VIP MEMBER' ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'bg-neutral-800 text-neutral-500'
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* ===== Kolom Kiri: Info User & VIP Card ===== */}
+        <div className="space-y-5">
+          {/* Avatar Card */}
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
+            <div className="relative">
+              <div className="w-24 h-24 bg-neutral-900 border-2 border-yellow-500/20 rounded-full flex items-center justify-center text-yellow-500 shadow-xl shadow-yellow-500/5">
+                <User size={40} />
+              </div>
+              <button 
+                onClick={() => {
+                  if (isEditing) setTempProfile({ ...profile });
+                  setIsEditing(!isEditing);
+                }}
+                className={`absolute bottom-0 right-0 p-2.5 rounded-full border border-neutral-800 transition-all shadow-lg ${
+                  isEditing ? 'bg-red-500 text-white' : 'bg-yellow-500 text-black hover:scale-110'
+                }`}
+              >
+                {isEditing ? <X size={16} /> : <Edit3 size={16} />}
+              </button>
+            </div>
+            <div>
+              <p className="text-lg font-extrabold text-white">{profile.nama_member}</p>
+              <p className="text-neutral-500 text-[10px] font-bold tracking-widest mt-0.5">ID: {profile.id_user_auth.slice(0,8)}</p>
+            </div>
+          </div>
+
+          {/* VIP Card */}
+          <div className={`p-5 rounded-2xl border flex items-center justify-between transition-all duration-500 ${
+            profile.status_vip === 'VIP Member' 
+            ? 'bg-yellow-500/10 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.05)]' 
+            : 'bg-neutral-900/50 border-neutral-800'
           }`}>
-            <Gem size={24} />
-          </div>
-          <div>
-            <div className="text-[10px] font-black tracking-[0.2em] text-neutral-500 mb-0.5">Membership</div>
-            <div className={`text-sm font-black italic tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-500' : 'text-white'}`}>
-              {profile.status_vip}
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                profile.status_vip === 'VIP Member' ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'bg-neutral-800 text-neutral-500'
+              }`}>
+                <Gem size={20} />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase">Membership</div>
+                <div className={`text-sm font-extrabold tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-400' : 'text-white'}`}>
+                  {profile.status_vip}
+                </div>
+              </div>
             </div>
+            {profile.status_vip === 'VIP Member' && profile.masa_aktif && (
+              <div className="text-right">
+                <div className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase flex items-center justify-end gap-1">
+                  <Calendar size={10} /> Expired
+                </div>
+                <div className="text-[11px] font-bold text-white mt-0.5">
+                  {new Date(profile.masa_aktif).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-        {profile.status_vip === 'VIP Member' && profile.masa_aktif && (
-          <div className="text-right">
-            <div className="text-[10px] font-black tracking-[0.2em] text-neutral-500 italic flex items-center justify-end gap-1">
-              <Calendar size={10} /> Expired
-            </div>
-            <div className="text-[11px] font-bold text-white mt-0.5">
-              {new Date(profile.masa_aktif).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </div>
-          </div>
-        )}
-      </div>
 
-      {/* Form Data */}
-      <div className="bg-neutral-900/50 border border-neutral-800 p-6 rounded-3xl space-y-6">
-        <div className="space-y-2 opacity-50">
-          <label className="text-[10px] font-black text-neutral-500 tracking-widest ml-1 text-center block">E-Mail</label>
-          <div className="flex items-center gap-4 p-4 bg-black/40 border border-neutral-800 rounded-2xl">
-            <Mail size={18} className="text-neutral-600" />
-            <span className="text-neutral-400 text-sm font-medium">{profile.email_member}</span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-neutral-400 tracking-widest ml-1 text-center block">Nama Member</label>
-          {isEditing ? (
-            <input 
-              type="text"
-              value={tempProfile.nama_member}
-              onChange={(e) => setTempProfile({ ...tempProfile, nama_member: e.target.value })}
-              className="w-full bg-neutral-800 border border-yellow-500/50 p-4 rounded-2xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all text-center"
-            />
-          ) : (
-            <div className="flex items-center justify-center gap-4 p-4 bg-black/20 border border-neutral-800 rounded-2xl">
-              <span className="text-white text-sm font-bold tracking-wide">{profile.nama_member}</span>
-            </div>
+          {/* Tombol Logout */}
+          {!isEditing && (
+            <button 
+              onClick={() => {
+                showConfirm({
+                  title: 'Konfirmasi Logout',
+                  message: 'Apakah Anda yakin ingin keluar dari akun ini?',
+                  type: 'warning',
+                  confirmText: 'Ya, Keluar',
+                  cancelText: 'Batal',
+                  onConfirm: async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = '/login';
+                  }
+                })
+              }}
+              className="w-full bg-red-500/5 text-red-500 py-3.5 rounded-2xl font-bold border border-red-500/20 flex items-center justify-center gap-2 text-xs tracking-widest hover:bg-red-500/10 transition-all active:scale-95"
+            >
+              <LogOut size={16} /> Logout Akun
+            </button>
           )}
         </div>
- 
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-neutral-400 tracking-widest ml-1 text-center block">WhatsApp</label>
-          {isEditing ? (
-            <input 
-              type="tel"
-              value={tempProfile.nomor_wa}
-              onChange={(e) => setTempProfile({ ...tempProfile, nomor_wa: e.target.value })}
-              className="w-full bg-neutral-800 border border-yellow-500/50 p-4 rounded-2xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all text-center"
-            />
-          ) : (
-            <div className="flex items-center justify-center gap-4 p-4 bg-black/20 border border-neutral-800 rounded-2xl">
-              <span className="text-white text-sm font-bold tracking-wide">{profile.nomor_wa}</span>
+
+        {/* ===== Kolom Kanan: Form Data (2/3 lebar) ===== */}
+        <div className="lg:col-span-2 bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 space-y-5">
+          {/* Email — read only */}
+          <div className="space-y-1.5 opacity-50">
+            <label className="text-[10px] font-bold text-neutral-500 tracking-widest uppercase">E-Mail</label>
+            <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+              <Mail size={16} className="text-neutral-600 shrink-0" />
+              <span className="text-neutral-400 text-sm font-medium">{profile.email_member}</span>
             </div>
+          </div>
+
+          {/* Nama Member */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">Nama Member</label>
+            {isEditing ? (
+              <input 
+                type="text"
+                value={tempProfile.nama_member}
+                onChange={(e) => setTempProfile({ ...tempProfile, nama_member: e.target.value })}
+                className="w-full bg-neutral-950 border border-yellow-500/50 p-3.5 rounded-xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+              />
+            ) : (
+              <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+                <span className="text-white text-sm font-bold">{profile.nama_member}</span>
+              </div>
+            )}
+          </div>
+
+          {/* WhatsApp */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">WhatsApp</label>
+            {isEditing ? (
+              <input 
+                type="tel"
+                value={tempProfile.nomor_wa}
+                onChange={(e) => setTempProfile({ ...tempProfile, nomor_wa: e.target.value })}
+                className="w-full bg-neutral-950 border border-yellow-500/50 p-3.5 rounded-xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+              />
+            ) : (
+              <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+                <span className="text-white text-sm font-bold">{profile.nomor_wa || '—'}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Tombol Simpan (hanya muncul saat edit mode) */}
+          {isEditing && (
+            <button 
+              onClick={handleUpdate}
+              disabled={updating}
+              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3.5 rounded-xl font-bold shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-sm tracking-widest mt-2"
+            >
+              {updating ? <RefreshCw className="animate-spin" size={18} /> : <><Save size={18} /> Simpan Perubahan</>}
+            </button>
           )}
         </div>
-      </div>
 
-      {isEditing ? (
-        <button 
-          onClick={handleUpdate}
-          disabled={updating}
-          className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-sm tracking-widest"
-        >
-          {updating ? <RefreshCw className="animate-spin" size={20} /> : <><Save size={20} /> Simpan Perubahan</>}
-        </button>
-      ) : (
-        <button 
-          onClick={() => {
-            showConfirm({
-              title: 'Konfirmasi Logout',
-              message: 'Apakah Anda yakin ingin keluar dari akun ini?',
-              type: 'warning',
-              confirmText: 'Ya, Keluar',
-              cancelText: 'Batal',
-              onConfirm: async () => {
-                await supabase.auth.signOut();
-                window.location.href = '/login';
-              }
-            })
-          }}
-          className="w-full bg-red-500/5 text-red-500 py-4 rounded-2xl font-bold border border-red-500/20 flex items-center justify-center gap-2 text-xs tracking-tighter hover:bg-red-500/10 transition-all active:scale-95"
-        >
-          <LogOut size={18} /> Logout Akun
-        </button>
-      )}
+      </div>
     </div>
   )
 }
