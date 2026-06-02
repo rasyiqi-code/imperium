@@ -77,9 +77,13 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="w-full max-w-md relative z-10">
-          <div className="text-center mb-10">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-900 border border-neutral-800 mb-4 shadow-2xl">
-              <LogIn className="text-yellow-500" size={32} />
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center mb-6">
+              <img 
+                src="/logo.png" 
+                alt="Imperium Crypto Logo" 
+                className="h-16 w-auto object-contain" 
+              />
             </div>
             <h1 className="text-4xl font-extrabold text-white tracking-tight uppercase">
               WELCOME <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">BACK</span>
@@ -176,23 +180,23 @@ export default function LoginPage() {
           style={{ backgroundImage: `url('/crypto_login.png')` }}
         />
         {/* Overlay gelap mewah untuk menyatukan gambar dengan tema website */}
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-neutral-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/40" />
         
         {/* Glow efek tambahan */}
         <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-yellow-500/10 rounded-full blur-[100px] pointer-events-none" />
         
-        {/* Konten Text Promosi di atas gambar */}
-        <div className="relative z-10 max-w-lg px-8 text-center">
+        {/* Konten Text Promosi di atas gambar dibungkus glassmorphism kokoh */}
+        <div className="relative z-10 max-w-lg mx-6 p-8 md:p-10 rounded-3xl bg-neutral-950/75 border border-neutral-800/80 backdrop-blur-md text-center shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
           <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold tracking-widest uppercase">
             Platform Crypto Terpercaya
           </div>
-          <h2 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight uppercase">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight uppercase">
             KUASAI PASAR DENGAN <br />
             <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
               SINYAL AKURAT
             </span>
           </h2>
-          <p className="text-neutral-400 text-base leading-relaxed max-w-md mx-auto">
+          <p className="text-neutral-300 text-sm md:text-base leading-relaxed max-w-md mx-auto">
             Bergabunglah dengan ribuan trader elit Imperium Crypto. Dapatkan analisis premium, sinyal real-time, dan strategi profit konsisten setiap hari.
           </p>
         </div>
