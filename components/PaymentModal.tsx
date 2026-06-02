@@ -50,6 +50,7 @@ interface PaymentModalProps {
   paketId: string
   paketNama: string
   harga: number
+  originalHarga?: number
   onSuccess: () => void
 }
 
@@ -92,6 +93,7 @@ export default function PaymentModal({
   paketId,
   paketNama,
   harga,
+  originalHarga,
   onSuccess,
 }: PaymentModalProps) {
   const [step, setStep] = useState<'loading' | 'select' | 'paying' | 'success' | 'error'>('loading')
@@ -291,7 +293,12 @@ export default function PaymentModal({
           <div className="px-5 py-3 bg-neutral-900/50 border-b border-neutral-800/30 flex items-center justify-between">
             <div>
               <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">Total Bayar</p>
-              <p className="text-xl font-black text-yellow-500">{formatRupiah(harga)}</p>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-xl font-black text-yellow-500">{formatRupiah(harga)}</span>
+                {originalHarga && originalHarga > harga && (
+                  <span className="text-xs font-bold text-neutral-500 line-through">{formatRupiah(originalHarga)}</span>
+                )}
+              </div>
             </div>
             <div className="text-right">
               <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">Paket</p>

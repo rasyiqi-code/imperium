@@ -153,6 +153,7 @@ export default function UpgradePage() {
           paketId={selectedPaket.id}
           paketNama={selectedPaket.nama_paket}
           harga={getProratedPrice(Number(selectedPaket.harga))}
+          originalHarga={Number(selectedPaket.harga)}
           onSuccess={() => {
             window.location.href = '/dashboard'
           }}
