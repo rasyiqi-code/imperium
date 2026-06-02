@@ -163,10 +163,10 @@ export default function AdminSettings() {
   )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
       
       {/* Title */}
-      <div className="border-b border-neutral-800 pb-4 mb-6">
+      <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
         <h1 className="text-xl font-black uppercase tracking-tight text-white">System <span className="text-yellow-500">Settings</span></h1>
         <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Kelola keamanan admin, konfigurasi notifikasi, dan integrasi pihak ketiga</p>
       </div>

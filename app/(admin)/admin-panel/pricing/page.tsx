@@ -153,17 +153,17 @@ export default function PricingEditor() {
   )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
       
       {/* Header Editor */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
-        <div>
+        <div className="hidden md:block">
           <h1 className="text-xl font-black uppercase tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
           <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="sm:self-center py-3.5 px-6 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-yellow-500/15 cursor-pointer duration-300"
+          className="w-full sm:w-auto py-3 px-5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-yellow-500/15 cursor-pointer duration-300"
         >
           <Plus size={14} /> Tambah Paket
         </button>

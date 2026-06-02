@@ -141,10 +141,10 @@ export default function PaymentAdmin() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left animate-in fade-in duration-300">
       
       {/* Title */}
-      <div className="border-b border-neutral-800 pb-4 mb-6">
+      <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
         <h1 className="text-xl font-black uppercase tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
         <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Konfirmasi pembayaran manual member dan sinkronisasi gateway Midtrans</p>
       </div>
