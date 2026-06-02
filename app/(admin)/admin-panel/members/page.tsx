@@ -433,69 +433,82 @@ export default function ManageMembers() {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setSelectedMember(null)} />
           
-          <div className="relative w-full max-w-sm bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md md:max-w-2xl bg-neutral-950/90 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-neutral-900 bg-neutral-950/50">
-              <h3 className="font-black tracking-wider text-white text-xs leading-none">Member Detail</h3>
+              <h3 className="font-black tracking-wider text-white text-xs leading-none uppercase">Member Detail</h3>
               <button onClick={() => setSelectedMember(null)} className="text-neutral-500 hover:text-white transition-all cursor-pointer"><X size={18} /></button>
             </div>
-            <div className="p-6 space-y-4">
-              <InfoItem label="Email Address" value={selectedMember.email} icon={<Mail size={14}/>} />
-              <InfoItem label="Full Name" value={selectedMember.full_name || 'Anonymous'} icon={<User size={14}/>} />
-              <InfoItem label="WhatsApp" value={selectedMember.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
-              <InfoItem label="Tanggal Daftar" value={selectedMember.created_at ? new Date(selectedMember.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<User size={14}/>} />
-              
-              {selectedMember.plan === 'vip' && (
-                <>
-                  <div className="pt-2 border-t border-neutral-900/60 space-y-3">
+            
+            <div className="p-6 space-y-6">
+              {/* Grid Informasi Member (2 Kolom di Desktop) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                <InfoItem label="Email Address" value={selectedMember.email} icon={<Mail size={14}/>} />
+                <InfoItem label="Full Name" value={selectedMember.full_name || 'Anonymous'} icon={<User size={14}/>} />
+                <InfoItem label="WhatsApp" value={selectedMember.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
+                <InfoItem label="Tanggal Daftar" value={selectedMember.created_at ? new Date(selectedMember.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<User size={14}/>} />
+                
+                {selectedMember.plan === 'vip' && (
+                  <>
+                    <div className="col-span-1 md:col-span-2 pt-2 border-t border-neutral-900/60" />
                     <InfoItem label="Paket VIP Aktif" value={selectedMember.vip_plan_name || 'VIP'} icon={<PlusCircle size={14}/>} />
                     <InfoItem label="Tanggal Mulai VIP" value={selectedMember.vip_activated_at ? new Date(selectedMember.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<RefreshCw size={14}/>} />
-                    <InfoItem label="Tanggal Expired VIP" value={selectedMember.vip_expired_at ? new Date(selectedMember.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<RefreshCw size={14}/>} />
-                  </div>
-                </>
-              )}
-              
-              <div className="flex flex-col gap-2 pt-4 border-t border-neutral-900">
-                <button 
-                  onClick={() => handleUpgrade(selectedMember)}
-                  disabled={isProcessing}
-                  className={`w-full py-3.5 rounded-xl font-black tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    selectedMember.plan === 'vip' 
-                    ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
-                    : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
-                  }`}
-                >
-                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : selectedMember.plan === 'vip' ? <><PlusCircle size={14} /> Perpanjang VIP</> : 'Upgrade ke VIP'}
-                </button>
-
-                {/* TOMBOL NONAKTIFKAN VIP */}
-                {selectedMember.plan === 'vip' && (
-                  <button 
-                    onClick={() => handleDeactivate(selectedMember)}
-                    disabled={isProcessing}
-                    className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
-                  </button>
+                    <div className="col-span-1 md:col-span-2">
+                      <InfoItem label="Tanggal Expired VIP" value={selectedMember.vip_expired_at ? new Date(selectedMember.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<RefreshCw size={14}/>} />
+                    </div>
+                  </>
                 )}
+              </div>
+              
+              {/* Grid Tombol Aksi */}
+              <div className="pt-4 border-t border-neutral-900">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button 
+                    onClick={() => handleUpgrade(selectedMember)}
+                    disabled={isProcessing}
+                    className={`w-full py-3.5 rounded-xl font-black tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      selectedMember.plan === 'vip' 
+                      ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
+                      : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
+                    }`}
+                  >
+                    {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : selectedMember.plan === 'vip' ? <><PlusCircle size={14} /> Perpanjang VIP</> : 'Upgrade ke VIP'}
+                  </button>
 
-                {/* Format nomor WhatsApp agar diawali dengan kode negara 62 (Indonesia) jika diawali dengan 0 */}
-                <a 
-                  href={`https://wa.me/${
-                    selectedMember.whatsapp_number
-                      ? (selectedMember.whatsapp_number.replace(/[^0-9]/g, '').startsWith('0')
-                        ? '62' + selectedMember.whatsapp_number.replace(/[^0-9]/g, '').slice(1)
-                        : selectedMember.whatsapp_number.replace(/[^0-9]/g, ''))
-                      : ''
-                  }`} 
-                  target="_blank" 
-                  className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  <MessageSquare size={14} /> Chat WhatsApp
-                </a>
-                
-                <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
-                  <Trash2 size={14} /> Hapus Akun
-                </button>
+                  {selectedMember.plan === 'vip' ? (
+                    <button 
+                      onClick={() => handleDeactivate(selectedMember)}
+                      disabled={isProcessing}
+                      className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
+                    </button>
+                  ) : (
+                    <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                      <Trash2 size={14} /> Hapus Akun
+                    </button>
+                  )}
+
+                  {/* Format nomor WhatsApp agar diawali dengan kode negara 62 (Indonesia) jika diawali dengan 0 */}
+                  <a 
+                    href={`https://wa.me/${
+                      selectedMember.whatsapp_number
+                        ? (selectedMember.whatsapp_number.replace(/[^0-9]/g, '').startsWith('0')
+                          ? '62' + selectedMember.whatsapp_number.replace(/[^0-9]/g, '').slice(1)
+                          : selectedMember.whatsapp_number.replace(/[^0-9]/g, ''))
+                        : ''
+                    }`} 
+                    target="_blank" 
+                    className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare size={14} /> Chat WhatsApp
+                  </a>
+
+                  {selectedMember.plan === 'vip' && (
+                    <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                      <Trash2 size={14} /> Hapus Akun
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
