@@ -14,6 +14,7 @@ import {
   X
 } from 'lucide-react'
 import { PaketVIP } from '@/lib/types'
+import { useModal } from '@/components/ModalProvider'
 
 
 interface Profile {
@@ -26,6 +27,7 @@ interface Profile {
 }
 
 export default function AdminDashboard() {
+  const { showAlert, showConfirm } = useModal()
   const [stats, setStats] = useState({ totalUser: 0, vipAktif: 0, omzet: 0 })
   const [allUsers, setAllUsers] = useState<Profile[]>([])
   const [plans, setPlans] = useState<PaketVIP[]>([])
@@ -70,56 +72,92 @@ export default function AdminDashboard() {
 
   useEffect(() => { getAdminData() }, [])
 
-  const handleUpgradeManual = async (user: Profile, plan: PaketVIP) => {
-    const confirm = window.confirm(`Upgrade ${user.email} ke VIP secara Manual menggunakan ${plan.nama_paket} (Omzet + Rp ${plan.harga.toLocaleString('id-ID')})?`)
-    if (!confirm) return
-
-    setUpgradeUser(null)
-    setActionLoading(user.id)
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'upgradeManual', userId: user.id, planId: plan.id })
-      })
-      const data = await res.json()
-      if (res.ok) {
-        alert("User berhasil menjadi VIP!")
-        getAdminData()
-      } else {
-        alert(data.error || "Gagal melakukan upgrade")
+  const handleUpgradeManual = (user: Profile, plan: PaketVIP) => {
+    showConfirm({
+      title: 'Upgrade Manual VIP',
+      message: `Upgrade ${user.email} ke VIP secara Manual menggunakan ${plan.nama_paket} (Omzet + Rp ${plan.harga.toLocaleString('id-ID')})?`,
+      type: 'warning',
+      confirmText: 'Ya, Upgrade',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        setUpgradeUser(null)
+        setActionLoading(user.id)
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'upgradeManual', userId: user.id, planId: plan.id })
+          })
+          const data = await res.json()
+          if (res.ok) {
+            showAlert({
+              title: 'Upgrade Berhasil',
+              message: 'User berhasil menjadi VIP!',
+              type: 'success'
+            })
+            getAdminData()
+          } else {
+            showAlert({
+              title: 'Gagal Upgrade',
+              message: data.error || 'Gagal melakukan upgrade',
+              type: 'danger'
+            })
+          }
+        } catch (error: any) {
+          showAlert({
+            title: 'Error',
+            message: `Error: ${error.message}`,
+            type: 'danger'
+          })
+        } finally {
+          setActionLoading(null)
+        }
       }
-    } catch (error: any) {
-      alert(`Error: ${error.message}`)
-    } finally {
-      setActionLoading(null)
-    }
+    })
   }
 
 
-  const handleDeleteUser = async (id: string) => {
-    const confirm = window.confirm("Hapus user ini secara permanen?")
-    if (!confirm) return
-    
-    setActionLoading(id)
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteUser', ids: [id] })
-      })
-      const data = await res.json()
-      if (res.ok) {
-        alert("User berhasil dihapus!")
-        getAdminData()
-      } else {
-        alert(data.error || "Gagal menghapus user")
+  const handleDeleteUser = (id: string) => {
+    showConfirm({
+      title: 'Hapus User',
+      message: 'Hapus user ini secara permanen?',
+      type: 'danger',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        setActionLoading(id)
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'deleteUser', ids: [id] })
+          })
+          const data = await res.json()
+          if (res.ok) {
+            showAlert({
+              title: 'Hapus Berhasil',
+              message: 'User berhasil dihapus!',
+              type: 'success'
+            })
+            getAdminData()
+          } else {
+            showAlert({
+              title: 'Gagal Menghapus',
+              message: data.error || 'Gagal menghapus user',
+              type: 'danger'
+            })
+          }
+        } catch (error: any) {
+          showAlert({
+            title: 'Error',
+            message: `Error: ${error.message}`,
+            type: 'danger'
+          })
+        } finally {
+          setActionLoading(null)
+        }
       }
-    } catch (error: any) {
-      alert(`Error: ${error.message}`)
-    } finally {
-      setActionLoading(null)
-    }
+    })
   }
 
   const filteredUsers = allUsers.filter(u => 

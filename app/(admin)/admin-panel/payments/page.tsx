@@ -7,8 +7,10 @@ import {
   ExternalLink, Search, RefreshCw
 } from 'lucide-react'
 import { Payment } from '@/lib/types'
+import { useModal } from '@/components/ModalProvider'
 
 export default function PaymentAdmin() {
+  const { showAlert, showConfirm } = useModal()
   const [payments, setPayments] = useState<Payment[]>([])
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'pending' | 'success' | 'failed' | 'all'>('pending')
@@ -27,44 +29,71 @@ export default function PaymentAdmin() {
 
   useEffect(() => { fetchPayments() }, [fetchPayments])
 
-  const handleConfirmPayment = async (pay: Payment) => {
-    if (!confirm(`Konfirmasi pembayaran dari ${pay.email_member}? User akan otomatis jadi VIP.`)) return
-    
-    setProcessingId(pay.id)
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'confirmPayment', paymentId: pay.id })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal mengonfirmasi pembayaran')
+  const handleConfirmPayment = (pay: Payment) => {
+    showConfirm({
+      title: 'Konfirmasi Pembayaran',
+      message: `Konfirmasi pembayaran dari ${pay.email_member}? User akan otomatis jadi VIP.`,
+      type: 'warning',
+      confirmText: 'Ya, Konfirmasi',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        setProcessingId(pay.id)
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'confirmPayment', paymentId: pay.id })
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Gagal mengonfirmasi pembayaran')
 
-      alert('Pembayaran Berhasil Dikonfirmasi!')
-      fetchPayments()
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'Unknown error'
-      alert(`Gagal: ${errMsg}`)
-    } finally {
-      setProcessingId(null)
-    }
+          showAlert({
+            title: 'Pembayaran Diterima',
+            message: 'Pembayaran Berhasil Dikonfirmasi!',
+            type: 'success'
+          })
+          fetchPayments()
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : 'Unknown error'
+          showAlert({
+            title: 'Error',
+            message: `Gagal: ${errMsg}`,
+            type: 'danger'
+          })
+        } finally {
+          setProcessingId(null)
+        }
+      }
+    })
   }
 
-  const handleReject = async (id: string) => {
-    if (!confirm('Tolak pembayaran ini?')) return
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'rejectPayment', paymentId: id })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal menolak pembayaran')
-      fetchPayments()
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'Unknown error'
-      alert(`Gagal: ${errMsg}`)
-    }
+  const handleReject = (id: string) => {
+    showConfirm({
+      title: 'Tolak Pembayaran',
+      message: 'Tolak pembayaran ini?',
+      type: 'danger',
+      confirmText: 'Ya, Tolak',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'rejectPayment', paymentId: id })
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Gagal menolak pembayaran')
+          fetchPayments()
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : 'Unknown error'
+          showAlert({
+            title: 'Error',
+            message: `Gagal: ${errMsg}`,
+            type: 'danger'
+          })
+        }
+      }
+    })
   }
 
   const filtered = payments.filter(p => {

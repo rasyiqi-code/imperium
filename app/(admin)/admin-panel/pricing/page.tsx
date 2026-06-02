@@ -12,8 +12,10 @@ import {
   Plus
 } from 'lucide-react'
 import { PaketVIP } from '@/lib/types'
+import { useModal } from '@/components/ModalProvider'
 
 export default function PricingEditor() {
+  const { showAlert } = useModal()
   const [plans, setPlans] = useState<PaketVIP[]>([])
   const [loading, setLoading] = useState(true)
   const [editModal, setEditModal] = useState<PaketVIP | null>(null)
@@ -30,15 +32,27 @@ export default function PricingEditor() {
 
   const handleCreate = async () => {
     if (!newPlan.nama_paket.trim()) {
-      alert('Nama paket wajib diisi!')
+      showAlert({
+        title: 'Nama Paket Kosong',
+        message: 'Nama paket wajib diisi!',
+        type: 'warning'
+      })
       return
     }
     if (newPlan.harga < 0) {
-      alert('Harga harus positif!')
+      showAlert({
+        title: 'Harga Tidak Valid',
+        message: 'Harga harus bernilai positif!',
+        type: 'warning'
+      })
       return
     }
     if (newPlan.durasi_hari <= 0) {
-      alert('Durasi hari harus lebih dari 0!')
+      showAlert({
+        title: 'Durasi Tidak Valid',
+        message: 'Durasi hari harus lebih dari 0!',
+        type: 'warning'
+      })
       return
     }
     setCreating(true)
@@ -68,7 +82,11 @@ export default function PricingEditor() {
       const updatedPlans = await fetchPlans()
       setPlans(updatedPlans)
     } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setCreating(false)
     }
@@ -118,7 +136,11 @@ export default function PricingEditor() {
       const updatedPlans = await fetchPlans()
       setPlans(updatedPlans)
     } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setSaving(false)
     }

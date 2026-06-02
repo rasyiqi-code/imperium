@@ -14,7 +14,7 @@ interface ModalOptions {
 }
 
 interface ModalContextType {
-  showAlert: (options: Omit<ModalOptions, 'onConfirm' | 'onCancel' | 'cancelText'>) => void
+  showAlert: (options: Omit<ModalOptions, 'onCancel' | 'cancelText'>) => void
   showConfirm: (options: ModalOptions) => void
 }
 
@@ -39,7 +39,7 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
     cancelText: 'Batal'
   })
 
-  const showAlert = (alertOptions: Omit<ModalOptions, 'onConfirm' | 'onCancel' | 'cancelText'>) => {
+  const showAlert = (alertOptions: Omit<ModalOptions, 'onCancel' | 'cancelText'>) => {
     setOptions({
       ...alertOptions,
       confirmText: alertOptions.confirmText || 'OK',

@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar } from 'lucide-react'
+import { useModal } from '@/components/ModalProvider'
 
 export default function ProfilePage() {
+  const { showAlert, showConfirm } = useModal()
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [updating, setUpdating] = useState(false)
@@ -79,12 +81,24 @@ export default function ProfilePage() {
       if (!error) {
         setProfile({ ...tempProfile })
         setIsEditing(false)
-        alert('Profil berhasil diperbarui!')
+        showAlert({
+          title: 'Profil Diperbarui',
+          message: 'Profil berhasil diperbarui!',
+          type: 'success'
+        })
       } else {
-        alert(error.message)
+        showAlert({
+          title: 'Gagal Memperbarui',
+          message: error.message,
+          type: 'danger'
+        })
       }
     } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setUpdating(false)
     }
@@ -206,9 +220,18 @@ export default function ProfilePage() {
         </button>
       ) : (
         <button 
-          onClick={async () => {
-            await supabase.auth.signOut();
-            window.location.href = '/login';
+          onClick={() => {
+            showConfirm({
+              title: 'Konfirmasi Logout',
+              message: 'Apakah Anda yakin ingin keluar dari akun ini?',
+              type: 'warning',
+              confirmText: 'Ya, Keluar',
+              cancelText: 'Batal',
+              onConfirm: async () => {
+                await supabase.auth.signOut();
+                window.location.href = '/login';
+              }
+            })
           }}
           className="w-full bg-red-500/5 text-red-500 py-4 rounded-2xl font-bold border border-red-500/20 flex items-center justify-center gap-2 text-xs uppercase tracking-tighter hover:bg-red-500/10 transition-all active:scale-95"
         >

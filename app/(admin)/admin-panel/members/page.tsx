@@ -6,6 +6,7 @@ import {
   RefreshCw, Eye, X, Trash2, Search, PlusCircle, CheckSquare, Square, 
   MessageSquare, Mail, User, Smartphone, UserMinus
 } from 'lucide-react'
+import { useModal } from '@/components/ModalProvider'
 
 interface Profile {
   id: string;
@@ -18,6 +19,7 @@ interface Profile {
 }
 
 export default function ManageMembers() {
+  const { showAlert, showConfirm } = useModal()
   const [members, setMembers] = useState<Profile[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -61,28 +63,44 @@ export default function ManageMembers() {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id])
   }
 
-  async function deleteMembers(ids: string[]) {
-    if (!confirm(`Hapus ${ids.length > 1 ? ids.length + ' member' : 'member ini'} secara permanen?`)) return
-    setIsProcessing(true)
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteUser', ids })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal menghapus user')
+  const deleteMembers = (ids: string[]) => {
+    showConfirm({
+      title: 'Hapus Member',
+      message: `Hapus ${ids.length > 1 ? ids.length + ' member' : 'member ini'} secara permanen?`,
+      type: 'danger',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        setIsProcessing(true)
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'deleteUser', ids })
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Gagal menghapus user')
 
-      setMembers(prev => prev.filter(m => !ids.includes(m.id)))
-      setSelectedIds([])
-      setSelectedMember(null)
-      alert('Berhasil dihapus.')
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'Unknown error'
-      alert(`Gagal hapus: ${errMsg}`)
-    } finally {
-      setIsProcessing(false)
-    }
+          setMembers(prev => prev.filter(m => !ids.includes(m.id)))
+          setSelectedIds([])
+          setSelectedMember(null)
+          showAlert({
+            title: 'Berhasil Dihapus',
+            message: 'Member berhasil dihapus secara permanen.',
+            type: 'success'
+          })
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : 'Unknown error'
+          showAlert({
+            title: 'Gagal Menghapus',
+            message: `Gagal hapus: ${errMsg}`,
+            type: 'danger'
+          })
+        } finally {
+          setIsProcessing(false)
+        }
+      }
+    })
   }
 
   async function handleUpgrade(member: Profile) {
@@ -99,37 +117,61 @@ export default function ManageMembers() {
       const updatedData = { ...member, plan: 'vip', plan_status: 'vip' }
       setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))
       setSelectedMember(updatedData)
-      alert('Berhasil Upgrade/Perpanjang!')
+      showAlert({
+        title: 'Upgrade Berhasil',
+        message: 'Akses VIP member berhasil diaktifkan/diperpanjang!',
+        type: 'success'
+      })
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error'
-      alert(`Error: ${errMsg}`)
+      showAlert({
+        title: 'Error',
+        message: `Error: ${errMsg}`,
+        type: 'danger'
+      })
     } finally {
       setIsProcessing(false)
     }
   }
 
-  async function handleDeactivate(member: Profile) {
-    if (!confirm(`Yakin ingin mencabut akses VIP ${member.email}?`)) return
-    setIsProcessing(true)
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deactivateVip', userId: member.id })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal menonaktifkan user')
+  const handleDeactivate = (member: Profile) => {
+    showConfirm({
+      title: 'Cabut Akses VIP',
+      message: `Yakin ingin mencabut akses VIP ${member.email}?`,
+      type: 'warning',
+      confirmText: 'Ya, Cabut',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        setIsProcessing(true)
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'deactivateVip', userId: member.id })
+          })
+          const data = await res.json()
+          if (!res.ok) throw new Error(data.error || 'Gagal menonaktifkan user')
 
-      const updatedData = { ...member, plan: 'free', plan_status: 'free' }
-      setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))
-      setSelectedMember(updatedData)
-      alert('Akses VIP berhasil dicabut.')
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : 'Unknown error'
-      alert(`Error: ${errMsg}`)
-    } finally {
-      setIsProcessing(false)
-    }
+          const updatedData = { ...member, plan: 'free', plan_status: 'free' }
+          setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))
+          setSelectedMember(updatedData)
+          showAlert({
+            title: 'Akses VIP Dicabut',
+            message: 'Akses VIP berhasil dicabut.',
+            type: 'success'
+          })
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : 'Unknown error'
+          showAlert({
+            title: 'Gagal Mencabut',
+            message: `Error: ${errMsg}`,
+            type: 'danger'
+          })
+        } finally {
+          setIsProcessing(false)
+        }
+      }
+    })
   }
 
   const filteredMembers = members.filter(m => 

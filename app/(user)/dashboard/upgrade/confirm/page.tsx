@@ -7,11 +7,13 @@ import {
   Upload, CheckCircle2, RefreshCw, 
   ArrowLeft, Info, ChevronDown 
 } from 'lucide-react'
+import { useModal } from '@/components/ModalProvider'
 
 function ConfirmContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const planParam = searchParams.get('plan')
+  const { showAlert } = useModal()
 
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
@@ -104,7 +106,11 @@ function ConfirmContent() {
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
       
       if (!fileExt || !allowedExtensions.includes(fileExt) || !selected.type.startsWith('image/')) {
-        alert('Hanya diperbolehkan mengunggah file gambar (JPG, JPEG, PNG, GIF, WEBP)!');
+        showAlert({
+          title: 'Format File Tidak Valid',
+          message: 'Hanya diperbolehkan mengunggah file gambar (JPG, JPEG, PNG, GIF, WEBP)!',
+          type: 'danger'
+        });
         e.target.value = '';
         setFile(null);
         setPreview(null);
@@ -118,12 +124,24 @@ function ConfirmContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!file || !user || !selectedPaket) return alert('Data tidak lengkap!')
+    if (!file || !user || !selectedPaket) {
+      showAlert({
+        title: 'Data Belum Lengkap',
+        message: 'Mohon unggah bukti pembayaran dan pastikan semua data terisi.',
+        type: 'warning'
+      })
+      return
+    }
 
     const fileExt = file.name.split('.').pop()?.toLowerCase();
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     if (!fileExt || !allowedExtensions.includes(fileExt) || !file.type.startsWith('image/')) {
-      return alert('Format file tidak didukung! Harap unggah gambar.');
+      showAlert({
+        title: 'Format File Tidak Didukung',
+        message: 'Format file tidak didukung! Harap unggah gambar.',
+        type: 'danger'
+      })
+      return;
     }
 
     setLoading(true)
@@ -146,13 +164,22 @@ function ConfirmContent() {
         bukti_transfer: publicUrl,
         status_pembayaran: 'pending'
       }])
-
       if (dbErr) throw dbErr
       
-      alert('Berhasil dikirim!')
-      router.push('/dashboard')
+      showAlert({
+        title: 'Pembayaran Terkirim',
+        message: 'Bukti transfer berhasil dikirim. Pembayaran Anda akan segera diverifikasi oleh Admin!',
+        type: 'success',
+        onConfirm: () => {
+          router.push('/dashboard')
+        }
+      })
     } catch (err: any) {
-      alert(`Error: ${err.message}`)
+      showAlert({
+        title: 'Pengiriman Gagal',
+        message: `Terjadi kesalahan: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setLoading(false)
     }

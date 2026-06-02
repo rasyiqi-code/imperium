@@ -6,6 +6,7 @@ import {
   Save, Plus, Trash2, MessageSquare, 
   RefreshCw, HelpCircle, X 
 } from 'lucide-react'
+import { useModal } from '@/components/ModalProvider'
 
 interface SupportConfig {
   whatsapp_number: string
@@ -22,6 +23,7 @@ interface FAQ {
 }
 
 export default function AdminSupportManager() {
+  const { showAlert, showConfirm } = useModal()
   const [config, setConfig] = useState<SupportConfig>({
     whatsapp_number: '',
     telegram_link: '',
@@ -67,10 +69,25 @@ export default function AdminSupportManager() {
         body: JSON.stringify({ action: 'updateSupportConfig', config })
       })
       const data = await res.json()
-      if (!res.ok) alert(data.error || 'Gagal update config')
-      else alert('Kontak Support Berhasil Diperbarui!')
+      if (!res.ok) {
+        showAlert({
+          title: 'Gagal Update',
+          message: data.error || 'Gagal update config',
+          type: 'danger'
+        })
+      } else {
+        showAlert({
+          title: 'Berhasil',
+          message: 'Kontak Support Berhasil Diperbarui!',
+          type: 'success'
+        })
+      }
     } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setIsSaving(false)
     }
@@ -91,29 +108,56 @@ export default function AdminSupportManager() {
         setNewFaq({ question: '', answer: '', sort_order: 0 })
         fetchData()
       } else {
-        alert(data.error || 'Gagal menyimpan FAQ')
+        showAlert({
+          title: 'Gagal Menyimpan',
+          message: data.error || 'Gagal menyimpan FAQ',
+          type: 'danger'
+        })
       }
     } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${err.message}`,
+        type: 'danger'
+      })
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleDeleteFaq = async (id: string) => {
-    if (!confirm('Hapus FAQ ini?')) return
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'deleteFaq', faqId: id })
-      })
-      const data = await res.json()
-      if (res.ok) fetchData()
-      else alert(data.error || 'Gagal menghapus FAQ')
-    } catch (err: any) {
-      alert(`Gagal: ${err.message}`)
-    }
+    showConfirm({
+      title: 'Hapus FAQ',
+      message: 'Hapus FAQ ini secara permanen?',
+      type: 'danger',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        try {
+          const res = await fetch('/api/admin/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'deleteFaq', faqId: id })
+          })
+          const data = await res.json()
+          if (res.ok) {
+            fetchData()
+          } else {
+            showAlert({
+              title: 'Gagal Menghapus',
+              message: data.error || 'Gagal menghapus FAQ',
+              type: 'danger'
+            })
+          }
+        } catch (err: any) {
+          showAlert({
+            title: 'Error',
+            message: `Gagal: ${err.message}`,
+            type: 'danger'
+          })
+        }
+      }
+    })
   }
 
   if (loading) return (
