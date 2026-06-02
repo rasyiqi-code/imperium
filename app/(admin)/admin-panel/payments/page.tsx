@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { 
   CheckCircle2, Wallet, 
-  ExternalLink, Search, RefreshCw
+  ExternalLink, Search, RefreshCw, Download
 } from 'lucide-react'
 import { Payment } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
@@ -15,6 +15,11 @@ export default function PaymentAdmin() {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'pending' | 'success' | 'failed' | 'all'>('pending')
   const [processingId, setProcessingId] = useState<string | null>(null)
+  
+  // State paginasi client-side
+  const [visibleCount, setVisibleCount] = useState(10)
+
+
 
   const fetchPayments = useCallback(async () => {
     const { data, error } = await supabase
@@ -102,6 +107,39 @@ export default function PaymentAdmin() {
     return matchesSearch && matchesFilter
   })
 
+  // Limit porsi data yang di-render di client
+  const paginated = filtered.slice(0, visibleCount)
+  const hasMore = filtered.length > visibleCount
+
+  // Unduh rekap pembayaran tersaring sebagai CSV
+  const exportToCSV = () => {
+    const headers = ['ID Pembayaran', 'Email Member', 'Nama Paket', 'Harga Bayar', 'Status', 'Bukti Transfer', 'Tanggal']
+    const rows = filtered.map(p => [
+      p.id,
+      p.email_member,
+      p.nama_paket,
+      p.harga_bayar,
+      p.status_pembayaran,
+      p.bukti_transfer || '',
+      p.created_at ? new Date(p.created_at).toLocaleString('id-ID') : ''
+    ])
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', `payments_export_${new Date().getTime()}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left animate-in fade-in duration-300">
       
@@ -112,29 +150,46 @@ export default function PaymentAdmin() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 shadow-lg mb-6">
-        <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
-          <Search className="text-neutral-500 mr-3" size={16} />
-          <input 
-            type="text" placeholder="Cari Email..." 
-            className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
-            value={search} onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <div className="flex bg-neutral-950/50 p-1 rounded-xl border border-neutral-800/80 backdrop-blur-md self-start md:self-auto">
-          {(['pending', 'success', 'failed', 'all'] as const).map((f) => (
-            <button 
-              key={f} onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${filter === f ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10' : 'text-neutral-500 hover:text-white'}`}
+      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 p-4 md:p-5 rounded-2xl shadow-lg mb-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
+              <Search className="text-neutral-500 mr-3" size={16} />
+              <input 
+                type="text" placeholder="Cari Email..." 
+                className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
+                value={search} onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-900/80">
+            <div className="flex bg-neutral-950/50 p-1 rounded-xl border border-neutral-800/80 backdrop-blur-md self-start md:self-auto">
+              {(['pending', 'success', 'failed', 'all'] as const).map((f) => (
+                <button 
+                  key={f} onClick={() => {
+                    setFilter(f)
+                    setVisibleCount(10) // reset paginasi saat filter ganti
+                  }}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${filter === f ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10' : 'text-neutral-500 hover:text-white'}`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={exportToCSV}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
             >
-              {f}
+              <Download size={12} /> Export CSV
             </button>
-          ))}
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map((pay) => (
+        {paginated.map((pay) => (
           <div key={pay.id} className="p-5 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 hover:border-neutral-700/50 shadow-lg hover:shadow-black/30 flex flex-col gap-4 transition-all duration-300 group relative overflow-hidden">
             <div className="absolute -right-6 -top-6 w-16 h-16 bg-neutral-500/2 blur-xl rounded-full pointer-events-none group-hover:bg-yellow-500/2 duration-300" />
             
@@ -189,6 +244,18 @@ export default function PaymentAdmin() {
           </div>
         ))}
       </div>
+
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setVisibleCount(prev => prev + 10)}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
+          >
+            Tampilkan Lebih Banyak
+          </button>
+        </div>
+      )}
     </div>
   )
 }

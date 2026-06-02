@@ -644,13 +644,24 @@ export async function POST(request: Request) {
       }
 
       case 'getMembers': {
-        const { data: members, error } = await supabaseServer
+        // Ambil parameter paginasi dan filter plan dari body request
+        const { limit = 10, offset = 0, plan = 'all' } = body;
+        
+        let query = supabaseServer
           .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*', { count: 'exact' });
+
+        // Filter berdasarkan plan jika ditentukan (selain 'all')
+        if (plan && plan !== 'all') {
+          query = query.eq('plan', plan);
+        }
+
+        const { data: members, count, error } = await query
+          .order('created_at', { ascending: false })
+          .range(offset, offset + limit - 1);
 
         if (error) throw error;
-        return NextResponse.json({ success: true, members });
+        return NextResponse.json({ success: true, members, totalCount: count || 0 });
       }
 
       default:

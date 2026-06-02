@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { 
   RefreshCw, Eye, X, Trash2, Search, PlusCircle, CheckSquare, Square, 
-  MessageSquare, Mail, User, Smartphone, UserMinus
+  MessageSquare, Mail, User, Smartphone, UserMinus, Download
 } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
 
@@ -26,33 +26,90 @@ export default function ManageMembers() {
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  
+  // Paginasi & State Filter Plan
+  const [selectedPlan, setSelectedPlan] = useState<'all' | 'vip' | 'free'>('all')
+  const [offset, setOffset] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const limit = 10
 
-  const fetchMembers = useCallback(async () => {
+  const fetchMembers = useCallback(async (offsetVal: number, planVal: 'all' | 'vip' | 'free') => {
     try {
       const res = await fetch('/api/admin/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getMembers' })
+        body: JSON.stringify({ action: 'getMembers', limit, offset: offsetVal, plan: planVal })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to fetch members')
-      return (data.members as Profile[]) || []
+      return {
+        members: (data.members as Profile[]) || [],
+        totalCount: data.totalCount || 0
+      }
     } catch (err) {
       console.error('Error fetching members:', err)
-      return []
+      return { members: [], totalCount: 0 }
     }
   }, [])
 
-
   const refreshData = useCallback(async () => {
     setLoading(true)
-    const data = await fetchMembers()
-    setMembers(data)
+    const result = await fetchMembers(0, selectedPlan)
+    setMembers(result.members)
+    setTotalCount(result.totalCount)
+    setOffset(0)
+    setHasMore(result.members.length < result.totalCount)
     setSelectedIds([])
     setLoading(false)
-  }, [fetchMembers])
+  }, [fetchMembers, selectedPlan])
 
-  useEffect(() => { refreshData() }, [fetchMembers, refreshData])
+  const loadMore = async () => {
+    if (isProcessing) return
+    setIsProcessing(true)
+    const nextOffset = offset + limit
+    const result = await fetchMembers(nextOffset, selectedPlan)
+    if (result.members.length > 0) {
+      setMembers(prev => [...prev, ...result.members])
+      setOffset(nextOffset)
+      setHasMore(members.length + result.members.length < result.totalCount)
+    } else {
+      setHasMore(false)
+    }
+    setIsProcessing(false)
+  }
+
+  // Unduh CSV dari data yang ter-render
+  const exportToCSV = () => {
+    const headers = ['Email', 'Nama Lengkap', 'No WhatsApp', 'Paket', 'Status', 'Tanggal Daftar']
+    const rows = filteredMembers.map(m => [
+      m.email,
+      m.full_name || 'Anonymous',
+      m.whatsapp_number || '',
+      m.plan || 'free',
+      m.plan_status || 'free',
+      m.created_at ? new Date(m.created_at).toLocaleString('id-ID') : ''
+    ])
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', `members_export_${new Date().getTime()}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  useEffect(() => {
+    refreshData()
+  }, [selectedPlan])
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredMembers.length) setSelectedIds([])
@@ -196,26 +253,54 @@ export default function ManageMembers() {
 
       {/* Search & Bulk Action Bar */}
       <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 p-4 md:p-5 rounded-2xl shadow-lg">
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
-            <Search className="text-neutral-500 mr-3" size={16} />
-            <input 
-              type="text" placeholder="Cari member..." 
-              className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
-              value={search} onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-2">
-            {selectedIds.length > 0 && (
-              <button 
-                onClick={() => deleteMembers(selectedIds)} 
-                className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
-              >
-                <Trash2 size={14} /> Hapus ({selectedIds.length})
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
+              <Search className="text-neutral-500 mr-3" size={16} />
+              <input 
+                type="text" placeholder="Cari member..." 
+                className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
+                value={search} onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              {selectedIds.length > 0 && (
+                <button 
+                  onClick={() => deleteMembers(selectedIds)} 
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
+                >
+                  <Trash2 size={14} /> Hapus ({selectedIds.length})
+                </button>
+              )}
+              <button onClick={refreshData} className="p-2.5 bg-neutral-900/80 border border-neutral-800 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
+                <RefreshCw size={18} className={isProcessing ? 'animate-spin' : ''} />
               </button>
-            )}
-            <button onClick={refreshData} className="p-2.5 bg-neutral-900/80 border border-neutral-800 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
-              <RefreshCw size={18} className={isProcessing ? 'animate-spin' : ''} />
+            </div>
+          </div>
+
+          {/* Quick Plan Filter & CSV Export */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-900/80">
+            <div className="flex gap-1.5">
+              {(['all', 'vip', 'free'] as const).map((plan) => (
+                <button
+                  key={plan}
+                  onClick={() => setSelectedPlan(plan)}
+                  className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border cursor-pointer transition-all duration-200 ${
+                    selectedPlan === plan
+                    ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 shadow-md shadow-yellow-500/5'
+                    : 'bg-neutral-900/50 text-neutral-500 border-neutral-800 hover:text-neutral-400'
+                  }`}
+                >
+                  {plan}
+                </button>
+              ))}
+            </div>
+            
+            <button
+              onClick={exportToCSV}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <Download size={12} /> Export CSV
             </button>
           </div>
         </div>
@@ -287,6 +372,25 @@ export default function ManageMembers() {
             </tbody>
           </table>
         </div>
+
+        {/* Load More Button */}
+        {hasMore && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={loadMore}
+              disabled={isProcessing}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
+            >
+              {isProcessing ? (
+                <>
+                  <RefreshCw className="animate-spin" size={14} /> Loading...
+                </>
+              ) : (
+                'Tampilkan Lebih Banyak'
+              )}
+            </button>
+          </div>
+        )}
       </main>
 
       {/* Modal Detail */}
