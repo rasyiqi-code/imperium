@@ -256,7 +256,7 @@ export default function ManageMembers() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black tracking-tight text-white">
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">
           Members <span className="text-yellow-500">Manager</span>
           <span className="ml-2 text-xs font-normal text-neutral-400 font-mono">({totalCount} Member)</span>
         </h1>

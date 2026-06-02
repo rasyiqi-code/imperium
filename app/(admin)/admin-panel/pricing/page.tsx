@@ -173,7 +173,7 @@ export default function PricingEditor() {
       {/* Header Editor */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
         <div className="hidden md:block">
-          <h1 className="text-xl font-black tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
+          <h1 className="text-xl font-black uppercase tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
           <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
         </div>
         <button 
@@ -200,9 +200,9 @@ export default function PricingEditor() {
                 </button>
               </div>
 
-              <h3 className="text-base font-black tracking-tight text-white">{plan.nama_paket}</h3>
-              <p className="text-lg font-black text-yellow-500 mt-1 tracking-tight">
-                Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} hari</span>
+              <h3 className="text-base font-black uppercase tracking-tight text-white">{plan.nama_paket}</h3>
+              <p className="text-lg font-black text-yellow-500 mt-1 uppercase tracking-tight">
+                Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} HARI</span>
               </p>
             </div>
 

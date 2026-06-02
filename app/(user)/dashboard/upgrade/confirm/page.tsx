@@ -207,7 +207,7 @@ function ConfirmContent() {
       </button>
 
       <div className="space-y-1">
-        <h1 className="text-sm font-bold tracking-tight">Konfirmasi Pembayaran</h1>
+        <h1 className="text-sm font-bold uppercase tracking-tight">Konfirmasi Pembayaran</h1>
         <p className="text-xs text-neutral-500 font-bold tracking-tight leading-none">Imperium Crypto VIP Portal</p>
       </div>
 

@@ -49,7 +49,7 @@ export default function SupportPage() {
 
   return (
     <div className="p-4 md:p-8 space-y-8 max-w-4xl mx-auto pb-32 bg-black min-h-screen text-white font-sans text-left">
-      <h1 className="text-xl font-bold tracking-tight">Support & FAQ</h1>
+      <h1 className="text-xl font-bold uppercase tracking-tight">Support & FAQ</h1>
 
       {/* Grid Kontak dari Database */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -75,7 +75,7 @@ export default function SupportPage() {
 
       {/* List FAQ dari Database */}
       <div className="space-y-4">
-        <h3 className="text-xs font-bold text-neutral-500 tracking-widest px-1">Pertanyaan Umum</h3>
+        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest px-1">Pertanyaan Umum</h3>
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden divide-y divide-neutral-800">
           {faqs.map((faq) => (
             <div key={faq.id} className="p-5 hover:bg-neutral-800/30 transition-all">

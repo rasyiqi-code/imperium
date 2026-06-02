@@ -184,7 +184,7 @@ export default function AdminSupportManager() {
 
       {/* Title */}
       <div className="border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black tracking-tight text-white">Support <span className="text-yellow-500">Manager</span></h1>
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">Support <span className="text-yellow-500">Manager</span></h1>
         <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola kontak bantuan operasional WhatsApp, Telegram, email, dan FAQ member</p>
       </div>
 

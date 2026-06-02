@@ -151,7 +151,7 @@ export default function PaymentAdmin() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
         <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Konfirmasi pembayaran manual member dan sinkronisasi gateway Midtrans</p>
       </div>
 

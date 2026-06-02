@@ -98,8 +98,8 @@ export default function UpgradePage() {
       
       {/* Header */}
       <div className="text-center space-y-3">
-        <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter">
-          Upgrade <span className="text-yellow-500">VIP</span>
+        <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
+          UPGRADE <span className="text-yellow-500">VIP</span>
         </h1>
         <p className="text-neutral-500 text-sm md:text-base max-w-md mx-auto font-medium">
           Dapatkan akses sinyal harian dan belajar Crypto secara profesional bersama komunitas eksklusif.

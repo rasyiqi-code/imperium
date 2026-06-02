@@ -80,7 +80,7 @@ export default function UserDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Selamat Datang, <span className="text-yellow-500">{member?.nama_member?.split(' ')[0]}</span>!
+            Selamat Datang, <span className="text-yellow-500 uppercase">{member?.nama_member?.split(' ')[0]}</span>!
           </h1>
           <p className="text-neutral-400 mt-2 font-medium">Akses komunitas dan pantau status membership kamu.</p>
         </div>
@@ -103,7 +103,7 @@ export default function UserDashboard() {
         {!isVip && (
           <div className="absolute inset-0 z-10 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center text-center p-6">
             <Lock className="text-yellow-500 mb-4" size={40} />
-            <h3 className="text-xl font-extrabold text-white mb-2 tracking-tight">Konten VIP Terkunci</h3>
+            <h3 className="text-xl font-extrabold text-white mb-2 uppercase tracking-tight">Konten VIP Terkunci</h3>
             <p className="text-neutral-400 text-sm max-w-xs mb-6 font-bold opacity-70">
               Join VIP Imperium untuk akses sinyal trading harian dengan akurasi tinggi.
             </p>
@@ -120,16 +120,16 @@ export default function UserDashboard() {
           <div className="p-2.5 bg-green-500/10 rounded-xl text-green-500 border border-green-500/20">
             <TrendingUp size={24} />
           </div>
-          <h3 className="text-xl font-black text-white tracking-tighter">Live Trading Signals</h3>
+          <h3 className="text-xl font-black text-white tracking-tighter uppercase">Live Trading Signals</h3>
         </div>
 
         <div className="space-y-4">
           <div className="p-5 bg-black/40 border border-neutral-800 rounded-2xl flex justify-between items-center group hover:border-neutral-700 transition-all">
-            <div className="font-black text-neutral-300 tracking-widest text-sm">BTC / USDT</div>
+            <div className="font-black text-neutral-300 tracking-widest uppercase text-sm">BTC / USDT</div>
             <div className="text-neutral-600 font-mono italic text-xs tracking-[0.3em]">HIDDEN_SIGNAL</div>
           </div>
           <div className="p-5 bg-black/40 border border-neutral-800 rounded-2xl flex justify-between items-center group hover:border-neutral-700 transition-all">
-            <div className="font-black text-neutral-300 tracking-widest text-sm">ETH / USDT</div>
+            <div className="font-black text-neutral-300 tracking-widest uppercase text-sm">ETH / USDT</div>
             <div className="text-neutral-600 font-mono italic text-xs tracking-[0.3em]">HIDDEN_SIGNAL</div>
           </div>
         </div>

@@ -189,7 +189,7 @@ export default function AdminSettings() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black tracking-tight text-white">System <span className="text-yellow-500">Settings</span></h1>
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">System <span className="text-yellow-500">Settings</span></h1>
         <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola keamanan admin, konfigurasi notifikasi, dan integrasi pihak ketiga</p>
       </div>
 

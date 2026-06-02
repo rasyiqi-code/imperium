@@ -142,7 +142,7 @@ export default function ProfilePage() {
           </button>
         </div>
         <div>
-          <h1 className="text-2xl font-black text-white italic tracking-tight">Profil Saya</h1>
+          <h1 className="text-2xl font-black text-white italic uppercase tracking-tight">Profil Saya</h1>
           <p className="text-neutral-500 text-[10px] font-black tracking-[0.2em] mt-1">ID: {profile.id_user_auth.slice(0,8)}</p>
         </div>
       </div>
