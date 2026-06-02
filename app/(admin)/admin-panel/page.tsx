@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   TrendingUp, 
   Users, 
@@ -9,25 +8,19 @@ import {
   RefreshCw
 } from 'lucide-react'
 
-
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  plan: string | null;
-  plan_status: string | null;
-  created_at: string;
+interface PaymentItem {
+  harga_bayar: number;
+  created_at: string | null;
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalUser: 0, vipAktif: 0, omzet: 0 })
-  const [allUsers, setAllUsers] = useState<Profile[]>([])
-  const [paymentsList, setPaymentsList] = useState<any[]>([])
+  const [paymentsList, setPaymentsList] = useState<PaymentItem[]>([])
   const [loading, setLoading] = useState(true)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   // Fungsi pembantu untuk mengelompokkan omzet 7 hari terakhir secara harian
-  const getOmzetTrend = (payments: any[]) => {
+  const getOmzetTrend = (payments: PaymentItem[]) => {
     const trendMap: Record<string, number> = {}
     
     // Inisialisasi label tanggal 7 hari terakhir
@@ -51,38 +44,36 @@ export default function AdminDashboard() {
     return Object.entries(trendMap).map(([label, value]) => ({ label, value }))
   }
 
-  const getAdminData = async () => {
+  const getAdminData = useCallback(async () => {
     setLoading(true)
     try {
-      const resMembers = await fetch('/api/admin/actions', {
+      const res = await fetch('/api/admin/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getMembers' })
+        body: JSON.stringify({ action: 'getDashboardStats' })
       })
-      const dataMembers = await resMembers.json()
-      if (!resMembers.ok) throw new Error(dataMembers.error || 'Failed to fetch members')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch dashboard stats')
 
-      const { data: payData } = await supabase.from('data_pembayaran').select('harga_bayar, created_at').eq('status_pembayaran', 'success')
-
-      const profiles = (dataMembers.members as Profile[]) || []
-      const payments = (payData as any[]) || []
-
-      const totalOmzet = payments.reduce((acc, curr) => acc + (Number(curr.harga_bayar) || 0), 0)
-      const vipAktifCount = profiles.filter(p => p.plan?.toLowerCase() === 'vip').length
-
-      setStats({ totalUser: profiles.length, vipAktif: vipAktifCount, omzet: totalOmzet })
-      setAllUsers(profiles)
-      setPaymentsList(payments)
+      setStats({
+        totalUser: data.stats?.totalUser || 0,
+        vipAktif: data.stats?.vipAktif || 0,
+        omzet: data.stats?.omzet || 0
+      })
+      setPaymentsList((data.payments as PaymentItem[]) || [])
     } catch (error) {
       console.error("Error syncing admin dashboard:", error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-
-
-  useEffect(() => { getAdminData() }, [])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getAdminData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [getAdminData])
 
 
 
