@@ -20,7 +20,9 @@ interface MembershipData {
   nama_paket: string | null
   harga_bayar: number | null
   dibuat_pada: string | null
+  tanggal_berakhir: string | null
 }
+
 
 export default function UserDashboard() {
   const [member, setMember] = useState<MemberVIP | null>(null)
@@ -66,7 +68,8 @@ export default function UserDashboard() {
           status_aktif: (m?.status_aktif || 'free') as any, 
           nama_paket: m?.nama_paket || null,
           harga_bayar: m?.harga_bayar || 0,
-          dibuat_pada: m?.dibuat_pada || new Date().toISOString()
+          dibuat_pada: m?.dibuat_pada || new Date().toISOString(),
+          tanggal_berakhir: m?.tanggal_berakhir || null
         }
         setMember(mergedData)
       }
