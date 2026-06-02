@@ -129,7 +129,7 @@ export default function PaymentAdmin() {
               )}
             </div>
 
-            {pay.status_pembayaran === 'pending' && (
+            {pay.status_pembayaran === 'pending' && (!pay.bukti_transfer || !pay.bukti_transfer.startsWith('IMP-')) && (
               <div className="flex gap-2">
                 <button 
                   onClick={() => handleConfirmPayment(pay)}
@@ -146,6 +146,7 @@ export default function PaymentAdmin() {
                 </button>
               </div>
             )}
+
           </div>
         ))}
       </div>
