@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
-import { supabaseServer } from '@/lib/supabaseServer'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { sendEmail } from '@/lib/email'
@@ -209,22 +208,14 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Anda tidak dapat menghapus akun Anda sendiri!' }, { status: 400 })
         }
 
-        // Hapus semua data relasi user di database menggunakan Prisma
+        // Hapus semua data relasi user dan akun otentikasinya di database secara atomik menggunakan Prisma
         await prisma.$transaction([
           prisma.data_member_vip.deleteMany({ where: { id_user_auth: { in: ids } } }),
           prisma.data_pembayaran.deleteMany({ where: { id_user_auth: { in: ids } } }),
           prisma.notifications.deleteMany({ where: { user_id: { in: ids } } }),
-          prisma.profiles.deleteMany({ where: { id: { in: ids } } })
+          prisma.profiles.deleteMany({ where: { id: { in: ids } } }),
+          prisma.users.deleteMany({ where: { id: { in: ids } } })
         ])
-
-        // Hapus akun dari sistem Supabase Auth (diperlukan menggunakan API admin service role Supabase)
-        for (const id of ids) {
-          try {
-            await supabaseServer.auth.admin.deleteUser(id)
-          } catch (authDelErr) {
-            console.error(`Gagal menghapus user dari Supabase Auth untuk ID ${id}:`, authDelErr)
-          }
-        }
 
         return NextResponse.json({ success: true })
       }
