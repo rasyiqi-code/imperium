@@ -58,7 +58,7 @@ export default function GroupPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-6 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
       <div className="w-20 h-20 bg-[#5865F2]/10 rounded-3xl flex items-center justify-center text-[#5865F2] mb-6 border border-[#5865F2]/20">
         <MessageSquare size={40} />
       </div>
