@@ -111,29 +111,45 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 mt-2">
-              {isConfirm && (
+            <div className="flex items-center gap-3 mt-4 w-full">
+              {isConfirm ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="flex-1 py-3 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer text-center"
+                  >
+                    {options.cancelText}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirm}
+                    className={`flex-1 py-3 text-black rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer text-center ${
+                      options.type === 'danger'
+                        ? 'bg-red-500 hover:bg-red-400 shadow-md shadow-red-500/10'
+                        : options.type === 'success'
+                          ? 'bg-green-500 hover:bg-green-400 shadow-md shadow-green-500/10'
+                          : 'bg-yellow-500 hover:bg-yellow-400 shadow-md shadow-yellow-500/10'
+                    }`}
+                  >
+                    {options.confirmText}
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
-                  onClick={handleCancel}
-                  className="px-5 py-2.5 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer"
+                  onClick={handleConfirm}
+                  className={`w-full py-3 text-black rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer text-center ${
+                    options.type === 'danger'
+                      ? 'bg-red-500 hover:bg-red-400 shadow-md shadow-red-500/10'
+                      : options.type === 'success'
+                        ? 'bg-green-500 hover:bg-green-400 shadow-md shadow-green-500/10'
+                        : 'bg-yellow-500 hover:bg-yellow-400 shadow-md shadow-yellow-500/10'
+                  }`}
                 >
-                  {options.cancelText}
+                  {options.confirmText}
                 </button>
               )}
-              <button
-                type="button"
-                onClick={handleConfirm}
-                className={`px-5 py-2.5 text-black rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer ${
-                  options.type === 'danger'
-                    ? 'bg-red-500 hover:bg-red-400 shadow-md shadow-red-500/10'
-                    : options.type === 'success'
-                      ? 'bg-green-500 hover:bg-green-400 shadow-md shadow-green-500/10'
-                      : 'bg-yellow-500 hover:bg-yellow-400 shadow-md shadow-yellow-500/10'
-                }`}
-              >
-                {options.confirmText}
-              </button>
             </div>
           </div>
         </div>
