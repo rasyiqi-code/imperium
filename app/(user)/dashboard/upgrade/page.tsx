@@ -12,16 +12,34 @@ export default function UpgradePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [showPayment, setShowPayment] = useState(false)
+  const [upgradeMode, setUpgradeMode] = useState('stacking')
+  const [currentMember, setCurrentMember] = useState<any>(null)
 
   useEffect(() => {
     async function loadPaket() {
-      const { data, error } = await supabase
-        .from('data_paket_vip')
-        .select('*')
-        .order('harga', { ascending: true })
+      const [authRes, paketRes, settingsRes] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from('data_paket_vip').select('*').order('harga', { ascending: true }),
+        supabase.from('admin_settings').select('midtrans_upgrade_mode').eq('id', 1).maybeSingle()
+      ])
 
-      if (!error && data) {
-        const packages = data as PaketVIP[]
+      const user = authRes.data?.user;
+      let memberData = null;
+      if (user) {
+        const { data } = await supabase.from('data_member_vip').select('*').eq('id_user_auth', user.id).maybeSingle();
+        memberData = data;
+      }
+
+      const settingsData = settingsRes.data as any
+      if (settingsData) {
+        setUpgradeMode(settingsData.midtrans_upgrade_mode || 'stacking')
+      }
+      if (memberData) {
+        setCurrentMember(memberData)
+      }
+
+      if (!paketRes.error && paketRes.data) {
+        const packages = paketRes.data as PaketVIP[]
         setPaketList(packages)
         if (packages.length > 0) setSelectedId(packages[0].id)
       }
@@ -29,6 +47,34 @@ export default function UpgradePage() {
     }
     loadPaket()
   }, [])
+
+  const getProratedPrice = (paketHarga: number) => {
+    if (upgradeMode !== 'proration' || !currentMember) return paketHarga
+
+    const { status_aktif, tanggal_berakhir, dibuat_pada, created_at, harga_bayar } = currentMember
+    if ((status_aktif === 'aktif' || status_aktif === 'vip') && tanggal_berakhir) {
+      const today = new Date()
+      const expiry = new Date(tanggal_berakhir)
+
+      if (expiry > today) {
+        const created = dibuat_pada 
+          ? new Date(dibuat_pada) 
+          : (created_at ? new Date(created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000))
+
+        let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000))
+        if (totalDays <= 0) totalDays = 30
+
+        let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
+        if (remainingDays < 0) remainingDays = 0
+
+        const oldPaidAmount = Number(harga_bayar) || 0
+        const remainingValue = oldPaidAmount * (remainingDays / totalDays)
+
+        return Math.max(10000, paketHarga - remainingValue)
+      }
+    }
+    return paketHarga
+  }
 
   const selectedPaket = paketList.find((p) => p.id === selectedId)
 
@@ -60,6 +106,7 @@ export default function UpgradePage() {
             paket={p} 
             isSelected={selectedId === p.id} 
             onSelect={setSelectedId} 
+            proratedHarga={getProratedPrice(Number(p.harga))}
           />
         ))}
       </div>
@@ -96,7 +143,7 @@ export default function UpgradePage() {
           onClose={() => setShowPayment(false)}
           paketId={selectedPaket.id}
           paketNama={selectedPaket.nama_paket}
-          harga={selectedPaket.harga}
+          harga={getProratedPrice(Number(selectedPaket.harga))}
           onSuccess={() => {
             window.location.href = '/dashboard'
           }}

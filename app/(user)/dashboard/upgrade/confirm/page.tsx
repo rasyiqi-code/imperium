@@ -21,6 +21,8 @@ function ConfirmContent() {
   
   const [listPaket, setListPaket] = useState<any[]>([])
   const [selectedPaket, setSelectedPaket] = useState<any>(null)
+  const [upgradeMode, setUpgradeMode] = useState('stacking')
+  const [currentMember, setCurrentMember] = useState<any>(null)
 
   // Load Data dengan Guard
   useEffect(() => {
@@ -30,15 +32,26 @@ function ConfirmContent() {
       try {
         setFetching(true)
         // Ambil User & Paket sekaligus
-        const [authRes, pricingRes] = await Promise.all([
+        const [authRes, pricingRes, settingsRes] = await Promise.all([
           supabase.auth.getUser(),
-          (supabase.from('data_paket_vip') as any).select('*')
+          (supabase.from('data_paket_vip') as any).select('*'),
+          supabase.from('admin_settings').select('midtrans_upgrade_mode').eq('id', 1).maybeSingle()
         ])
 
         if (!isMounted) return
 
-        if (authRes.data?.user) setUser(authRes.data.user)
+        const user = authRes.data?.user;
+        if (user) {
+          setUser(user)
+          const { data } = await supabase.from('data_member_vip').select('*').eq('id_user_auth', user.id).maybeSingle();
+          if (data) setCurrentMember(data)
+        }
         
+        const settingsData = settingsRes.data as any
+        if (settingsData) {
+          setUpgradeMode(settingsData.midtrans_upgrade_mode || 'stacking')
+        }
+
         if (pricingRes.data && pricingRes.data.length > 0) {
           setListPaket(pricingRes.data)
           const initial = planParam 
@@ -56,6 +69,34 @@ function ConfirmContent() {
     initPage()
     return () => { isMounted = false }
   }, [planParam])
+
+  const getProratedPrice = useCallback((paketHarga: number) => {
+    if (upgradeMode !== 'proration' || !currentMember) return paketHarga
+
+    const { status_aktif, tanggal_berakhir, dibuat_pada, created_at, harga_bayar } = currentMember
+    if ((status_aktif === 'aktif' || status_aktif === 'vip') && tanggal_berakhir) {
+      const today = new Date()
+      const expiry = new Date(tanggal_berakhir)
+
+      if (expiry > today) {
+        const created = dibuat_pada 
+          ? new Date(dibuat_pada) 
+          : (created_at ? new Date(created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000))
+
+        let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000))
+        if (totalDays <= 0) totalDays = 30
+
+        let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
+        if (remainingDays < 0) remainingDays = 0
+
+        const oldPaidAmount = Number(harga_bayar) || 0
+        const remainingValue = oldPaidAmount * (remainingDays / totalDays)
+
+        return Math.max(10000, paketHarga - remainingValue)
+      }
+    }
+    return paketHarga
+  }, [upgradeMode, currentMember])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -97,11 +138,12 @@ function ConfirmContent() {
       const { data: { publicUrl } } = supabase.storage.from('pembayaran').getPublicUrl(fileName)
 
       // 2. Insert ke data_pembayaran
+      const finalPrice = getProratedPrice(Number(selectedPaket.harga))
       const { error: dbErr } = await (supabase.from('data_pembayaran') as any).insert([{
         id_user_auth: user.id,
         email_member: user.email,
         nama_paket: selectedPaket.nama_paket, 
-        harga_bayar: Number(selectedPaket.harga),
+        harga_bayar: finalPrice,
         bukti_transfer: publicUrl,
         status_pembayaran: 'pending'
       }])
@@ -146,21 +188,37 @@ function ConfirmContent() {
             }}
             className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-xs font-bold uppercase outline-none appearance-none focus:border-yellow-500 transition-all cursor-pointer text-white"
           >
-            {listPaket.map((p) => (
-              <option key={p.id} value={p.id} className="bg-neutral-900 text-white">
-                {p.nama_paket} - Rp {Number(p.harga).toLocaleString('id-ID')}
-              </option>
-            ))}
+            {listPaket.map((p) => {
+              const displayPrice = getProratedPrice(Number(p.harga))
+              const isProrated = displayPrice < Number(p.harga)
+              return (
+                <option key={p.id} value={p.id} className="bg-neutral-900 text-white">
+                  {p.nama_paket} - Rp {displayPrice.toLocaleString('id-ID')} {isProrated ? '(Potong Harga Prorasi)' : ''}
+                </option>
+              )
+            })}
           </select>
           <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
         </div>
       </div>
 
       <div className="p-5 rounded-xl bg-neutral-900 border border-neutral-800 flex justify-between items-center">
-        <span className="text-xs font-bold text-neutral-500 uppercase leading-none">Total Tagihan</span>
-        <span className="text-sm font-bold text-yellow-500 uppercase tracking-tighter leading-none">
-          Rp {Number(selectedPaket.harga).toLocaleString('id-ID')}
-        </span>
+        <div className="text-left">
+          <span className="text-xs font-bold text-neutral-500 uppercase leading-none block">Total Tagihan</span>
+          {getProratedPrice(Number(selectedPaket.harga)) < Number(selectedPaket.harga) && (
+            <span className="text-[10px] text-green-500 font-bold uppercase mt-1 block">Potongan Harga Prorasi Aktif</span>
+          )}
+        </div>
+        <div className="text-right">
+          {getProratedPrice(Number(selectedPaket.harga)) < Number(selectedPaket.harga) && (
+            <span className="text-xs text-neutral-500 line-through mr-2 font-bold">
+              Rp {Number(selectedPaket.harga).toLocaleString('id-ID')}
+            </span>
+          )}
+          <span className="text-sm font-bold text-yellow-500 uppercase tracking-tighter leading-none">
+            Rp {getProratedPrice(Number(selectedPaket.harga)).toLocaleString('id-ID')}
+          </span>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

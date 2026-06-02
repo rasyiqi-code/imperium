@@ -7,9 +7,10 @@ interface PricingCardProps {
   paket: PaketVIP;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  proratedHarga?: number;
 }
 
-export default function PricingCard({ paket, isSelected, onSelect }: PricingCardProps) {
+export default function PricingCard({ paket, isSelected, onSelect, proratedHarga }: PricingCardProps) {
   return (
     <div 
       onClick={() => onSelect(paket.id)}
@@ -29,8 +30,15 @@ export default function PricingCard({ paket, isSelected, onSelect }: PricingCard
         <span className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">
           {paket.nama_paket}
         </span>
-        <div className="text-2xl font-black text-white">
-          Rp {paket.harga.toLocaleString('id-ID')}
+        <div className="text-2xl font-black text-white flex items-baseline gap-2 flex-wrap">
+          {proratedHarga && proratedHarga < paket.harga ? (
+            <>
+              <span className="text-yellow-500">Rp {proratedHarga.toLocaleString('id-ID')}</span>
+              <span className="text-sm font-bold text-neutral-500 line-through">Rp {paket.harga.toLocaleString('id-ID')}</span>
+            </>
+          ) : (
+            <span>Rp {paket.harga.toLocaleString('id-ID')}</span>
+          )}
         </div>
         <div className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest mt-1">
           Durasi: {paket.durasi_hari} Hari

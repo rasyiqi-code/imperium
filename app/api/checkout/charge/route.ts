@@ -252,15 +252,48 @@ export async function POST(request: Request) {
     // 3. Fetch Midtrans settings
     const { data: settings } = (await supabaseServer
       .from('admin_settings')
-      .select('midtrans_server_key, midtrans_is_production')
+      .select('midtrans_server_key, midtrans_is_production, midtrans_upgrade_mode')
       .eq('id', 1)
       .maybeSingle()) as any;
 
     const isProduction = settings?.midtrans_is_production === true;
     const serverKey = settings?.midtrans_server_key || '';
+    const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
     if (!serverKey) {
       return NextResponse.json({ error: 'Midtrans belum dikonfigurasi' }, { status: 500 });
+    }
+
+    let finalAmount = Number(paket.harga);
+
+    if (upgradeMode === 'proration') {
+      const { data: currentMember } = await supabaseServer
+        .from('data_member_vip')
+        .select('*')
+        .eq('id_user_auth', user.id)
+        .maybeSingle() as any;
+
+      if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+        const today = new Date();
+        const expiry = new Date(currentMember.tanggal_berakhir);
+
+        if (expiry > today) {
+          const created = currentMember.dibuat_pada 
+            ? new Date(currentMember.dibuat_pada) 
+            : (currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000));
+
+          let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
+          if (totalDays <= 0) totalDays = 30;
+
+          let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+          if (remainingDays < 0) remainingDays = 0;
+
+          const oldPaidAmount = Number(currentMember.harga_bayar) || 0;
+          const remainingValue = oldPaidAmount * (remainingDays / totalDays);
+
+          finalAmount = Math.max(10000, Number(paket.harga) - remainingValue);
+        }
+      }
     }
 
     // 4. Generate order ID & build callback URL
@@ -274,7 +307,7 @@ export async function POST(request: Request) {
       id_user_auth: user.id,
       email_member: user.email || '',
       nama_paket: paket.nama_paket,
-      harga_bayar: paket.harga,
+      harga_bayar: finalAmount,
       bukti_transfer: orderId,
       status_pembayaran: 'pending',
     });
@@ -287,7 +320,7 @@ export async function POST(request: Request) {
     // 6. Build charge payload
     const payload = buildChargePayload(
       orderId,
-      Number(paket.harga),
+      Number(finalAmount),
       paymentType as PaymentType,
       user.user_metadata?.full_name || 'Member Imperium',
       user.email || '',
