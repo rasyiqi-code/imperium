@@ -24,7 +24,7 @@ export default function UpgradePage() {
       ])
 
       const user = authRes.data?.user;
-      let memberData = null;
+      let memberData: any = null;
       if (user) {
         const { data } = await supabase.from('data_member_vip').select('*').eq('id_user_auth', user.id).maybeSingle();
         memberData = data;
@@ -40,7 +40,11 @@ export default function UpgradePage() {
       if (!paketRes.error && paketRes.data) {
         const packages = paketRes.data as PaketVIP[]
         setPaketList(packages)
-        if (packages.length > 0) setSelectedId(packages[0].id)
+        if (packages.length > 0) {
+          const activePkg = memberData && (memberData.status_aktif === 'aktif' || memberData.status_aktif === 'vip') ? memberData.nama_paket : null;
+          const selectable = packages.find(p => p.nama_paket !== activePkg) || packages[0];
+          setSelectedId(selectable.id);
+        }
       }
       setLoading(false)
     }
@@ -99,15 +103,21 @@ export default function UpgradePage() {
 
       {/* Grid Pricing: Responsif 1 kol (mobile) / 2 kol (PC) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        {paketList.map((p) => (
-          <PricingCard 
-            key={p.id} 
-            paket={p} 
-            isSelected={selectedId === p.id} 
-            onSelect={setSelectedId} 
-            proratedHarga={getProratedPrice(Number(p.harga))}
-          />
-        ))}
+        {paketList.map((p) => {
+          const isActive = currentMember && 
+            (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && 
+            currentMember.nama_paket === p.nama_paket;
+          return (
+            <PricingCard 
+              key={p.id} 
+              paket={p} 
+              isSelected={selectedId === p.id} 
+              onSelect={setSelectedId} 
+              isActivePackage={!!isActive}
+              upgradeMode={upgradeMode}
+            />
+          );
+        })}
       </div>
 
       {/* Payment Button Container */}
