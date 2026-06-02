@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { supabase } from '@/lib/supabase'
 import {
   Save, Plus, Trash2, MessageSquare,
   RefreshCw, HelpCircle, X
@@ -42,12 +41,18 @@ export default function AdminSupportManager() {
     if (!isMounted.current) return
     setLoading(true)
     try {
-      const resConfig = await supabase.from('support_config').select('*').eq('id', 1).maybeSingle()
-      const resFaqs = await supabase.from('support_faqs').select('*').order('sort_order', { ascending: true })
-
-      if (resConfig.data) setConfig(resConfig.data)
-      if (resFaqs.data) setFaqs(resFaqs.data as FAQ[])
-    } catch (err) {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getSupportData' })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengambil data support')
+      if (isMounted.current) {
+        if (data.config) setConfig(data.config)
+        if (data.faqs) setFaqs(data.faqs as FAQ[])
+      }
+    } catch (err: unknown) {
       console.error(err)
     } finally {
       if (isMounted.current) setLoading(false)
@@ -56,8 +61,13 @@ export default function AdminSupportManager() {
 
   useEffect(() => {
     isMounted.current = true
-    fetchData()
-    return () => { isMounted.current = false }
+    const timer = setTimeout(() => {
+      fetchData()
+    }, 0)
+    return () => {
+      isMounted.current = false
+      clearTimeout(timer)
+    }
   }, [fetchData])
 
   const handleUpdateConfig = async () => {
@@ -82,10 +92,11 @@ export default function AdminSupportManager() {
           type: 'success'
         })
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error',
-        message: `Gagal: ${err.message}`,
+        message: `Gagal: ${error.message}`,
         type: 'danger'
       })
     } finally {
@@ -114,10 +125,11 @@ export default function AdminSupportManager() {
           type: 'danger'
         })
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error',
-        message: `Gagal: ${err.message}`,
+        message: `Gagal: ${error.message}`,
         type: 'danger'
       })
     } finally {
@@ -149,10 +161,11 @@ export default function AdminSupportManager() {
               type: 'danger'
             })
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
+          const error = err as Error
           showAlert({
             title: 'Error',
-            message: `Gagal: ${err.message}`,
+            message: `Gagal: ${error.message}`,
             type: 'danger'
           })
         }

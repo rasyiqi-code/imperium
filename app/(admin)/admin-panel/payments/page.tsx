@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
 import { 
   CheckCircle2, Wallet, 
   ExternalLink, Search, RefreshCw, Download
@@ -19,20 +18,27 @@ export default function PaymentAdmin() {
   // State paginasi client-side
   const [visibleCount, setVisibleCount] = useState(10)
 
-
-
   const fetchPayments = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('data_pembayaran')
-      .select('*')
-      .order('created_at', { ascending: false })
-    
-    if (!error && data) {
-      setPayments(data as Payment[])
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getPayments' })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengambil data pembayaran')
+      setPayments((data.payments as Payment[]) || [])
+    } catch (err: unknown) {
+      console.error('Error fetching payments:', err)
     }
   }, [])
 
-  useEffect(() => { fetchPayments() }, [fetchPayments])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchPayments()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [fetchPayments])
 
   const handleConfirmPayment = (pay: Payment) => {
     showConfirm({

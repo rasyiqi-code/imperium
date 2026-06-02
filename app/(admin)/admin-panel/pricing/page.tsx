@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
 import { 
   RefreshCw, 
   Edit3, 
@@ -81,10 +80,11 @@ export default function PricingEditor() {
       })
       const updatedPlans = await fetchPlans()
       setPlans(updatedPlans)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error',
-        message: `Gagal: ${err.message}`,
+        message: `Gagal: ${error.message}`,
         type: 'danger'
       })
     } finally {
@@ -93,23 +93,37 @@ export default function PricingEditor() {
   }
 
   const fetchPlans = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('data_paket_vip')
-      .select('*')
-      .order('harga', { ascending: true })
-    
-    if (!error && data) return data as PaketVIP[]
-    return []
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getPricingPlans' })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengambil paket pricing')
+      return (data.plans as PaketVIP[]) || []
+    } catch (err: unknown) {
+      console.error('Error fetching pricing plans:', err)
+      return []
+    }
   }, [])
 
   useEffect(() => { 
+    let active = true
     const load = async () => {
       setLoading(true)
       const data = await fetchPlans()
+      if (!active) return
       setPlans(data)
       setLoading(false)
     }
-    load()
+    const timer = setTimeout(() => {
+      load()
+    }, 0)
+    return () => {
+      active = false
+      clearTimeout(timer)
+    }
   }, [fetchPlans])
 
   const handleUpdate = async () => {
@@ -135,10 +149,11 @@ export default function PricingEditor() {
       setEditModal(null)
       const updatedPlans = await fetchPlans()
       setPlans(updatedPlans)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error',
-        message: `Gagal: ${err.message}`,
+        message: `Gagal: ${error.message}`,
         type: 'danger'
       })
     } finally {

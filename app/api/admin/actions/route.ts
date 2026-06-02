@@ -739,6 +739,59 @@ export async function POST(request: Request) {
         })
       }
 
+      case 'getPayments': {
+        // Ambil data pembayaran terurut berdasarkan tanggal terbaru via Prisma
+        const payments = await prisma.data_pembayaran.findMany({
+          orderBy: { created_at: 'desc' }
+        })
+
+        // Map data pembayaran agar Decimal dikonversi ke Number dan created_at ke ISO String
+        const formattedPayments = payments.map(p => ({
+          ...p,
+          harga_bayar: Number(p.harga_bayar),
+          created_at: p.created_at ? p.created_at.toISOString() : null
+        }))
+
+        return NextResponse.json({ success: true, payments: formattedPayments })
+      }
+
+      case 'getPricingPlans': {
+        // Ambil data paket VIP terurut dari termurah via Prisma
+        const plans = await prisma.data_paket_vip.findMany({
+          orderBy: { harga: 'asc' }
+        })
+
+        // Map data paket agar Decimal dikonversi ke Number
+        const formattedPlans = plans.map(p => ({
+          ...p,
+          harga: Number(p.harga)
+        }))
+
+        return NextResponse.json({ success: true, plans: formattedPlans })
+      }
+
+      case 'getAdminSettings': {
+        // Ambil pengaturan admin sistem via Prisma
+        const settings = await prisma.admin_settings.findUnique({
+          where: { id: 1 }
+        })
+        return NextResponse.json({ success: true, settings })
+      }
+
+      case 'getSupportData': {
+        // Ambil konfigurasi WhatsApp/Telegram dan FAQ via Prisma secara paralel
+        const [config, faqs] = await prisma.$transaction([
+          prisma.support_config.findUnique({
+            where: { id: 1 }
+          }),
+          prisma.support_faqs.findMany({
+            orderBy: { sort_order: 'asc' }
+          })
+        ])
+
+        return NextResponse.json({ success: true, config, faqs })
+      }
+
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
     }

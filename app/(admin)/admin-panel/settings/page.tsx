@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
-import { supabase, Database } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
   Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap 
@@ -25,27 +25,47 @@ export default function AdminSettings() {
   const [syncing, setSyncing] = useState(false)
 
   useEffect(() => {
+    let active = true
     async function initSettings() {
-      // Fetch admin user
+      // Ambil data admin user (Supabase Auth tetap digunakan)
       const { data: { user } } = await supabase.auth.getUser()
+      if (!active) return
       if (user?.email) setAdminEmail(user.email)
 
-      // Fetch Resend and Midtrans settings
-      const { data } = await supabase.from('admin_settings').select('*').eq('id', 1).maybeSingle()
-      const settings = data as Database['public']['Tables']['admin_settings']['Row'] | null
-      if (settings) {
-        setResendApiKey(settings.resend_api_key || '')
-        setResendSenderEmail(settings.resend_sender_email || '')
-        setMidtransClientKey(settings.midtrans_client_key || '')
-        setMidtransServerKey(settings.midtrans_server_key || '')
-        setMidtransPublicKey(settings.midtrans_public_key || '')
-        setMidtransIsProduction(!!settings.midtrans_is_production)
-        setMidtransUpgradeMode(settings.midtrans_upgrade_mode || 'stacking')
-        setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
+      // Ambil setelan Resend dan Midtrans menggunakan action API
+      try {
+        const res = await fetch('/api/admin/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getAdminSettings' })
+        })
+        const data = await res.json()
+        if (!active) return
+        if (res.ok && data.settings) {
+          const settings = data.settings
+          setResendApiKey(settings.resend_api_key || '')
+          setResendSenderEmail(settings.resend_sender_email || '')
+          setMidtransClientKey(settings.midtrans_client_key || '')
+          setMidtransServerKey(settings.midtrans_server_key || '')
+          setMidtransPublicKey(settings.midtrans_public_key || '')
+          setMidtransIsProduction(!!settings.midtrans_is_production)
+          setMidtransUpgradeMode(settings.midtrans_upgrade_mode || 'stacking')
+          setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
+        }
+      } catch (err) {
+        console.error('Gagal mengambil settings:', err)
+      } finally {
+        if (active) setLoading(false)
       }
-      setLoading(false)
     }
-    initSettings()
+    
+    const timer = setTimeout(() => {
+      initSettings()
+    }, 0)
+    return () => {
+      active = false
+      clearTimeout(timer)
+    }
   }, [])
 
   const handleLogout = () => {
@@ -111,10 +131,11 @@ export default function AdminSettings() {
         message: 'Pengaturan Resend berhasil disimpan!',
         type: 'success'
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Simpan Gagal',
-        message: err.message || 'Gagal menyimpan pengaturan Resend!',
+        message: error.message || 'Gagal menyimpan pengaturan Resend!',
         type: 'danger'
       })
     } finally {
@@ -145,10 +166,11 @@ export default function AdminSettings() {
         message: 'Pengaturan Midtrans berhasil disimpan!',
         type: 'success'
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Simpan Gagal',
-        message: err.message || 'Gagal menyimpan pengaturan Midtrans!',
+        message: error.message || 'Gagal menyimpan pengaturan Midtrans!',
         type: 'danger'
       })
     } finally {
@@ -247,10 +269,11 @@ export default function AdminSettings() {
                         message: `Berhasil sync! ${data.enabled?.length || 0} metode pembayaran aktif.`,
                         type: 'success'
                       })
-                    } catch (err: any) {
+                    } catch (err: unknown) {
+                      const error = err as Error
                       showAlert({
                         title: 'Sync Gagal',
-                        message: err.message || 'Gagal sync payment methods',
+                        message: error.message || 'Gagal sync payment methods',
                         type: 'danger'
                       })
                     } finally {
@@ -506,11 +529,30 @@ function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: st
 
   // Load status awal
   useEffect(() => {
+    let activeItem = true
     const getSetting = async () => {
-      const { data } = await supabase.from('admin_settings').select(dbField).eq('id', 1).maybeSingle()
-      if (data) setActive(!!data[dbField])
+      try {
+        const res = await fetch('/api/admin/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getAdminSettings' })
+        })
+        const data = await res.json()
+        if (!activeItem) return
+        if (res.ok && data.settings) {
+          setActive(!!data.settings[dbField])
+        }
+      } catch (err) {
+        console.error('Gagal memuat setting:', err)
+      }
     }
-    getSetting()
+    const timer = setTimeout(() => {
+      getSetting()
+    }, 0)
+    return () => {
+      activeItem = false
+      clearTimeout(timer)
+    }
   }, [dbField])
 
   const handleToggle = async () => {
@@ -530,10 +572,11 @@ function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: st
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal update setting')
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error Update',
-        message: err.message || "Gagal update setting di database!",
+        message: error.message || "Gagal update setting di database!",
         type: 'danger'
       })
       setActive(!newState) // Rollback UI kalau error
