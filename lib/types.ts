@@ -52,3 +52,14 @@ export interface PaketVIP {
   durasi_hari: number;
   fitur: string[];
 }
+
+export interface Payment {
+  id: string;
+  id_user_auth: string;
+  email_member: string;
+  nama_paket: string;
+  harga_bayar: number;
+  bukti_transfer: string;
+  status_pembayaran: 'pending' | 'success' | 'failed';
+  created_at: string;
+}

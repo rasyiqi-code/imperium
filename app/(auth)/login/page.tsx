@@ -38,18 +38,19 @@ export default function LoginPage() {
           .from('profiles')
           .select('plan')
           .eq('id', data.user.id)
-          .single()
+          .maybeSingle()
 
         if (profileError) throw profileError
 
         // Casting tipe data secara aman
-        const userProfile = profile as UserProfile
+        const userProfile = profile as unknown as UserProfile
 
         // Sinkronkan session ke server
         router.refresh()
         
         // Jeda sebentar biar cookie nempel sempurna sebelum redirect
         setTimeout(() => {
+          setLoading(false)
           if (userProfile?.plan === 'admin') {
             window.location.href = '/admin-panel'
           } else {
@@ -107,9 +108,9 @@ export default function LoginPage() {
                 <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
                   Password
                 </label>
-                <Link href="#" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold uppercase tracking-widest transition">
+                <a href="https://wa.me/62812345678?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold uppercase tracking-widest transition">
                   Lupa?
-                </Link>
+                </a>
               </div>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={18} />

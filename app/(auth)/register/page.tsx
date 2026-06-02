@@ -42,12 +42,17 @@ export default function RegisterPage() {
     }
 
     if (authData.user) {
-      setMessage('Sukses! Menyiapkan akses Imperium...')
-      
-      // 2. Langsung arahkan ke Dashboard (User otomatis ter-login)
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 1500)
+      if (authData.session) {
+        setMessage('Sukses! Menyiapkan akses Imperium...')
+        
+        // Langsung arahkan ke Dashboard jika otomatis login
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 1500)
+      } else {
+        setMessage('Registrasi sukses! Silakan periksa kotak masuk email Anda untuk melakukan verifikasi akun sebelum masuk.')
+        setLoading(false)
+      }
     }
     
     setLoading(false)

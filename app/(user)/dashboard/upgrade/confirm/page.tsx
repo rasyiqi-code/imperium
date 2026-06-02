@@ -60,6 +60,17 @@ function ConfirmContent() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const selected = e.target.files[0]
+      const fileExt = selected.name.split('.').pop()?.toLowerCase();
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      
+      if (!fileExt || !allowedExtensions.includes(fileExt) || !selected.type.startsWith('image/')) {
+        alert('Hanya diperbolehkan mengunggah file gambar (JPG, JPEG, PNG, GIF, WEBP)!');
+        e.target.value = '';
+        setFile(null);
+        setPreview(null);
+        return;
+      }
+      
       setFile(selected)
       setPreview(URL.createObjectURL(selected))
     }
@@ -69,9 +80,14 @@ function ConfirmContent() {
     e.preventDefault()
     if (!file || !user || !selectedPaket) return alert('Data tidak lengkap!')
 
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    if (!fileExt || !allowedExtensions.includes(fileExt) || !file.type.startsWith('image/')) {
+      return alert('Format file tidak didukung! Harap unggah gambar.');
+    }
+
     setLoading(true)
     try {
-      const fileExt = file.name.split('.').pop()
       const fileName = `${user.id}-${Date.now()}.${fileExt}`
       
       // 1. Upload Storage

@@ -13,8 +13,8 @@ export default function SupportPage() {
     async function loadSupport() {
       // Ambil Kontak & FAQ sekaligus
       const [resConfig, resFaqs] = await Promise.all([
-        (supabase.from('support_config') as any).select('*').eq('id', 1).single(),
-        (supabase.from('support_faqs') as any).select('*').order('sort_order', { ascending: true })
+        supabase.from('support_config').select('*').eq('id', 1).maybeSingle(),
+        supabase.from('support_faqs').select('*').order('sort_order', { ascending: true })
       ])
       
       if (resConfig.data) setConfig(resConfig.data)

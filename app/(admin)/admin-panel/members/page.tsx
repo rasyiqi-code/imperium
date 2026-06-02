@@ -26,7 +26,8 @@ export default function ManageMembers() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const fetchMembers = useCallback(async () => {
-    const { data, error } = await (supabase.from('profiles') as unknown as { select: (col: string) => { order: (col: string, opt: unknown) => Promise<{ data: Profile[] | null; error: unknown }> } })
+    const { data, error } = await supabase
+      .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
     if (error) return []
@@ -56,8 +57,14 @@ export default function ManageMembers() {
     if (!confirm(`Hapus ${ids.length > 1 ? ids.length + ' member' : 'member ini'} secara permanen?`)) return
     setIsProcessing(true)
     try {
-      const { error } = await (supabase.from('profiles') as unknown as { delete: () => { in: (col: string, vals: string[]) => Promise<{ error: Error | null }> } }).delete().in('id', ids)
-      if (error) throw error
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteUser', ids })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menghapus user')
+
       setMembers(prev => prev.filter(m => !ids.includes(m.id)))
       setSelectedIds([])
       setSelectedMember(null)
@@ -73,18 +80,14 @@ export default function ManageMembers() {
   async function handleUpgrade(member: Profile) {
     setIsProcessing(true)
     try {
-      const expiryDate = new Date()
-      expiryDate.setDate(expiryDate.getDate() + 365)
-      await (supabase.from('profiles') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } }).update({ plan: 'vip', plan_status: 'vip' }).eq('id', member.id)
-      await (supabase.from('data_member_vip') as unknown as { delete: () => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } }).delete().eq('id_user_auth', member.id)
-      await (supabase.from('data_member_vip') as unknown as { insert: (objs: unknown[]) => Promise<{ error: Error | null }> }).insert([{
-        id_user_auth: member.id,
-        email_member: member.email,
-        nama_paket: 'Paket 1 Tahun',
-        harga_bayar: 948000,
-        status_aktif: 'aktif',
-        tanggal_berakhir: expiryDate.toISOString()
-      }])
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'upgradeManual', userId: member.id })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal upgrade user')
+
       const updatedData = { ...member, plan: 'vip', plan_status: 'vip' }
       setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))
       setSelectedMember(updatedData)
@@ -97,16 +100,17 @@ export default function ManageMembers() {
     }
   }
 
-  // FITUR BARU: NONAKTIFKAN VIP
   async function handleDeactivate(member: Profile) {
     if (!confirm(`Yakin ingin mencabut akses VIP ${member.email}?`)) return
     setIsProcessing(true)
     try {
-      // 1. Balikin ke plan free di profiles
-      await (supabase.from('profiles') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } }).update({ plan: 'free', plan_status: 'free' }).eq('id', member.id)
-      
-      // 2. Set nonaktif di data_member_vip
-      await (supabase.from('data_member_vip') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } }).update({ status_aktif: 'nonaktif' }).eq('id_user_auth', member.id)
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deactivateVip', userId: member.id })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menonaktifkan user')
 
       const updatedData = { ...member, plan: 'free', plan_status: 'free' }
       setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))

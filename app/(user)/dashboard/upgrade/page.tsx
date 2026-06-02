@@ -4,22 +4,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { PaketVIP } from '@/lib/types'
 import PricingCard from '@/components/PricingCard'
+import PaymentModal from '@/components/PaymentModal'
 import { RefreshCw, CreditCard, ShieldCheck } from 'lucide-react'
-
-// Deklarasi global agar TS tidak marah soal window.snap
-declare global {
-  interface Window {
-    snap: {
-      pay: (token: string, options?: object) => void;
-    };
-  }
-}
 
 export default function UpgradePage() {
   const [paketList, setPaketList] = useState<PaketVIP[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [payLoading, setPayLoading] = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
 
   useEffect(() => {
     async function loadPaket() {
@@ -29,7 +21,6 @@ export default function UpgradePage() {
         .order('harga', { ascending: true })
 
       if (!error && data) {
-        // Casting data sebagai PaketVIP[] untuk fix error 'never'
         const packages = data as PaketVIP[]
         setPaketList(packages)
         if (packages.length > 0) setSelectedId(packages[0].id)
@@ -39,49 +30,7 @@ export default function UpgradePage() {
     loadPaket()
   }, [])
 
-  const handleCheckout = async () => {
-    const paket = paketList.find(p => p.id === selectedId)
-    if (!paket) return
-    
-    setPayLoading(true)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("User tidak ditemukan")
-      
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          email: user.email,
-          nama: user.user_metadata?.full_name || 'Member Imperium',
-          harga: paket.harga,
-          paket: paket.nama_paket
-        })
-      })
-      
-      const responseData = await res.json()
-      
-      if (responseData.token && window.snap) {
-        window.snap.pay(responseData.token, {
-          onSuccess: function() { routerPush() }, // Bisa tambah router kalau mau redirect
-        })
-      } else {
-        alert("Sistem pembayaran sedang sibuk, silakan coba lagi.")
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Terjadi kesalahan'
-      console.error("Payment Error:", message)
-      alert("Gagal memproses pembayaran.")
-    } finally {
-      setPayLoading(false)
-    }
-  }
-
-  // Fungsi pembantu untuk redirect manual jika sukses
-  const routerPush = () => {
-    window.location.href = '/dashboard'
-  }
+  const selectedPaket = paketList.find((p) => p.id === selectedId)
 
   if (loading) return (
     <div className="p-10 flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -119,15 +68,11 @@ export default function UpgradePage() {
       <div className="flex flex-col items-center gap-6 pt-4">
         <div className="w-full max-w-md space-y-4 text-center">
           <button 
-            onClick={handleCheckout}
-            disabled={payLoading || !selectedId}
+            onClick={() => setShowPayment(true)}
+            disabled={!selectedId}
             className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 uppercase tracking-tight text-sm"
           >
-            {payLoading ? (
-              <RefreshCw className="animate-spin" size={24} />
-            ) : (
-              <><CreditCard size={20}/> BAYAR SEKARANG</>
-            )}
+            <CreditCard size={20}/> BAYAR SEKARANG
           </button>
 
           <div className="flex items-center justify-center gap-2 text-neutral-600">
@@ -144,6 +89,19 @@ export default function UpgradePage() {
         </p>
       </div>
 
+      {/* Payment Modal */}
+      {selectedPaket && (
+        <PaymentModal
+          isOpen={showPayment}
+          onClose={() => setShowPayment(false)}
+          paketId={selectedPaket.id}
+          paketNama={selectedPaket.nama_paket}
+          harga={selectedPaket.harga}
+          onSuccess={() => {
+            window.location.href = '/dashboard'
+          }}
+        />
+      )}
     </div>
   )
 }

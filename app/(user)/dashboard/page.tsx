@@ -32,6 +32,13 @@ export default function UserDashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
+        // Sync pending payment status with Midtrans first
+        try {
+          await fetch('/api/checkout/check', { method: 'POST' })
+        } catch (e) {
+          console.error("Payment sync failed:", e)
+        }
+
         // Ambil Nama dari profiles
         const { data: profile } = await supabase
           .from('profiles')
@@ -44,7 +51,7 @@ export default function UserDashboard() {
           .from('data_member_vip')
           .select('*')
           .eq('id_user_auth', user.id)
-          .single()
+          .maybeSingle()
         
         const p = profile as ProfileData | null
         const m = membership as MembershipData | null

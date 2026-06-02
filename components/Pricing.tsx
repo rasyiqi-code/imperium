@@ -137,18 +137,16 @@ function LandingPricingCard({ paket, onAction }: { paket: PaketVIP, onAction: ()
       </div>
 
       <ul className="mb-10 space-y-4 grow text-left border-t border-neutral-800/50 pt-8">
-        {[
-          "Sinyal Trading High Accuracy",
-          "Analisis Pasar VIP Mendalam",
-          "E-Book Strategi Premium",
-          "Grup Mentorship Private",
-          "Support Prioritas 24/7"
-        ].map((feature, index) => (
-          <li key={index} className="flex items-center text-neutral-300">
-            <Check className={`mr-3 shrink-0 ${isYearly ? 'text-yellow-500' : 'text-yellow-500/50'}`} size={16} strokeWidth={4} />
-            <span className="text-xs font-bold uppercase tracking-tight">{feature}</span>
-          </li>
-        ))}
+        {paket.fitur && paket.fitur.length > 0 ? (
+          paket.fitur.map((feature, index) => (
+            <li key={index} className="flex items-center text-neutral-300">
+              <Check className={`mr-3 shrink-0 ${isYearly ? 'text-yellow-500' : 'text-yellow-500/50'}`} size={16} strokeWidth={4} />
+              <span className="text-xs font-bold uppercase tracking-tight">{feature}</span>
+            </li>
+          ))
+        ) : (
+          <li className="text-neutral-500 text-xs italic uppercase">Fitur paket VIP tidak tersedia</li>
+        )}
       </ul>
 
       <button 

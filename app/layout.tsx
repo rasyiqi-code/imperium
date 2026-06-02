@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script"; // 1. IMPORT INI
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,14 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="scroll-smooth">
-      <head>
-       
-        <Script
-          src="https://app.sandbox.midtrans.com/snap/snap.js"
-          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
-          strategy="beforeInteractive"
-        />
-      </head>
+      <head />
       <body className="relative min-h-screen overflow-x-hidden bg-linear-to-br from-black via-neutral-900 to-black text-white antialiased">
         {children}
       </body>

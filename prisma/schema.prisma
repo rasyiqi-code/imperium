@@ -1,45 +1,140 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["auth", "public"]
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
+model users {
+  id                                                  String           @id @db.Uuid
+  email                                               String?          @db.VarChar(255)
+  created_at                                          DateTime?        @db.Timestamptz(6)
+  data_member_vip_data_member_vip_id_user_authTousers data_member_vip? @relation("data_member_vip_id_user_authTousers")
+  data_member_vip_data_member_vip_user_idTousers      data_member_vip[] @relation("data_member_vip_user_idTousers")
+  notifications                                       notifications[]
+  profiles                                            profiles?
 
-  payments     Payment[]
-  accessTokens AccessToken[]
+  @@schema("auth")
 }
 
-model Payment {
-  id        String   @id @default(uuid())
-  userId    String
-  amount    Int
-  status    PaymentStatus @default(PENDING)
-  createdAt DateTime      @default(now())
+model admin_internal {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email_admin String    @unique
+  nama_admin  String?
+  level_akses String?   @default("staff")
+  dibuat_pada DateTime? @default(now()) @db.Timestamptz(6)
 
-  user User @relation(fields: [userId], references: [id])
+  @@schema("public")
 }
 
-model AccessToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  isUsed    Boolean  @default(false)
-  usedAt    DateTime?
-  expiresAt DateTime?
-  createdAt DateTime @default(now())
+model admin_settings {
+  id                 Int       @id @default(1)
+  email_notif_active Boolean?  @default(true)
+  maintenance_mode   Boolean?  @default(false)
+  updated_at         DateTime? @default(now()) @db.Timestamptz(6)
+  resend_api_key      String?
+  resend_sender_email String?
+  midtrans_client_key String?
+  midtrans_server_key String?
+  midtrans_public_key String?
+  midtrans_is_production Boolean? @default(false)
 
-  userId String
-  user   User @relation(fields: [userId], references: [id])
+  @@schema("public")
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
+model data_member_vip {
+  id                                        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id_user_auth                              String    @unique @db.Uuid
+  email_member                              String
+  nama_paket                                String?
+  harga_bayar                               Int?      @default(0)
+  status_aktif                              String?   @default("menunggu")
+  kode_invite_unik                          String?
+  id_discord_user                           String?
+  tanggal_berakhir                          DateTime? @db.Timestamptz(6)
+  created_at                                DateTime? @default(now()) @db.Timestamptz(6)
+  user_id                                   String?   @db.Uuid
+  users_data_member_vip_id_user_authTousers users     @relation("data_member_vip_id_user_authTousers", fields: [id_user_auth], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_data_member_vip_user_idTousers      users?    @relation("data_member_vip_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model data_paket_vip {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_paket  String
+  harga       Decimal  @db.Decimal
+  durasi_hari Int
+  fitur       String[]
+
+  @@schema("public")
+}
+
+model data_pembayaran {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_user_auth      String?   @db.Uuid
+  email_member      String
+  nama_paket        String
+  harga_bayar       Decimal   @db.Decimal
+  bukti_transfer    String
+  status_pembayaran String?   @default("pending")
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  profiles          profiles? @relation(fields: [id_user_auth], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([email_member], map: "idx_payment_email")
+  @@index([status_pembayaran], map: "idx_payment_status")
+  @@schema("public")
+}
+
+model notifications {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String?  @db.Uuid
+  title      String
+  message    String
+  type       String?  @default("info")
+  is_read    Boolean? @default(false)
+  created_at DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users      users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model profiles {
+  id              String            @id @db.Uuid
+  email           String?
+  full_name       String?
+  plan            String?           @default("free")
+  discord_joined  Boolean?          @default(false)
+  created_at      DateTime          @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  plan_status     String?           @default("free")
+  whatsapp_number String?
+  data_pembayaran data_pembayaran[]
+  users           users             @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model support_config {
+  id                Int       @id @default(1)
+  whatsapp_number   String?   @default("62812345678")
+  telegram_link     String?   @default("https://t.me/imperiumcrypto")
+  support_email     String?   @default("support@imperiumcrypto.com")
+  operational_hours String?   @default("09:00 - 21:00 WIB")
+  updated_at        DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
+model support_faqs {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  question   String
+  answer     String
+  sort_order Int?      @default(0)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
 }

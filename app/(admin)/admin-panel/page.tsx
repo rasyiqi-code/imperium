@@ -22,11 +22,6 @@ interface Profile {
   created_at: string;
 }
 
-interface VipData {
-  harga_bayar: number | null;
-  status_aktif: string | null;
-}
-
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalUser: 0, vipAktif: 0, omzet: 0 })
   const [allUsers, setAllUsers] = useState<Profile[]>([])
@@ -38,18 +33,18 @@ export default function AdminDashboard() {
     setLoading(true)
     try {
       const { data: pData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
-      const { data: vData } = await supabase.from('data_member_vip').select('harga_bayar, status_aktif')
+      const { data: payData } = await supabase.from('data_pembayaran').select('harga_bayar').eq('status_pembayaran', 'success')
 
-      const profiles = (pData as unknown as Profile[]) || []
-      const vips = (vData as unknown as VipData[]) || []
+      const profiles = (pData as Profile[]) || []
+      const payments = (payData as any[]) || []
 
-      const totalOmzet = vips.reduce((acc, curr) => acc + (Number(curr.harga_bayar) || 0), 0)
+      const totalOmzet = payments.reduce((acc, curr) => acc + (Number(curr.harga_bayar) || 0), 0)
       const vipAktifCount = profiles.filter(p => p.plan?.toLowerCase() === 'vip').length
 
       setStats({ totalUser: profiles.length, vipAktif: vipAktifCount, omzet: totalOmzet })
       setAllUsers(profiles)
     } catch (error) {
-      console.error("Error sync:", error)
+      console.error("Error syncing admin dashboard:", error)
     } finally {
       setLoading(false)
     }
@@ -63,22 +58,20 @@ export default function AdminDashboard() {
 
     setActionLoading(user.id)
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('profiles') as any).update({ plan: 'vip', plan_status: 'aktif' }).eq('id', user.id)
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('data_member_vip') as any).insert([{
-        id_user_auth: user.id,
-        email_member: user.email,
-        nama_member: user.full_name || user.email.split('@')[0],
-        harga_bayar: 948000,
-        status_aktif: 'aktif'
-      }])
-
-      alert("User berhasil menjadi VIP!")
-      getAdminData()
-    } catch (error) {
-      console.error("Gagal upgrade:", error)
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'upgradeManual', userId: user.id })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        alert("User berhasil menjadi VIP!")
+        getAdminData()
+      } else {
+        alert(data.error || "Gagal melakukan upgrade")
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
     } finally {
       setActionLoading(null)
     }
@@ -87,9 +80,26 @@ export default function AdminDashboard() {
   const handleDeleteUser = async (id: string) => {
     const confirm = window.confirm("Hapus user ini secara permanen?")
     if (!confirm) return
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from('profiles') as any).delete().eq('id', id)
-    getAdminData()
+    
+    setActionLoading(id)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteUser', ids: [id] })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        alert("User berhasil dihapus!")
+        getAdminData()
+      } else {
+        alert(data.error || "Gagal menghapus user")
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`)
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const filteredUsers = allUsers.filter(u => 
@@ -132,7 +142,8 @@ export default function AdminDashboard() {
         <input 
           type="text"
           placeholder="Cari email atau nama..."
-          className="w-full bg-neutral-900 border border-neutral-800 rounded-xl py-3.5 pl-12 pr-4 text-xs font-bold uppercase tracking-wider focus:border-yellow-500 outline-none transition-all"
+          className="w-full bg-neutral-900 border border-neutral-800 rounded-xl py-3.5 pl-12 pr-4 text-xs font-bold uppercase tracking-wider focus:border-yellow-500 outline-none transition-all text-white"
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
@@ -182,6 +193,7 @@ export default function AdminDashboard() {
 
                 <button 
                   onClick={() => handleDeleteUser(user.id)}
+                  disabled={actionLoading === user.id}
                   className="p-2.5 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all active:scale-95"
                 >
                   <Trash2 size={16} />

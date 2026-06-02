@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, ReactNode } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, Database } from '@/lib/supabase'
 import { 
   Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw 
 } from 'lucide-react'
@@ -9,14 +9,36 @@ import {
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true)
   const [adminEmail, setAdminEmail] = useState('')
+  const [resendApiKey, setResendApiKey] = useState('')
+  const [resendSenderEmail, setResendSenderEmail] = useState('')
+  const [savingResend, setSavingResend] = useState(false)
+
+  const [midtransClientKey, setMidtransClientKey] = useState('')
+  const [midtransServerKey, setMidtransServerKey] = useState('')
+  const [midtransPublicKey, setMidtransPublicKey] = useState('')
+  const [midtransIsProduction, setMidtransIsProduction] = useState(false)
+  const [savingMidtrans, setSavingMidtrans] = useState(false)
 
   useEffect(() => {
-    async function getAdmin() {
+    async function initSettings() {
+      // Fetch admin user
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.email) setAdminEmail(user.email)
+
+      // Fetch Resend and Midtrans settings
+      const { data } = await supabase.from('admin_settings').select('*').eq('id', 1).maybeSingle()
+      const settings = data as Database['public']['Tables']['admin_settings']['Row'] | null
+      if (settings) {
+        setResendApiKey(settings.resend_api_key || '')
+        setResendSenderEmail(settings.resend_sender_email || '')
+        setMidtransClientKey(settings.midtrans_client_key || '')
+        setMidtransServerKey(settings.midtrans_server_key || '')
+        setMidtransPublicKey(settings.midtrans_public_key || '')
+        setMidtransIsProduction(!!settings.midtrans_is_production)
+      }
       setLoading(false)
     }
-    getAdmin()
+    initSettings()
   }, [])
 
   const handleLogout = async () => {
@@ -34,6 +56,54 @@ export default function AdminSettings() {
     })
     if (error) alert(error.message)
     else alert('Link reset password sudah dikirim ke email!')
+  }
+
+  const handleSaveResendSettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSavingResend(true)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateResendSettings',
+          apiKey: resendApiKey,
+          senderEmail: resendSenderEmail
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan pengaturan Resend')
+      alert('Pengaturan Resend berhasil disimpan!')
+    } catch (err: any) {
+      alert(err.message || 'Gagal menyimpan pengaturan Resend!')
+    } finally {
+      setSavingResend(false)
+    }
+  }
+
+  const handleSaveMidtransSettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSavingMidtrans(true)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateMidtransSettings',
+          clientKey: midtransClientKey,
+          serverKey: midtransServerKey,
+          publicKey: midtransPublicKey,
+          isProduction: midtransIsProduction
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan pengaturan Midtrans')
+      alert('Pengaturan Midtrans berhasil disimpan!')
+    } catch (err: any) {
+      alert(err.message || 'Gagal menyimpan pengaturan Midtrans!')
+    } finally {
+      setSavingMidtrans(false)
+    }
   }
 
   if (loading) return (
@@ -72,7 +142,6 @@ export default function AdminSettings() {
       <div className="space-y-4">
         <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest px-1">Konfigurasi Sistem</h3>
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-5">
-          {/* DISINI PERBAIKANNYA: dbField harus diisi sesuai kolom di tabel SQL lu */}
           <ToggleItem 
             icon={<Bell size={16}/>} 
             title="Notifikasi Email" 
@@ -86,6 +155,117 @@ export default function AdminSettings() {
             dbField="maintenance_mode" 
           />
         </div>
+      </div>
+
+      {/* Integrasi Resend Email */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest px-1">Integrasi Resend Email</h3>
+        <form onSubmit={handleSaveResendSettings} className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+          <div className="space-y-2 text-left">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Resend API Key</label>
+            <input 
+              type="password"
+              placeholder="re_..."
+              value={resendApiKey}
+              onChange={(e) => setResendApiKey(e.target.value)}
+              className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-xs font-mono outline-none focus:border-yellow-500 text-white transition-all"
+            />
+            <p className="text-[9px] text-neutral-600 font-bold uppercase">Masukkan API key dari akun Resend Anda</p>
+          </div>
+
+          <div className="space-y-2 text-left">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Sender Email</label>
+            <input 
+              type="text"
+              placeholder="onboarding@resend.dev"
+              value={resendSenderEmail}
+              onChange={(e) => setResendSenderEmail(e.target.value)}
+              className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-xs outline-none focus:border-yellow-500 text-white transition-all"
+            />
+            <p className="text-[9px] text-neutral-600 font-bold uppercase">Email pengirim terverifikasi (default: onboarding@resend.dev)</p>
+          </div>
+
+          <button 
+            type="submit"
+            disabled={savingResend}
+            className="w-full py-3 bg-yellow-500 text-black rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-yellow-400 disabled:opacity-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+          >
+            {savingResend ? (
+              <>
+                <RefreshCw size={12} className="animate-spin" /> Menyimpan...
+              </>
+            ) : (
+              'Simpan Pengaturan Resend'
+            )}
+          </button>
+        </form>
+      </div>
+
+      {/* Integrasi Kredensial Midtrans */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest px-1">Integrasi Kredensial Midtrans</h3>
+        <form onSubmit={handleSaveMidtransSettings} className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+          <div className="space-y-2 text-left">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Midtrans Client Key</label>
+            <input 
+              type="text"
+              placeholder="Mid-client-..."
+              value={midtransClientKey}
+              onChange={(e) => setMidtransClientKey(e.target.value)}
+              className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-xs font-mono outline-none focus:border-yellow-500 text-white transition-all"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Midtrans Server Key</label>
+            <input 
+              type="password"
+              placeholder="Mid-server-..."
+              value={midtransServerKey}
+              onChange={(e) => setMidtransServerKey(e.target.value)}
+              className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-xs font-mono outline-none focus:border-yellow-500 text-white transition-all"
+            />
+          </div>
+
+          <div className="space-y-2 text-left">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Midtrans Public Key (BI SNAP)</label>
+            <textarea 
+              rows={3}
+              placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"
+              value={midtransPublicKey}
+              onChange={(e) => setMidtransPublicKey(e.target.value)}
+              className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-xs font-mono outline-none focus:border-yellow-500 text-white transition-all"
+            />
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-neutral-800">
+            <div className="text-left">
+              <p className="text-xs font-bold uppercase text-white">Mode Produksi (Production Mode)</p>
+              <p className="text-[9px] text-neutral-500 font-bold uppercase mt-1">Aktifkan untuk transaksi real, matikan untuk sandbox</p>
+            </div>
+            <button 
+              type="button"
+              onClick={() => setMidtransIsProduction(!midtransIsProduction)}
+              className={`w-10 h-5 rounded-full relative transition-all duration-300 ${midtransIsProduction ? 'bg-yellow-500' : 'bg-neutral-800 border border-neutral-700'}`}
+            >
+              <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${midtransIsProduction ? 'left-6' : 'left-1'}`} />
+            </button>
+          </div>
+
+          <button 
+            type="submit"
+            disabled={savingMidtrans}
+            className="w-full py-3 bg-yellow-500 text-black rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-yellow-400 disabled:opacity-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+          >
+            {savingMidtrans ? (
+              <>
+                <RefreshCw size={12} className="animate-spin" /> Menyimpan...
+              </>
+            ) : (
+              'Simpan Pengaturan Midtrans'
+            )}
+          </button>
+        </form>
       </div>
 
       {/* Logout Button */}
@@ -116,15 +296,15 @@ function SettingItem({ icon, title, value, isLink }: { icon: ReactNode, title: s
   )
 }
 
-function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: string, desc: string, dbField: string }) {
+function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: string, desc: string, dbField: 'email_notif_active' | 'maintenance_mode' }) {
   const [active, setActive] = useState(false)
   const [syncing, setSyncing] = useState(false)
 
   // Load status awal
   useEffect(() => {
     const getSetting = async () => {
-      const { data } = await (supabase.from('admin_settings') as unknown as { select: (field: string) => { eq: (col: string, val: number) => { single: () => Promise<{ data: Record<string, boolean> | null }> } } }).select(dbField).eq('id', 1).single()
-      if (data) setActive(data[dbField])
+      const { data } = await supabase.from('admin_settings').select(dbField).eq('id', 1).maybeSingle()
+      if (data) setActive(!!data[dbField])
     }
     getSetting()
   }, [dbField])
@@ -134,15 +314,24 @@ function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: st
     setActive(newState) // Optimistic UI
     setSyncing(true)
     
-    const { error } = await (supabase.from('admin_settings') as unknown as { update: (obj: Record<string, boolean>) => { eq: (col: string, val: number) => Promise<{ error: Error | null }> } })
-      .update({ [dbField]: newState })
-      .eq('id', 1)
-
-    if (error) {
-      alert("Gagal update setting di database!")
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggleSetting',
+          dbField,
+          value: newState
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal update setting')
+    } catch (err: any) {
+      alert(err.message || "Gagal update setting di database!")
       setActive(!newState) // Rollback UI kalau error
+    } finally {
+      setSyncing(false)
     }
-    setSyncing(false)
   }
 
   return (

@@ -8,9 +8,15 @@ interface Props {
 export default function StatusCard({ member }: Props) {
   const getStatusStyle = (status: string | undefined) => {
     switch (status) {
-      case 'aktif': return 'bg-green-900/50 text-green-400 border-green-800'
-      case 'menunggu': return 'bg-yellow-900/50 text-yellow-400 border-yellow-800'
-      default: return 'bg-red-900/50 text-red-400 border-red-800'
+      case 'aktif':
+      case 'vip':
+        return 'bg-green-900/50 text-green-400 border-green-800'
+      case 'menunggu':
+        return 'bg-yellow-900/50 text-yellow-400 border-yellow-800'
+      case 'free':
+        return 'bg-neutral-800 text-neutral-400 border-neutral-700'
+      default:
+        return 'bg-red-900/50 text-red-400 border-red-800'
     }
   }
 

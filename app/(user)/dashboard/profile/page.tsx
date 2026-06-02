@@ -4,14 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar } from 'lucide-react'
 
-// 1. Definisikan tipe data dari tabel agar tidak pakai 'any'
-interface DbMemberData {
-  nama_member: string | null;
-  nomor_wa: string | null;
-  status_vip: string | null;
-  masa_aktif: string | null;
-}
-
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
@@ -34,22 +26,29 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
-        const { data: dbData } = await supabase
-          .from('data_member_vip')
-          .select('nama_member, nomor_wa, status_vip, masa_aktif')
-          .eq('id_user_auth', user.id)
-          .single()
+        // 1. Fetch user metadata from profiles table
+        const { data: profData } = await supabase
+          .from('profiles')
+          .select('full_name, whatsapp_number, plan')
+          .eq('id', user.id)
+          .maybeSingle() as any
 
-        // 2. Casting ke interface DbMemberData, bukan 'any'
-        const rawData = dbData as DbMemberData | null;
+        // 2. Fetch membership active status from data_member_vip
+        const { data: vipData } = await supabase
+          .from('data_member_vip')
+          .select('status_aktif, tanggal_berakhir')
+          .eq('id_user_auth', user.id)
+          .maybeSingle() as any
+
+        const isVip = profData?.plan === 'vip' || vipData?.status_aktif === 'aktif' || vipData?.status_aktif === 'vip'
 
         const dataProfile = {
           id_user_auth: user.id,
-          nama_member: rawData?.nama_member || user.user_metadata?.full_name || 'Member Imperium',
+          nama_member: profData?.full_name || user.user_metadata?.full_name || 'Member Imperium',
           email_member: user.email || '',
-          nomor_wa: rawData?.nomor_wa || user.user_metadata?.whatsapp_number || '',
-          status_vip: rawData?.status_vip === 'VIP' ? 'VIP MEMBER' : 'PAKET GRATIS',
-          masa_aktif: rawData?.masa_aktif || null
+          nomor_wa: profData?.whatsapp_number || user.user_metadata?.whatsapp_number || '',
+          status_vip: isVip ? 'VIP MEMBER' : 'PAKET GRATIS',
+          masa_aktif: vipData?.tanggal_berakhir || null
         }
 
         setProfile(dataProfile)
@@ -69,13 +68,13 @@ export default function ProfilePage() {
   const handleUpdate = async () => {
     setUpdating(true)
     try {
-      const { error } = await supabase
-        .from('data_member_vip')
+      // 3. Save name and whatsapp number in profiles table
+      const { error } = await (supabase.from('profiles') as any)
         .update({
-          nama_member: tempProfile.nama_member,
-          nomor_wa: tempProfile.nomor_wa
-        } as never)
-        .eq('id_user_auth', profile.id_user_auth)
+          full_name: tempProfile.nama_member,
+          whatsapp_number: tempProfile.nomor_wa
+        })
+        .eq('id', profile.id_user_auth)
 
       if (!error) {
         setProfile({ ...tempProfile })
@@ -84,6 +83,8 @@ export default function ProfilePage() {
       } else {
         alert(error.message)
       }
+    } catch (err: any) {
+      alert(`Gagal: ${err.message}`)
     } finally {
       setUpdating(false)
     }

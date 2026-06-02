@@ -1,15 +1,36 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Crown, MessageSquare, User } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 export default function MobileNav() {
   const pathname = usePathname()
+  const [plan, setPlan] = useState<string>('free')
+
+  useEffect(() => {
+    async function getPlan() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data } = await (supabase.from('profiles') as any)
+          .select('plan')
+          .eq('id', user.id)
+          .single()
+        if (data?.plan) {
+          setPlan(data.plan)
+        }
+      }
+    }
+    getPlan()
+  }, [])
 
   const navItems = [
     { name: 'Dash', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'VIP', href: '/dashboard/upgrade', icon: Crown },
+    ...(plan !== 'vip' && plan !== 'admin' ? [
+      { name: 'VIP', href: '/dashboard/upgrade', icon: Crown }
+    ] : []),
     { name: 'Group', href: '/dashboard/group', icon: MessageSquare },
     { name: 'Profil', href: '/dashboard/profile', icon: User },
   ]

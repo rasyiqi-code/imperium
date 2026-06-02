@@ -18,24 +18,7 @@ interface FAQ {
   id: string
   question: string
   answer: string
-}
-
-// TRIK FINAL: Kita bikin struktur dummy yang 'menyerupai' PostgrestBuilder
-// Tanpa pake Generic <T> yang bikin TS pusing.
-interface QueryResult {
-  data: unknown;
-  error: unknown;
-  eq: (col: string, val: string | number | boolean) => QueryResult;
-  select: (columns: string) => QueryResult;
-  single: () => Promise<QueryResult>;
-  order: (col: string, opt: unknown) => QueryResult;
-  insert: (val: unknown[]) => Promise<QueryResult>;
-  update: (val: unknown) => QueryResult;
-  delete: () => QueryResult;
-}
-
-interface SupabaseBypass {
-  from: (table: string) => QueryResult;
+  sort_order: number
 }
 
 export default function AdminSupportManager() {
@@ -51,26 +34,23 @@ export default function AdminSupportManager() {
   const isMounted = useRef(true)
   
   const [showFaqModal, setShowFaqModal] = useState(false)
-  const [newFaq, setNewFaq] = useState({ question: '', answer: '' })
-
-  // Double casting lewat unknown biar ESLint gak teriak 'Unexpected any'
-  const db = (supabase as unknown) as SupabaseBypass
+  const [newFaq, setNewFaq] = useState({ question: '', answer: '', sort_order: 0 })
 
   const fetchData = useCallback(async () => {
     if (!isMounted.current) return
     setLoading(true)
     try {
-      const resConfig = await db.from('support_config').select('*').eq('id', 1).single() as unknown as { data: SupportConfig }
-      const resFaqs = await db.from('support_faqs').select('*').order('created_at', { ascending: false }) as unknown as { data: FAQ[] }
+      const resConfig = await supabase.from('support_config').select('*').eq('id', 1).maybeSingle()
+      const resFaqs = await supabase.from('support_faqs').select('*').order('sort_order', { ascending: true })
       
       if (resConfig.data) setConfig(resConfig.data)
-      if (resFaqs.data) setFaqs(resFaqs.data)
+      if (resFaqs.data) setFaqs(resFaqs.data as FAQ[])
     } catch (err) {
       console.error(err)
     } finally {
       if (isMounted.current) setLoading(false)
     }
-  }, [db])
+  }, [])
 
   useEffect(() => {
     isMounted.current = true
@@ -80,30 +60,60 @@ export default function AdminSupportManager() {
 
   const handleUpdateConfig = async () => {
     setIsSaving(true)
-    const { error } = await (db.from('support_config').update(config).eq('id', 1) as unknown as Promise<{ error: Error | null }>)
-    if (error) alert((error as Error).message)
-    else alert('Kontak Support Berhasil Diperbarui!')
-    setIsSaving(false)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateSupportConfig', config })
+      })
+      const data = await res.json()
+      if (!res.ok) alert(data.error || 'Gagal update config')
+      else alert('Kontak Support Berhasil Diperbarui!')
+    } catch (err: any) {
+      alert(`Gagal: ${err.message}`)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleAddFaq = async () => {
     if (!newFaq.question || !newFaq.answer) return
     setIsSaving(true)
-    const { error } = await (db.from('support_faqs').insert([newFaq]) as unknown as Promise<{ error: Error | null }>)
-    if (!error) {
-      setShowFaqModal(false)
-      setNewFaq({ question: '', answer: '' })
-      fetchData()
-    } else {
-      alert((error as Error).message)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addFaq', faq: newFaq })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setShowFaqModal(false)
+        setNewFaq({ question: '', answer: '', sort_order: 0 })
+        fetchData()
+      } else {
+        alert(data.error || 'Gagal menyimpan FAQ')
+      }
+    } catch (err: any) {
+      alert(`Gagal: ${err.message}`)
+    } finally {
+      setIsSaving(false)
     }
-    setIsSaving(false)
   }
 
   const handleDeleteFaq = async (id: string) => {
     if (!confirm('Hapus FAQ ini?')) return
-    const { error } = await (db.from('support_faqs').delete().eq('id', id) as unknown as Promise<{ error: Error | null }>)
-    if (!error) fetchData()
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deleteFaq', faqId: id })
+      })
+      const data = await res.json()
+      if (res.ok) fetchData()
+      else alert(data.error || 'Gagal menghapus FAQ')
+    } catch (err: any) {
+      alert(`Gagal: ${err.message}`)
+    }
   }
 
   if (loading) return (
@@ -173,6 +183,7 @@ export default function AdminSupportManager() {
             </div>
             <input type="text" placeholder="Pertanyaan" value={newFaq.question} onChange={(e) => setNewFaq({...newFaq, question: e.target.value})} className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs text-white" />
             <textarea placeholder="Jawaban" value={newFaq.answer} onChange={(e) => setNewFaq({...newFaq, answer: e.target.value})} className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs text-white min-h-20" />
+            <input type="number" placeholder="Sort Order" value={newFaq.sort_order} onChange={(e) => setNewFaq({...newFaq, sort_order: Number(e.target.value)})} className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs text-white" />
             <button onClick={handleAddFaq} className="w-full py-3 bg-yellow-500 text-black rounded-xl text-xs font-bold uppercase">Simpan</button>
           </div>
         </div>

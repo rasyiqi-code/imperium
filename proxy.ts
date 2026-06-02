@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
 
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         get(name: string) {
@@ -42,16 +42,51 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const url = request.nextUrl.pathname
 
-  // 1. Proteksi Login & Register
+  // 1. Maintenance Mode Redirect Checks
+  if (url === '/maintenance') {
+    const { data: settings } = await (supabase.from('admin_settings') as any)
+      .select('maintenance_mode')
+      .eq('id', 1)
+      .maybeSingle()
+    
+    if (!settings?.maintenance_mode) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    return response
+  }
+
+  // Fetch settings to check if maintenance is active
+  const { data: settings } = await (supabase.from('admin_settings') as any)
+    .select('maintenance_mode')
+    .eq('id', 1)
+    .maybeSingle()
+
+  if (settings?.maintenance_mode) {
+    let isAdmin = false
+    if (user) {
+      const { data: profile } = await (supabase.from('profiles') as any)
+        .select('plan')
+        .eq('id', user.id)
+        .single()
+      const userPlan = profile ? (profile as { plan: string | null }).plan : null
+      if (userPlan === 'admin') {
+        isAdmin = true
+      }
+    }
+    // Block non-admins from all routes except assets & api
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL('/maintenance', request.url))
+    }
+  }
+
+  // 2. Proteksi Login & Register
   if (url === '/login' || url === '/register') {
     if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase.from('profiles') as any)
         .select('plan')
         .eq('id', user.id)
         .single()
       
-      // FIX: Pakai pengecekan aman agar tidak 'never'
       const userPlan = profile ? (profile as { plan: string | null }).plan : null
       const target = userPlan === 'admin' ? '/admin-panel' : '/dashboard'
       
@@ -60,22 +95,21 @@ export async function proxy(request: NextRequest) {
     return response
   }
 
-  // 2. Proteksi Belum Login
+  // 3. Proteksi Belum Login
   if (!user && (url.startsWith('/dashboard') || url.startsWith('/admin-panel'))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // 3. Proteksi Khusus Admin Panel
+  // 4. Proteksi Khusus Admin Panel
   if (user && url.startsWith('/admin-panel')) {
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: profile } = await (supabase.from('profiles') as any)
       .select('plan')
       .eq('id', user.id)
       .single()
     
 
     const userPlan = profile ? (profile as { plan: string | null }).plan : null
-    // 4. kalo bukan admin masukin dashboard 
+    // 5. Kalo bukan admin masukin dashboard 
     if (userPlan !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }

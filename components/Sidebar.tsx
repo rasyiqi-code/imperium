@@ -23,37 +23,36 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname()
-  const [userData, setUserData] = useState({ email: '', name: '' })
+  const [userData, setUserData] = useState({ email: '', name: '', plan: 'free' })
 
-useEffect(() => {
+  useEffect(() => {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Query tetap pake Database type yang udah ada di supabase.ts
         const { data: profile } = await supabase
           .from('profiles')
-          .select('full_name')
+          .select('full_name, plan')
           .eq('id', user.id)
           .single()
         
-        // FIX: Casting ke object yang punya full_name biar TS gak 'never'
-        const profileData = profile as { full_name: string | null } | null
+        const profileData = profile as { full_name: string | null; plan: string | null } | null
         
         setUserData({
           email: user.email || '',
-          name: profileData?.full_name || user.email?.split('@')[0] || 'User'
+          name: profileData?.full_name || user.email?.split('@')[0] || 'User',
+          plan: profileData?.plan || 'free'
         })
       }
     }
     getUser()
   }, [])
 
-  // ... (Menu List & logic logout tetep sama)
-
   const userMenus = [
     { name: 'Dash', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
-    { name: 'VIP', href: '/dashboard/upgrade', icon: <Crown size={20} /> },
-    { name: 'Konfirmasi Pembayaran', href: '/dashboard/upgrade/confirm', icon: <Crown size={20} /> },
+    ...(userData.plan !== 'vip' && userData.plan !== 'admin' ? [
+      { name: 'VIP', href: '/dashboard/upgrade', icon: <Crown size={20} /> },
+      { name: 'Konfirmasi Pembayaran', href: '/dashboard/upgrade/confirm', icon: <Crown size={20} /> }
+    ] : []),
     { name: 'Group', href: '/dashboard/group', icon: <MessageSquare size={20} /> },
     { name: 'Profil', href: '/dashboard/profile', icon: <User size={20} /> },
     { name: 'Support', href: '/dashboard/support', icon: <HeadphonesIcon size={20} /> },

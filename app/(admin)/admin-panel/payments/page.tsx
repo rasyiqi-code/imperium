@@ -6,33 +6,22 @@ import {
   CheckCircle2, Wallet, 
   ExternalLink, Search, RefreshCw
 } from 'lucide-react'
-
-// Definisi Interface untuk Type Safety
-interface Payment {
-  id: string
-  id_user_auth: string
-  email_member: string
-  nama_paket: string
-  harga_bayar: number
-  bukti_transfer: string
-  status_pembayaran: 'pending' | 'success' | 'failed'
-  created_at: string
-}
+import { Payment } from '@/lib/types'
 
 export default function PaymentAdmin() {
   const [payments, setPayments] = useState<Payment[]>([])
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState<'pending' | 'success' | 'all'>('pending')
+  const [filter, setFilter] = useState<'pending' | 'success' | 'failed' | 'all'>('pending')
   const [processingId, setProcessingId] = useState<string | null>(null)
 
   const fetchPayments = useCallback(async () => {
-    // Berikan tipe data eksplisit pada query select
-    const { data, error } = await (supabase.from('data_pembayaran') as unknown as { select: (col: string) => { order: (col: string, opt: unknown) => Promise<{ data: Payment[] | null; error: unknown }> } })
+    const { data, error } = await supabase
+      .from('data_pembayaran')
       .select('*')
       .order('created_at', { ascending: false })
     
     if (!error && data) {
-      setPayments(data)
+      setPayments(data as Payment[])
     }
   }, [])
 
@@ -43,34 +32,13 @@ export default function PaymentAdmin() {
     
     setProcessingId(pay.id)
     try {
-      const expiryDate = new Date()
-      expiryDate.setDate(expiryDate.getDate() + 365)
-
-      // 1. Update Status Pembayaran (Cast ke any hanya pada .from untuk bypass schema)
-      const { error: payErr } = await (supabase.from('data_pembayaran') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } })
-        .update({ status_pembayaran: 'success' })
-        .eq('id', pay.id)
-      if (payErr) throw payErr
-
-      // 2. Update Plan di Profiles
-      const { error: profErr } = await (supabase.from('profiles') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } })
-        .update({ plan: 'vip', plan_status: 'vip' })
-        .eq('id', pay.id_user_auth)
-      if (profErr) throw profErr
-
-      // 3. Sync ke Data Member VIP
-      await (supabase.from('data_member_vip') as unknown as { delete: () => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } }).delete().eq('id_user_auth', pay.id_user_auth)
-      
-      const { error: vipErr } = await (supabase.from('data_member_vip') as unknown as { insert: (objs: unknown[]) => Promise<{ error: Error | null }> })
-        .insert([{
-          id_user_auth: pay.id_user_auth,
-          email_member: pay.email_member,
-          nama_paket: pay.nama_paket,
-          harga_bayar: pay.harga_bayar,
-          status_aktif: 'aktif',
-          tanggal_berakhir: expiryDate.toISOString()
-        }])
-      if (vipErr) throw vipErr
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'confirmPayment', paymentId: pay.id })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengonfirmasi pembayaran')
 
       alert('Pembayaran Berhasil Dikonfirmasi!')
       fetchPayments()
@@ -84,10 +52,19 @@ export default function PaymentAdmin() {
 
   const handleReject = async (id: string) => {
     if (!confirm('Tolak pembayaran ini?')) return
-    const { error } = await (supabase.from('data_pembayaran') as unknown as { update: (obj: Record<string, string>) => { eq: (col: string, val: string) => Promise<{ error: Error | null }> } })
-      .update({ status_pembayaran: 'failed' })
-      .eq('id', id)
-    if (!error) fetchPayments()
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'rejectPayment', paymentId: id })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menolak pembayaran')
+      fetchPayments()
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
+      alert(`Gagal: ${errMsg}`)
+    }
   }
 
   const filtered = payments.filter(p => {
@@ -108,7 +85,7 @@ export default function PaymentAdmin() {
           />
         </div>
         <div className="flex bg-neutral-900 p-1 rounded-xl border border-neutral-800">
-          {(['pending', 'success', 'all'] as const).map((f) => (
+          {(['pending', 'success', 'failed', 'all'] as const).map((f) => (
             <button 
               key={f} onClick={() => setFilter(f)}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${filter === f ? 'bg-yellow-500 text-black' : 'text-neutral-500'}`}
@@ -143,9 +120,13 @@ export default function PaymentAdmin() {
 
             <div className="flex items-center justify-between p-3 bg-black rounded-xl border border-neutral-800">
               <span className="text-xs font-bold text-white tracking-tight">Rp {pay.harga_bayar.toLocaleString('id-ID')}</span>
-              <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-xs font-bold text-yellow-500 uppercase hover:underline">
-                Bukti <ExternalLink size={12} />
-              </a>
+              {pay.bukti_transfer && pay.bukti_transfer.startsWith('IMP-') ? (
+                <span className="text-xs font-bold text-neutral-500 tracking-wider">MIDTRANS ONLINE</span>
+              ) : (
+                <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-xs font-bold text-yellow-500 uppercase hover:underline">
+                  Bukti <ExternalLink size={12} />
+                </a>
+              )}
             </div>
 
             {pay.status_pembayaran === 'pending' && (

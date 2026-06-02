@@ -6,7 +6,7 @@ interface Props {
 }
 
 export default function DiscordCard({ member }: Props) {
-  const isAktif = member?.status_aktif === 'aktif'
+  const isAktif = member?.status_aktif === 'aktif' || member?.status_aktif === 'vip'
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col justify-between">
