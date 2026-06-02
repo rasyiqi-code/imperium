@@ -15,8 +15,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         <MobileHeader />
 
         {/* 3. MAIN CONTENT */}
-        {/* pb-28 di mobile agar konten tidak tertutup Floating Navbar */}
-        <main className="flex-1 overflow-y-auto pb-28 md:pb-0">
+        {/* pb-28 di mobile agar konten tidak tertutup Floating Navbar, md:overflow-visible agar sticky bekerja di desktop */}
+        <main className="flex-1 overflow-y-auto md:overflow-visible pb-28 md:pb-0">
           {children}
         </main>
 

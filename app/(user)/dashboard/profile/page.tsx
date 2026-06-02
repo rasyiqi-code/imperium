@@ -143,7 +143,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* ===== Kolom Kiri: Info User & VIP Card (Sticky di desktop) ===== */}
-        <div className="space-y-4 lg:sticky lg:top-24 self-start">
+        <div className="space-y-4 lg:sticky lg:top-8 self-start">
           {/* Avatar Card */}
           <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-5 flex flex-col items-center gap-3.5 text-center">
             <div className="relative">
