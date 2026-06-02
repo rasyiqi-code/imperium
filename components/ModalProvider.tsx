@@ -96,25 +96,27 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
           />
           
           {/* Modal Container */}
-          <div className="relative w-full max-w-sm bg-neutral-950 border border-neutral-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left animate-in zoom-in-95 duration-200">
-            <div className="flex items-start gap-4">
-              {getIcon()}
-              <div className="flex-1 space-y-1">
-                <h3 className="text-sm font-black text-white uppercase tracking-tight leading-normal">
+          <div className="relative w-full max-w-sm bg-neutral-950 border border-neutral-900 rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col gap-4 text-left animate-in zoom-in-95 duration-200">
+            <div className="flex gap-4">
+              <div className="mt-0.5 shrink-0">
+                {getIcon()}
+              </div>
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <h3 className="text-sm font-black text-white uppercase tracking-tight leading-none">
                   {options.title}
                 </h3>
-                <p className="text-xs text-neutral-400 font-bold uppercase leading-normal tracking-wide">
+                <p className="text-xs text-neutral-400 font-medium leading-relaxed">
                   {options.message}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 mt-2">
+            <div className="flex items-center justify-end gap-2.5 mt-2">
               {isConfirm && (
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="px-4 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer"
+                  className="px-5 py-2.5 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer"
                 >
                   {options.cancelText}
                 </button>
