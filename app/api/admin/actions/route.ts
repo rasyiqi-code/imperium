@@ -4,6 +4,29 @@ import { supabaseServer } from '@/lib/supabaseServer'
 import { sendEmail } from '@/lib/email'
 import { paymentManager } from '@crediblemark/buayar'
 
+interface MemberVip {
+  id: string;
+  id_user_auth: string;
+  email_member: string;
+  nama_paket: string;
+  harga_bayar: number;
+  status_aktif: string;
+  kode_invite_unik: string;
+  tanggal_berakhir: string;
+  dibuat_pada?: string;
+  created_at?: string;
+}
+
+interface AdminSettings {
+  id: number;
+  midtrans_upgrade_mode?: string | null;
+  midtrans_server_key?: string | null;
+  midtrans_client_key?: string | null;
+  midtrans_public_key?: string | null;
+  midtrans_is_production?: boolean | null;
+  midtrans_enabled_payments?: string[] | null;
+}
+
 export async function POST(request: Request) {
   try {
     // 1. Authenticate user using client session cookies
@@ -62,14 +85,14 @@ export async function POST(request: Request) {
           .from('data_member_vip')
           .select('*')
           .eq('id_user_auth', userId)
-          .maybeSingle() as any;
+          .maybeSingle() as unknown as { data: MemberVip | null };
 
         // Fetch Midtrans settings from database to get upgrade mode
         const { data: settings } = await supabaseServer
           .from('admin_settings')
           .select('midtrans_upgrade_mode')
           .eq('id', 1)
-          .maybeSingle() as any;
+          .maybeSingle() as unknown as { data: AdminSettings | null };
         const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
@@ -447,7 +470,7 @@ export async function POST(request: Request) {
         }
 
         const cleanedFitur = Array.isArray(fitur)
-          ? fitur.map((f: any) => String(f).trim()).filter(Boolean)
+          ? fitur.map((f: unknown) => String(f).trim()).filter(Boolean)
           : []
 
         const { error: planErr } = await supabaseServer
@@ -481,7 +504,7 @@ export async function POST(request: Request) {
         }
 
         const cleanedFitur = Array.isArray(fitur)
-          ? fitur.map((f: any) => String(f).trim()).filter(Boolean)
+          ? fitur.map((f: unknown) => String(f).trim()).filter(Boolean)
           : []
 
         const { error: planErr } = await supabaseServer
@@ -503,7 +526,7 @@ export async function POST(request: Request) {
 
         // Whitelist allowed fields to prevent arbitrary column updates or primary key changes
         const allowedKeys = ['whatsapp_number', 'telegram_link', 'support_email', 'operational_hours']
-        const filteredConfig: Record<string, any> = {}
+        const filteredConfig: Record<string, unknown> = {}
         for (const key of allowedKeys) {
           if (config[key] !== undefined) {
             filteredConfig[key] = config[key]
@@ -595,7 +618,7 @@ export async function POST(request: Request) {
           .from('admin_settings')
           .select('midtrans_server_key, midtrans_client_key, midtrans_is_production')
           .eq('id', 1)
-          .maybeSingle() as any;
+          .maybeSingle() as unknown as { data: AdminSettings | null };
 
         const sKey = mtSettings?.midtrans_server_key || '';
         const cKey = mtSettings?.midtrans_client_key || '';
@@ -620,7 +643,7 @@ export async function POST(request: Request) {
         // Save enabled methods to database
         const { error: saveErr } = await supabaseServer
           .from('admin_settings')
-          .update({ midtrans_enabled_payments: enabled as any })
+          .update({ midtrans_enabled_payments: enabled as string[] })
           .eq('id', 1);
         if (saveErr) throw saveErr;
 
@@ -636,7 +659,7 @@ export async function POST(request: Request) {
 
         const { error: saveErr } = await supabaseServer
           .from('admin_settings')
-          .update({ midtrans_enabled_payments: enabledPayments as any })
+          .update({ midtrans_enabled_payments: enabledPayments as string[] })
           .eq('id', 1);
         if (saveErr) throw saveErr;
 
@@ -661,15 +684,40 @@ export async function POST(request: Request) {
           .range(offset, offset + limit - 1);
 
         if (error) throw error;
-        return NextResponse.json({ success: true, members, totalCount: count || 0 });
+
+        // Ambil data aktivasi dan kedaluwarsa VIP secara paralel untuk user yang di-fetch
+        let enrichedMembers = members || [];
+        if (enrichedMembers.length > 0) {
+          const userIds = enrichedMembers.map(m => m.id);
+          const { data: vipData, error: vipErr } = await supabaseServer
+            .from('data_member_vip')
+            .select('id_user_auth, created_at, tanggal_berakhir, nama_paket')
+            .in('id_user_auth', userIds);
+          
+          if (!vipErr && vipData) {
+            const vipMap = new Map(vipData.map(v => [v.id_user_auth, v]));
+            enrichedMembers = enrichedMembers.map(m => {
+              const vipInfo = vipMap.get(m.id);
+              return {
+                ...m,
+                vip_activated_at: vipInfo ? vipInfo.created_at : null,
+                vip_expired_at: vipInfo ? vipInfo.tanggal_berakhir : null,
+                vip_plan_name: vipInfo ? vipInfo.nama_paket : null
+              };
+            });
+          }
+        }
+
+        return NextResponse.json({ success: true, members: enrichedMembers, totalCount: count || 0 });
       }
 
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
     }
-  } catch (error: any) {
-    console.error('Admin Action Error:', error)
-    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 })
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error('Admin Action Error:', err)
+    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 })
   }
 }
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
 import { 
   RefreshCw, Eye, X, Trash2, Search, PlusCircle, CheckSquare, Square, 
   MessageSquare, Mail, User, Smartphone, UserMinus, Download
@@ -16,6 +15,9 @@ interface Profile {
   plan: string | null;
   plan_status: string | null;
   created_at: string;
+  vip_activated_at?: string | null;
+  vip_expired_at?: string | null;
+  vip_plan_name?: string | null;
 }
 
 export default function ManageMembers() {
@@ -54,6 +56,7 @@ export default function ManageMembers() {
   }, [])
 
   const refreshData = useCallback(async () => {
+    await Promise.resolve()
     setLoading(true)
     const result = await fetchMembers(0, selectedPlan)
     setMembers(result.members)
@@ -81,14 +84,17 @@ export default function ManageMembers() {
 
   // Unduh CSV dari data yang ter-render
   const exportToCSV = () => {
-    const headers = ['Email', 'Nama Lengkap', 'No WhatsApp', 'Paket', 'Status', 'Tanggal Daftar']
+    const headers = ['Email', 'Nama Lengkap', 'No WhatsApp', 'Paket', 'Status', 'Tanggal Daftar', 'Paket VIP Aktif', 'Tanggal Upgrade VIP', 'Tanggal Expired VIP']
     const rows = filteredMembers.map(m => [
       m.email,
       m.full_name || 'Anonymous',
       m.whatsapp_number || '',
       m.plan || 'free',
       m.plan_status || 'free',
-      m.created_at ? new Date(m.created_at).toLocaleString('id-ID') : ''
+      m.created_at ? new Date(m.created_at).toLocaleString('id-ID') : '',
+      m.vip_plan_name || '-',
+      m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleString('id-ID') : '-',
+      m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleString('id-ID') : '-'
     ])
 
     const csvContent = [
@@ -108,8 +114,11 @@ export default function ManageMembers() {
   }
 
   useEffect(() => {
-    refreshData()
-  }, [selectedPlan])
+    const timer = setTimeout(() => {
+      refreshData()
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [refreshData])
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredMembers.length) setSelectedIds([])
@@ -247,7 +256,10 @@ export default function ManageMembers() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black uppercase tracking-tight text-white">Members <span className="text-yellow-500">Manager</span></h1>
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">
+          Members <span className="text-yellow-500">Manager</span>
+          <span className="ml-2 text-xs font-normal text-neutral-400 font-mono normal-case">({totalCount} Member)</span>
+        </h1>
         <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Kelola data member registrasi, status membership VIP, dan opsi chat langsung</p>
       </div>
 
@@ -316,9 +328,18 @@ export default function ManageMembers() {
                   <button onClick={() => toggleSelectOne(m.id)} className={selectedIds.includes(m.id) ? 'text-yellow-500' : 'text-neutral-600'}>
                     {selectedIds.includes(m.id) ? <CheckSquare size={20} /> : <Square size={20} />}
                   </button>
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col min-w-0 text-left">
                     <span className="text-sm font-bold uppercase truncate max-w-40 text-white">{m.full_name || 'Anonymous'}</span>
                     <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
+                    <div className="text-[9px] text-neutral-500 font-bold uppercase leading-none space-y-0.5 mt-2.5">
+                      <p>Daftar: <span className="text-neutral-300">{m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
+                      {m.plan === 'vip' && (
+                        <>
+                          <p>Mulai: <span className="text-neutral-400">{m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
+                          <p>Expired: <span className="text-yellow-500/80">{m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border ${
@@ -343,7 +364,8 @@ export default function ManageMembers() {
                   <button onClick={toggleSelectAll} className="cursor-pointer">{selectedIds.length === filteredMembers.length ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
                 </th>
                 <th className="px-6 py-4">Info Member</th>
-                <th className="px-6 py-4 text-center">Plan</th>
+                <th className="px-6 py-4">Tanggal Daftar</th>
+                <th className="px-6 py-4">Detail Membership VIP</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
@@ -357,12 +379,25 @@ export default function ManageMembers() {
                     <div className="font-bold uppercase text-white group-hover:text-yellow-500 transition-colors font-sans">{m.full_name || 'Anonymous'}</div>
                     <div className="text-[10px] text-neutral-500 font-bold uppercase mt-0.5 tracking-tight">{m.email}</div>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest border ${
-                      m.plan === 'vip' 
-                      ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15' 
-                      : 'bg-neutral-900/80 text-neutral-500 border-neutral-800'
-                    }`}>{m.plan || 'FREE'}</span>
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                    {m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                  </td>
+                  <td className="px-6 py-4 text-left">
+                    {m.plan === 'vip' ? (
+                      <div className="flex flex-col gap-1 text-left max-w-xs">
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/15 uppercase tracking-widest self-start leading-none">
+                          {m.vip_plan_name || 'VIP'}
+                        </span>
+                        <div className="text-[9px] text-neutral-500 font-bold uppercase mt-0.5 leading-none space-y-0.5">
+                          <p>Mulai: <span className="text-neutral-300">{m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
+                          <p>Expired: <span className="text-yellow-500/80">{m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest self-start leading-none">
+                        FREE
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => setSelectedMember(m)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"><Eye size={18} /></button>
@@ -408,6 +443,17 @@ export default function ManageMembers() {
               <InfoItem label="Email Address" value={selectedMember.email} icon={<Mail size={14}/>} />
               <InfoItem label="Full Name" value={selectedMember.full_name || 'Anonymous'} icon={<User size={14}/>} />
               <InfoItem label="WhatsApp" value={selectedMember.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
+              <InfoItem label="Tanggal Daftar" value={selectedMember.created_at ? new Date(selectedMember.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<User size={14}/>} />
+              
+              {selectedMember.plan === 'vip' && (
+                <>
+                  <div className="pt-2 border-t border-neutral-900/60 space-y-3">
+                    <InfoItem label="Paket VIP Aktif" value={selectedMember.vip_plan_name || 'VIP'} icon={<PlusCircle size={14}/>} />
+                    <InfoItem label="Tanggal Mulai VIP" value={selectedMember.vip_activated_at ? new Date(selectedMember.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<RefreshCw size={14}/>} />
+                    <InfoItem label="Tanggal Expired VIP" value={selectedMember.vip_expired_at ? new Date(selectedMember.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<RefreshCw size={14}/>} />
+                  </div>
+                </>
+              )}
               
               <div className="flex flex-col gap-2 pt-4 border-t border-neutral-900">
                 <button 
