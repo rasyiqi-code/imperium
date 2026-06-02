@@ -5,10 +5,11 @@ import { supabase } from '@/lib/supabase'
 import { MemberVIP } from '@/lib/types' 
 import StatusCard from '@/components/StatusCard'
 import DiscordCard from '@/components/DiscordCard'
-import { Crown, Lock, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react'
+import { Crown, Lock, TrendingUp, AlertCircle, RefreshCw, Zap, ShieldCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
-// Samakan dengan interface di lib/types.ts lu biar gak bentrok
+// Samakan dengan interface di lib/types.ts agar tidak bentrok
 import { StatusAktif } from '@/lib/types'
 
 
@@ -22,7 +23,7 @@ export default function UserDashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
-        // Sync pending payment status with Midtrans first
+        // Sinkronkan status pembayaran dengan Midtrans
         try {
           await fetch('/api/checkout/check', { method: 'POST' })
         } catch (e) {
@@ -65,84 +66,121 @@ export default function UserDashboard() {
 
   if (loading) return (
     <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-      <div className="text-neutral-500 font-black tracking-widest text-center">Sinkronisasi Data...</div>
+      <RefreshCw className="animate-spin text-yellow-500" size={28} />
+      <div className="text-neutral-500 text-xs font-bold tracking-widest text-center uppercase">Sinkronisasi Data...</div>
     </div>
   )
 
   const isVip = member?.status_aktif === 'aktif' || member?.status_aktif === 'vip'
-  const goToUpgrade = () => router.push('/dashboard/upgrade')
+  const firstName = member?.nama_member?.split(' ')[0] || 'Member'
 
   return (
-    <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500 text-left">
-      
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto animate-in fade-in duration-500 text-left">
+
+      {/* ===== Welcome Header ===== */}
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Selamat Datang, <span className="text-yellow-500 uppercase">{member?.nama_member?.split(' ')[0]}</span>!
+          {/* Badge status di atas nama */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full border text-[10px] font-bold tracking-widest uppercase
+            bg-neutral-900 border-neutral-800 text-neutral-500">
+            <span className={`h-1.5 w-1.5 rounded-full ${isVip ? 'bg-green-400' : 'bg-neutral-600'}`} />
+            {isVip ? 'Member VIP' : 'Member Free'}
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Selamat Datang, <span className="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">{firstName}</span>!
           </h1>
-          <p className="text-neutral-400 mt-2 font-medium">Akses komunitas dan pantau status membership kamu.</p>
+          <p className="text-neutral-400 mt-2 text-sm">Pantau status membership dan akses komunitas eksklusif kamu.</p>
         </div>
         
         <button 
-          onClick={goToUpgrade}
-          className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-black transition-all flex items-center gap-2 shadow-xl shadow-yellow-500/20 active:scale-95 text-xs tracking-wider"
+          onClick={() => router.push('/dashboard/upgrade')}
+          className="group relative flex-shrink-0 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-yellow-500/20 active:scale-95 text-xs tracking-wider hover:shadow-yellow-500/30 overflow-hidden"
         >
-          <Crown size={20} /> {isVip ? 'Perpanjang / Ubah Paket' : 'Upgrade ke VIP'}
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Crown size={16} /> 
+          {isVip ? 'Perpanjang / Ubah Paket' : 'Upgrade ke VIP'}
         </button>
-
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* ===== Status & Discord Cards ===== */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <StatusCard member={member} />
         <DiscordCard member={member} />
       </div>
 
-      <div className="relative overflow-hidden bg-neutral-900/40 border border-neutral-800 p-8 rounded-3xl">
+      {/* ===== Live Trading Signals ===== */}
+      <div className="relative overflow-hidden bg-neutral-900/50 border border-neutral-800 rounded-2xl">
+        {/* Overlay kunci untuk non-VIP */}
         {!isVip && (
-          <div className="absolute inset-0 z-10 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center text-center p-6">
-            <Lock className="text-yellow-500 mb-4" size={40} />
-            <h3 className="text-xl font-extrabold text-white mb-2 uppercase tracking-tight">Konten VIP Terkunci</h3>
-            <p className="text-neutral-400 text-sm max-w-xs mb-6 font-bold opacity-70">
-              Join VIP Imperium untuk akses sinyal trading harian dengan akurasi tinggi.
+          <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/70 flex flex-col items-center justify-center text-center p-6 rounded-2xl">
+            <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl mb-4 shadow-2xl">
+              <Lock className="text-yellow-500" size={28} />
+            </div>
+            <h3 className="text-base font-extrabold text-white mb-2 uppercase tracking-tight">Konten VIP Terkunci</h3>
+            <p className="text-neutral-500 text-xs max-w-xs mb-5 leading-relaxed">
+              Upgrade ke paket VIP Imperium untuk akses sinyal trading harian dengan akurasi tinggi.
             </p>
             <button 
-              onClick={goToUpgrade}
-              className="bg-white text-black px-8 py-3 rounded-xl font-black hover:bg-yellow-500 transition-all shadow-lg active:scale-95 text-xs"
+              onClick={() => router.push('/dashboard/upgrade')}
+              className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-6 py-2.5 rounded-xl font-bold hover:from-yellow-300 hover:to-amber-400 transition-all shadow-lg active:scale-95 text-xs tracking-wider"
             >
-              Buka Sinyal Sekarang
+              Buka Akses VIP Sekarang
             </button>
           </div>
         )}
 
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2.5 bg-green-500/10 rounded-xl text-green-500 border border-green-500/20">
-            <TrendingUp size={24} />
+        {/* Header section signals */}
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-neutral-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-500/10 rounded-xl text-green-400 border border-green-500/20">
+              <TrendingUp size={18} />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-white tracking-tight uppercase">Live Trading Signals</h3>
+              <p className="text-[10px] text-neutral-500 font-bold">Update real-time setiap hari</p>
+            </div>
           </div>
-          <h3 className="text-xl font-black text-white tracking-tighter uppercase">Live Trading Signals</h3>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-[10px] font-bold text-green-400 uppercase tracking-widest">Live</span>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="p-5 bg-black/40 border border-neutral-800 rounded-2xl flex justify-between items-center group hover:border-neutral-700 transition-all">
-            <div className="font-black text-neutral-300 tracking-widest uppercase text-sm">BTC / USDT</div>
-            <div className="text-neutral-600 font-mono italic text-xs tracking-[0.3em]">HIDDEN_SIGNAL</div>
-          </div>
-          <div className="p-5 bg-black/40 border border-neutral-800 rounded-2xl flex justify-between items-center group hover:border-neutral-700 transition-all">
-            <div className="font-black text-neutral-300 tracking-widest uppercase text-sm">ETH / USDT</div>
-            <div className="text-neutral-600 font-mono italic text-xs tracking-[0.3em]">HIDDEN_SIGNAL</div>
-          </div>
+        {/* Daftar sinyal */}
+        <div className="p-6 pt-4 space-y-3">
+          {[
+            { pair: 'BTC / USDT', signal: 'HIDDEN_SIGNAL', icon: '₿' },
+            { pair: 'ETH / USDT', signal: 'HIDDEN_SIGNAL', icon: 'Ξ' },
+            { pair: 'SOL / USDT', signal: 'HIDDEN_SIGNAL', icon: '◎' },
+          ].map((item) => (
+            <div key={item.pair} className="flex items-center justify-between px-5 py-4 bg-neutral-950/60 border border-neutral-800 rounded-xl group hover:border-neutral-700 transition-all">
+              <div className="flex items-center gap-3">
+                <span className="text-base font-black text-yellow-500/60 w-6 text-center">{item.icon}</span>
+                <span className="font-extrabold text-neutral-300 tracking-widest uppercase text-sm">{item.pair}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap size={12} className="text-neutral-700" />
+                <span className="text-neutral-700 font-mono italic text-xs tracking-[0.3em]">{item.signal}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="bg-blue-500/5 border border-blue-500/20 p-6 rounded-2xl flex gap-4 items-start">
-        <AlertCircle className="text-blue-400 shrink-0 mt-0.5" size={20} />
+      {/* ===== Info Box ===== */}
+      <div className="flex gap-4 items-start bg-blue-500/5 border border-blue-500/15 p-5 rounded-2xl">
+        <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20 shrink-0 mt-0.5">
+          <AlertCircle className="text-blue-400" size={16} />
+        </div>
         <div>
-          <h3 className="text-white font-black text-xs mb-1.5 tracking-[0.2em]">Informasi Penting</h3>
-          <ul className="text-xs text-neutral-400 list-disc ml-5 space-y-1 font-bold opacity-80">
-            <li>Link invite Discord bersifat <span className="text-white font-black">Sekali Pakai</span> per akun.</li>
-            <li>Status VIP akan diperbarui otomatis via Midtrans maksimal 1x24 jam.</li>
-            <li>Dilarang membagikan sinyal Imperium ke publik/komunitas lain.</li>
+          <h3 className="text-white font-extrabold text-xs mb-2 tracking-widest uppercase flex items-center gap-2">
+            <ShieldCheck size={12} className="text-blue-400" />
+            Informasi Penting
+          </h3>
+          <ul className="text-xs text-neutral-400 list-disc ml-4 space-y-1.5 leading-relaxed">
+            <li>Link invite Discord bersifat <span className="text-white font-bold">Sekali Pakai</span> per akun.</li>
+            <li>Status VIP diperbarui otomatis via Midtrans maksimal 1×24 jam.</li>
+            <li>Dilarang membagikan sinyal Imperium ke publik atau komunitas lain.</li>
           </ul>
         </div>
       </div>
