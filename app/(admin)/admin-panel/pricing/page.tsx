@@ -147,55 +147,57 @@ export default function PricingEditor() {
   }
 
   if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-transparent">
       <RefreshCw className="animate-spin text-yellow-500" size={32} />
     </div>
   )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-black min-h-screen text-white text-left">
+    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans">
       
       {/* Header Editor */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-900 pb-6">
         <div>
-          <h1 className="text-xl font-bold uppercase tracking-tight">Pricing Editor</h1>
-          <p className="text-xs text-neutral-500 font-bold uppercase mt-1.5 tracking-tight">Atur paket membership VIP Imperium Crypto</p>
+          <h1 className="text-xl font-black uppercase tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
+          <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="sm:self-center py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl shadow-yellow-500/10 cursor-pointer"
+          className="sm:self-center py-3.5 px-6 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-yellow-500/15 cursor-pointer duration-300"
         >
-          <Plus size={16} /> Tambah Paket
+          <Plus size={14} /> Tambah Paket
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {plans.map((plan) => (
-          <div key={plan.id} className="p-6 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-yellow-500/30 transition-all group">
-            <div className="flex justify-between items-start mb-4">
-              <div className="h-10 w-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500">
-                <Package size={20} />
+          <div key={plan.id} className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-850 hover:border-yellow-500/30 shadow-lg hover:shadow-yellow-500/2 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-10 w-10 bg-yellow-500/5 border border-yellow-500/15 rounded-xl flex items-center justify-center text-yellow-500 group-hover:scale-105 transition-transform duration-300">
+                  <Package size={18} />
+                </div>
+                <button 
+                  onClick={() => setEditModal(plan)}
+                  className="p-2 bg-neutral-900 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"
+                >
+                  <Edit3 size={14} />
+                </button>
               </div>
-              <button 
-                onClick={() => setEditModal(plan)}
-                className="p-2 bg-neutral-800 rounded-xl text-neutral-400 hover:text-yellow-500 border border-neutral-700 transition-all"
-              >
-                <Edit3 size={16} />
-              </button>
+
+              <h3 className="text-base font-black uppercase tracking-tight text-white">{plan.nama_paket}</h3>
+              <p className="text-lg font-black text-yellow-500 mt-1 uppercase tracking-tight">
+                Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} HARI</span>
+              </p>
             </div>
 
-            <h3 className="text-lg font-bold uppercase tracking-tight">{plan.nama_paket}</h3>
-            <p className="text-xl font-bold text-yellow-500 mt-1 uppercase tracking-tight">
-              Rp {plan.harga.toLocaleString('id-ID')} <span className="text-xs text-neutral-500 font-medium">/ {plan.durasi_hari} HARI</span>
-            </p>
-
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-3 pt-6 border-t border-neutral-900/60">
               {plan.fitur && plan.fitur.length > 0 ? plan.fitur.map((feat, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs font-bold text-neutral-400 uppercase">
-                  <CheckCircle2 size={14} className="text-yellow-500" /> {feat}
+                <div key={i} className="flex items-center gap-2.5 text-[10px] font-black text-neutral-400 uppercase tracking-wide">
+                  <CheckCircle2 size={12} className="text-yellow-500 shrink-0" /> {feat}
                 </div>
               )) : (
-                <p className="text-xs text-neutral-600 uppercase font-medium">Belum ada fitur</p>
+                <p className="text-[10px] text-neutral-600 uppercase font-bold tracking-widest">Belum ada fitur</p>
               )}
             </div>
           </div>
@@ -204,52 +206,60 @@ export default function PricingEditor() {
 
       {/* MODAL EDIT */}
       {editModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-          <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl overflow-hidden text-left animate-in zoom-in duration-200">
-            <div className="p-6 border-b border-neutral-800 flex justify-between items-center">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Edit Pricing Plan</h3>
-              <button onClick={() => setEditModal(null)} className="text-neutral-500 hover:text-white transition-all"><X size={20}/></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setEditModal(null)} />
+          
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
+              <h3 className="text-xs font-black uppercase tracking-wider text-white">Edit Pricing Plan</h3>
+              <button 
+                onClick={() => setEditModal(null)} 
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+              >
+                <X size={14}/>
+              </button>
             </div>
 
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Nama Paket</label>
+                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Nama Paket</label>
                 <input 
                   type="text" 
                   value={editModal.nama_paket} 
                   onChange={e => setEditModal({...editModal, nama_paket: e.target.value})}
-                  className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold uppercase outline-none focus:border-yellow-500 text-white"
+                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Harga (Rp)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Harga (Rp)</label>
                   <input 
                     type="number" 
                     value={editModal.harga} 
                     onChange={e => setEditModal({...editModal, harga: Number(e.target.value)})}
-                    className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold outline-none focus:border-yellow-500 text-white"
+                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Durasi (Hari)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Durasi (Hari)</label>
                   <input 
                     type="number" 
                     value={editModal.durasi_hari} 
                     onChange={e => setEditModal({...editModal, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold outline-none focus:border-yellow-500 text-white"
+                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Fitur (Pisahkan dengan koma)</label>
+                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 
                   rows={3}
                   value={editModal.fitur?.join(', ') || ''} 
                   onChange={e => setEditModal({...editModal, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold uppercase outline-none focus:border-yellow-500 text-white"
+                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
                   placeholder="CONTOH: SINYAL VIP, MENTORSHIP"
                 />
               </div>
@@ -257,9 +267,9 @@ export default function PricingEditor() {
               <button 
                 onClick={handleUpdate}
                 disabled={saving}
-                className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3.5 rounded-xl transition-all uppercase text-xs tracking-widest flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
               >
-                {saving ? <RefreshCw className="animate-spin" size={16}/> : <Save size={16}/>} Simpan Perubahan
+                {saving ? <RefreshCw className="animate-spin" size={14}/> : <Save size={14}/>} Simpan Perubahan
               </button>
             </div>
           </div>
@@ -268,55 +278,63 @@ export default function PricingEditor() {
 
       {/* MODAL TAMBAH */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-          <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl overflow-hidden text-left animate-in zoom-in duration-200">
-            <div className="p-6 border-b border-neutral-800 flex justify-between items-center">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Tambah Paket Pricing Baru</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-neutral-500 hover:text-white transition-all"><X size={20}/></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setShowAddModal(false)} />
+          
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
+              <h3 className="text-xs font-black uppercase tracking-wider text-white">Tambah Paket Pricing Baru</h3>
+              <button 
+                onClick={() => setShowAddModal(false)} 
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+              >
+                <X size={14}/>
+              </button>
             </div>
 
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Nama Paket</label>
+                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Nama Paket</label>
                 <input 
                   type="text" 
                   value={newPlan.nama_paket} 
                   onChange={e => setNewPlan({...newPlan, nama_paket: e.target.value})}
-                  className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold uppercase outline-none focus:border-yellow-500 text-white"
+                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
                   placeholder="CONTOH: PAKET 3 BULAN"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Harga (Rp)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Harga (Rp)</label>
                   <input 
                     type="number" 
                     value={newPlan.harga} 
                     onChange={e => setNewPlan({...newPlan, harga: Number(e.target.value)})}
-                    className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold outline-none focus:border-yellow-500 text-white"
+                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                     placeholder="299000"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Durasi (Hari)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Durasi (Hari)</label>
                   <input 
                     type="number" 
                     value={newPlan.durasi_hari} 
                     onChange={e => setNewPlan({...newPlan, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold outline-none focus:border-yellow-500 text-white"
+                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                     placeholder="90"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Fitur (Pisahkan dengan koma)</label>
+                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 
                   rows={3}
                   value={newPlan.fitur?.join(', ') || ''} 
                   onChange={e => setNewPlan({...newPlan, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-xs font-bold uppercase outline-none focus:border-yellow-500 text-white"
+                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
                   placeholder="SINYAL VIP, MENTORSHIP, AKADEMI CRYPTO"
                 />
               </div>
@@ -324,9 +342,9 @@ export default function PricingEditor() {
               <button 
                 onClick={handleCreate}
                 disabled={creating}
-                className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3.5 rounded-xl transition-all uppercase text-xs tracking-widest flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
               >
-                {creating ? <RefreshCw className="animate-spin" size={16}/> : <Plus size={16}/>} Simpan Paket Baru
+                {creating ? <RefreshCw className="animate-spin" size={14}/> : <Plus size={14}/>} Simpan Paket Baru
               </button>
             </div>
           </div>

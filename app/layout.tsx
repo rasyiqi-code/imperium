@@ -18,10 +18,13 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <head />
-      <body className="relative min-h-screen overflow-x-hidden bg-linear-to-br from-black via-neutral-900 to-black text-white antialiased">
-        <ModalProvider>
-          {children}
-        </ModalProvider>
+      <body className="relative min-h-screen overflow-x-hidden bg-black text-white antialiased">
+        <div className="absolute inset-0 bg-grid-pattern pointer-events-none z-0" />
+        <div className="relative z-10 min-h-screen">
+          <ModalProvider>
+            {children}
+          </ModalProvider>
+        </div>
       </body>
     </html>
   );

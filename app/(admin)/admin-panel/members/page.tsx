@@ -186,16 +186,16 @@ export default function ManageMembers() {
   )
 
   return (
-    <div className="bg-black min-h-screen text-white pb-32 font-sans text-left">
+    <div className="bg-transparent min-h-screen text-white pb-32 font-sans text-left">
       
       {/* Search & Bulk Action Bar */}
-      <div className="bg-neutral-900/50 border-b border-neutral-800 p-4 md:p-6 sticky top-0 z-30 backdrop-blur-md">
+      <div className="bg-neutral-950/40 border-b border-neutral-900 p-4 md:p-6 sticky top-0 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+          <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-850 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
+            <Search className="text-neutral-500 mr-3" size={16} />
             <input 
               type="text" placeholder="Cari member..." 
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-bold uppercase tracking-wider outline-none focus:border-yellow-500 transition-all text-white"
+              className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
               value={search} onChange={(e) => setSearch(e.target.value)}
             />
           </div>
@@ -203,13 +203,13 @@ export default function ManageMembers() {
             {selectedIds.length > 0 && (
               <button 
                 onClick={() => deleteMembers(selectedIds)} 
-                className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all animate-in fade-in zoom-in"
+                className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
               >
-                <Trash2 size={16} /> Hapus ({selectedIds.length})
+                <Trash2 size={14} /> Hapus ({selectedIds.length})
               </button>
             )}
-            <button onClick={refreshData} className="p-2.5 bg-neutral-900 border border-neutral-800 text-yellow-500 rounded-xl active:scale-95 transition-all">
-              <RefreshCw size={20} className={isProcessing ? 'animate-spin' : ''} />
+            <button onClick={refreshData} className="p-2.5 bg-neutral-900/80 border border-neutral-850 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
+              <RefreshCw size={18} className={isProcessing ? 'animate-spin' : ''} />
             </button>
           </div>
         </div>
@@ -219,54 +219,62 @@ export default function ManageMembers() {
         {/* Mobile Card View */}
         <div className="grid grid-cols-1 gap-3 md:hidden">
           {filteredMembers.map(m => (
-            <div key={m.id} className={`p-4 rounded-xl border transition-all duration-300 ${selectedIds.includes(m.id) ? 'bg-yellow-500/5 border-yellow-500/50' : 'bg-neutral-900 border-neutral-800'}`}>
+            <div key={m.id} className={`p-4 rounded-xl border transition-all duration-300 ${selectedIds.includes(m.id) ? 'bg-yellow-500/5 border-yellow-500/30' : 'bg-neutral-950/20 backdrop-blur-md border-neutral-850 hover:border-neutral-800'}`}>
               <div className="flex justify-between items-start mb-3">
                 <div className="flex gap-3">
-                  <button onClick={() => toggleSelectOne(m.id)} className={selectedIds.includes(m.id) ? 'text-yellow-500' : 'text-neutral-700'}>
+                  <button onClick={() => toggleSelectOne(m.id)} className={selectedIds.includes(m.id) ? 'text-yellow-500' : 'text-neutral-600'}>
                     {selectedIds.includes(m.id) ? <CheckSquare size={20} /> : <Square size={20} />}
                   </button>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold uppercase truncate max-w-40">{m.full_name || 'Anonymous'}</span>
-                    <span className="text-xs text-neutral-500 font-medium truncate max-w-40 leading-none">{m.email}</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-bold uppercase truncate max-w-40 text-white">{m.full_name || 'Anonymous'}</span>
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
                   </div>
                 </div>
-                <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase border ${m.plan === 'vip' ? 'text-yellow-500 border-yellow-500/20 bg-yellow-500/10' : 'text-neutral-600 border-neutral-800'}`}>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border ${
+                  m.plan === 'vip' 
+                  ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15' 
+                  : 'bg-neutral-900/80 text-neutral-500 border-neutral-800'
+                }`}>
                   {m.plan || 'FREE'}
                 </span>
               </div>
-              <button onClick={() => setSelectedMember(m)} className="w-full py-2 bg-neutral-800 border border-neutral-700 rounded-xl text-xs font-bold uppercase hover:bg-neutral-700 transition-all text-white">Detail Member</button>
+              <button onClick={() => setSelectedMember(m)} className="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl text-xs font-bold uppercase transition-all duration-300 text-white cursor-pointer">Detail Member</button>
             </div>
           ))}
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden md:block bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl">
+        <div className="hidden md:block bg-neutral-950/30 backdrop-blur-md border border-neutral-850/80 rounded-2xl overflow-hidden shadow-2xl">
           <table className="w-full text-left">
-            <thead className="bg-neutral-800/50 text-xs font-bold uppercase text-neutral-400 border-b border-neutral-800">
+            <thead className="bg-neutral-950/50 text-[10px] font-black uppercase text-neutral-500 border-b border-neutral-900 tracking-wider">
               <tr>
                 <th className="px-6 py-4 w-10 text-center">
-                  <button onClick={toggleSelectAll}>{selectedIds.length === filteredMembers.length ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} />}</button>
+                  <button onClick={toggleSelectAll} className="cursor-pointer">{selectedIds.length === filteredMembers.length ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
                 </th>
                 <th className="px-6 py-4">Info Member</th>
                 <th className="px-6 py-4 text-center">Plan</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800 text-xs font-medium">
+            <tbody className="divide-y divide-neutral-900 text-xs font-medium">
               {filteredMembers.map(m => (
-                <tr key={m.id} className={selectedIds.includes(m.id) ? 'bg-yellow-500/5' : 'hover:bg-neutral-800/50 transition-all'}>
+                <tr key={m.id} className={selectedIds.includes(m.id) ? 'bg-yellow-500/5' : 'hover:bg-neutral-900/25 transition-all duration-300 group'}>
                   <td className="px-6 py-4 text-center">
-                    <button onClick={() => toggleSelectOne(m.id)}>{selectedIds.includes(m.id) ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} />}</button>
+                    <button onClick={() => toggleSelectOne(m.id)} className="cursor-pointer">{selectedIds.includes(m.id) ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
                   </td>
                   <td className="px-6 py-4 text-left">
-                    <div className="font-bold uppercase text-white">{m.full_name || 'Anonymous'}</div>
-                    <div className="text-neutral-500 font-medium">{m.email}</div>
+                    <div className="font-bold uppercase text-white group-hover:text-yellow-500 transition-colors font-sans">{m.full_name || 'Anonymous'}</div>
+                    <div className="text-[10px] text-neutral-500 font-bold uppercase mt-0.5 tracking-tight">{m.email}</div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className={`px-3 py-1 rounded-lg font-bold uppercase border ${m.plan === 'vip' ? 'text-yellow-500 border-yellow-500/20 bg-yellow-500/10' : 'text-neutral-600 border-neutral-800'}`}>{m.plan || 'FREE'}</span>
+                    <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest border ${
+                      m.plan === 'vip' 
+                      ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15' 
+                      : 'bg-neutral-900/80 text-neutral-500 border-neutral-800'
+                    }`}>{m.plan || 'FREE'}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button onClick={() => setSelectedMember(m)} className="p-2 text-neutral-500 hover:text-yellow-500 transition-all active:scale-90"><Eye size={20} /></button>
+                    <button onClick={() => setSelectedMember(m)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"><Eye size={18} /></button>
                   </td>
                 </tr>
               ))}
@@ -277,24 +285,31 @@ export default function ManageMembers() {
 
       {/* Modal Detail */}
       {selectedMember && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-2xl animate-in zoom-in duration-300 text-left">
-            <div className="flex items-center justify-between p-6 border-b border-neutral-800">
-              <h3 className="font-bold uppercase tracking-tight text-white text-sm leading-none">Member Detail</h3>
-              <button onClick={() => setSelectedMember(null)} className="text-neutral-500 hover:text-white transition-all"><X size={24} /></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setSelectedMember(null)} />
+          
+          <div className="relative w-full max-w-sm bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-neutral-900 bg-neutral-950/50">
+              <h3 className="font-black uppercase tracking-wider text-white text-xs leading-none">Member Detail</h3>
+              <button onClick={() => setSelectedMember(null)} className="text-neutral-500 hover:text-white transition-all cursor-pointer"><X size={18} /></button>
             </div>
             <div className="p-6 space-y-4">
               <InfoItem label="Email Address" value={selectedMember.email} icon={<Mail size={14}/>} />
               <InfoItem label="Full Name" value={selectedMember.full_name || 'Anonymous'} icon={<User size={14}/>} />
               <InfoItem label="WhatsApp" value={selectedMember.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
               
-              <div className="flex flex-col gap-2 pt-4 border-t border-neutral-800">
+              <div className="flex flex-col gap-2 pt-4 border-t border-neutral-900">
                 <button 
                   onClick={() => handleUpgrade(selectedMember)}
                   disabled={isProcessing}
-                  className={`w-full py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider transition-all flex items-center justify-center gap-2 ${selectedMember.plan === 'vip' ? 'bg-neutral-800 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500 hover:text-black' : 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10 hover:bg-yellow-400'}`}
+                  className={`w-full py-3.5 rounded-xl font-black uppercase text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    selectedMember.plan === 'vip' 
+                    ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
+                    : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
+                  }`}
                 >
-                  {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : selectedMember.plan === 'vip' ? <><PlusCircle size={16} /> Perpanjang VIP</> : 'Upgrade ke VIP'}
+                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : selectedMember.plan === 'vip' ? <><PlusCircle size={14} /> Perpanjang VIP</> : 'Upgrade ke VIP'}
                 </button>
 
                 {/* TOMBOL NONAKTIFKAN VIP */}
@@ -302,18 +317,18 @@ export default function ManageMembers() {
                   <button 
                     onClick={() => handleDeactivate(selectedMember)}
                     disabled={isProcessing}
-                    className="w-full py-3.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <UserMinus size={16} />} Nonaktifkan VIP
+                    {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
                   </button>
                 )}
 
-                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-center text-xs font-bold uppercase tracking-wider text-neutral-400 hover:text-white transition-all flex items-center justify-center gap-2">
-                  <MessageSquare size={16} /> Chat WhatsApp
+                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-850/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                  <MessageSquare size={14} /> Chat WhatsApp
                 </a>
                 
-                <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-neutral-800 text-neutral-500 border border-neutral-800 rounded-xl text-xs font-bold uppercase hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2">
-                  <Trash2 size={16} /> Hapus Akun
+                <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                  <Trash2 size={14} /> Hapus Akun
                 </button>
               </div>
             </div>

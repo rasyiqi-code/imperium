@@ -113,3 +113,14 @@ p {
   outline: 2px solid var(--gold-primary);
   outline-offset: 2px;
 }
+
+/* ===============================
+   ENTERPRISE UTILITIES
+   =============================== */
+
+.bg-grid-pattern {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(212, 175, 55, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(212, 175, 55, 0.015) 1px, transparent 1px);
+}

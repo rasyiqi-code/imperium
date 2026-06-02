@@ -173,68 +173,82 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-black min-h-screen text-white">
+    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white">
       
       {/* Stats Section */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div className="p-5 bg-neutral-900 border border-neutral-800 rounded-xl">
-          <Users size={18} className="text-blue-500 mb-3" />
-          <div className="text-2xl font-bold leading-none tracking-tight">{stats.totalUser}</div>
-          <div className="text-xs font-bold text-neutral-500 uppercase tracking-wider mt-2">Pendaftar</div>
+        {/* Total Users */}
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
+          <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-blue-500/10 transition-all duration-300" />
+          <div className="h-10 w-10 bg-blue-500/5 border border-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
+            <Users size={18} />
+          </div>
+          <div className="text-2xl font-bold leading-none tracking-tight text-white">{stats.totalUser}</div>
+          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">Pendaftar</div>
         </div>
-        <div className="p-5 bg-neutral-900 border border-neutral-800 rounded-xl">
-          <TrendingUp size={18} className="text-green-500 mb-3" />
-          <div className="text-2xl font-bold leading-none tracking-tight">{stats.vipAktif}</div>
-          <div className="text-xs font-bold text-neutral-500 uppercase tracking-wider mt-2">VIP Aktif</div>
+
+        {/* VIP Active */}
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
+          <div className="absolute -right-6 -top-6 w-20 h-20 bg-green-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-green-500/10 transition-all duration-300" />
+          <div className="h-10 w-10 bg-green-500/5 border border-green-500/20 text-green-400 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
+            <TrendingUp size={18} />
+          </div>
+          <div className="text-2xl font-bold leading-none tracking-tight text-green-400">{stats.vipAktif}</div>
+          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">VIP Aktif</div>
         </div>
-        <div className="p-6 bg-yellow-500 rounded-xl col-span-2 md:col-span-1 shadow-lg shadow-yellow-500/10 border border-yellow-400">
-          <Wallet size={18} className="text-black mb-2" />
-          <div className="text-xl font-bold text-black leading-none uppercase tracking-tight">Rp {stats.omzet.toLocaleString('id-ID')}</div>
-          <div className="text-xs font-bold text-black/60 uppercase tracking-wider mt-1">Total Omzet</div>
+
+        {/* Total Omzet */}
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl col-span-2 md:col-span-1 relative overflow-hidden group transition-all duration-300">
+          <div className="absolute -right-6 -top-6 w-20 h-20 bg-yellow-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-yellow-500/10 transition-all duration-300" />
+          <div className="h-10 w-10 bg-yellow-500/5 border border-yellow-500/20 text-yellow-500 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
+            <Wallet size={18} />
+          </div>
+          <div className="text-2xl font-bold leading-none tracking-tight text-yellow-500">Rp {stats.omzet.toLocaleString('id-ID')}</div>
+          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">Total Omzet</div>
         </div>
       </div>
 
       {/* Search Input */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+      <div className="relative flex items-center bg-neutral-950/30 border border-neutral-850 rounded-2xl px-4 py-3.5 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300">
+        <Search className="text-neutral-500 mr-3" size={16} />
         <input 
           type="text"
           placeholder="Cari email atau nama..."
-          className="w-full bg-neutral-900 border border-neutral-800 rounded-xl py-3.5 pl-12 pr-4 text-xs font-bold uppercase tracking-wider focus:border-yellow-500 outline-none transition-all text-white"
+          className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {/* Database View */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
+      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-850/80 rounded-2xl overflow-hidden shadow-2xl relative">
+        <div className="p-5 border-b border-neutral-850/80 flex justify-between items-center bg-neutral-950/50">
           <div className="flex items-center gap-2">
             <History size={16} className="text-yellow-500" />
-            <h3 className="text-xs font-bold uppercase tracking-widest text-white">Recent Members</h3>
+            <h3 className="text-xs font-black uppercase tracking-widest text-white">Recent Members</h3>
           </div>
         </div>
         
-        <div className="divide-y divide-neutral-800">
+        <div className="divide-y divide-neutral-900">
           {filteredUsers.length > 0 ? filteredUsers.map((user) => (
-            <div key={user.id} className="p-4 flex items-center justify-between hover:bg-neutral-800/40 transition-colors">
+            <div key={user.id} className="p-4 flex items-center justify-between hover:bg-neutral-900/25 transition-all duration-300 group">
               <div className="flex items-center gap-4 text-left">
-                <div className="h-10 w-10 rounded-xl bg-neutral-800 flex items-center justify-center text-xs font-bold text-neutral-500 border border-neutral-700 uppercase">
+                <div className="h-10 w-10 rounded-xl bg-neutral-900/60 flex items-center justify-center text-xs font-bold text-yellow-500/80 border border-neutral-800 uppercase shrink-0">
                   {user.email.substring(0, 2)}
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <div className="text-xs font-bold uppercase tracking-tight text-white">
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <div className="text-xs font-bold uppercase tracking-tight text-white group-hover:text-yellow-500 transition-colors font-sans">
                     {user.full_name || 'Anonymous'}
                   </div>
-                  <div className="text-xs text-neutral-500 font-medium">{user.email}</div>
+                  <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-wide truncate">{user.email}</div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className={`text-xs font-bold px-2 py-1 rounded-lg uppercase tracking-wider border ${
+              <div className="flex items-center gap-2.5">
+                <div className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest border ${
                   user.plan?.toLowerCase() === 'vip' 
-                  ? 'bg-yellow-500 text-black border-yellow-400' 
-                  : 'bg-neutral-800 text-neutral-500 border-neutral-700'
+                  ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15' 
+                  : 'bg-neutral-900/80 text-neutral-500 border-neutral-800'
                 }`}>
                   {user.plan || 'FREE'}
                 </div>
@@ -243,19 +257,18 @@ export default function AdminDashboard() {
                   <button 
                     onClick={() => setUpgradeUser(user)}
                     disabled={actionLoading === user.id}
-                    className="p-2.5 bg-green-500/10 text-green-500 rounded-xl border border-green-500/20 hover:bg-green-500 hover:text-black transition-all active:scale-95 shadow-md"
+                    className="p-2.5 bg-green-500/5 text-green-400 rounded-xl border border-green-500/10 hover:bg-green-500 hover:text-black hover:border-green-400 hover:shadow-lg hover:shadow-green-500/10 transition-all active:scale-95 duration-300 cursor-pointer"
                   >
-                    {actionLoading === user.id ? <RefreshCw size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
+                    {actionLoading === user.id ? <RefreshCw size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
                   </button>
                 )}
-
 
                 <button 
                   onClick={() => handleDeleteUser(user.id)}
                   disabled={actionLoading === user.id}
-                  className="p-2.5 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                  className="p-2.5 bg-red-500/5 text-red-400 rounded-xl border border-red-500/10 hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all active:scale-95 duration-300 cursor-pointer"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>
@@ -269,33 +282,36 @@ export default function AdminDashboard() {
 
       {/* UPGRADE MANUAL PLAN SELECTION MODAL */}
       {upgradeUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200 text-left">
-          <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setUpgradeUser(null)} />
+          
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-wider text-white">Pilih Paket VIP</h3>
                 <p className="text-[10px] text-neutral-500 font-bold uppercase mt-0.5 tracking-tight truncate max-w-[280px]">User: {upgradeUser.email}</p>
               </div>
               <button 
                 onClick={() => setUpgradeUser(null)} 
-                className="w-8 h-8 rounded-full bg-neutral-850 hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
               >
-                <X size={16}/>
+                <X size={14}/>
               </button>
             </div>
             
-            <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+            <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto scrollbar-thin">
               {plans.length > 0 ? plans.map((plan) => (
                 <button
                   key={plan.id}
                   onClick={() => handleUpgradeManual(upgradeUser, plan)}
-                  className="w-full text-left p-4 rounded-xl border border-neutral-800 bg-neutral-950 hover:bg-neutral-800/40 hover:border-yellow-500/30 transition-all active:scale-[0.98] flex justify-between items-center group cursor-pointer"
+                  className="w-full text-left p-4 rounded-2xl border border-neutral-850 bg-neutral-900/20 hover:bg-neutral-850/40 hover:border-yellow-500/20 transition-all duration-300 flex justify-between items-center group cursor-pointer active:scale-[0.98]"
                 >
-                  <div>
+                  <div className="space-y-1">
                     <h4 className="text-xs font-black uppercase text-white group-hover:text-yellow-500 transition-colors">{plan.nama_paket}</h4>
-                    <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1">Durasi: {plan.durasi_hari} Hari</p>
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase leading-none">Durasi: {plan.durasi_hari} Hari</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <p className="text-xs font-black text-yellow-500">Rp {plan.harga.toLocaleString('id-ID')}</p>
                   </div>
                 </button>
