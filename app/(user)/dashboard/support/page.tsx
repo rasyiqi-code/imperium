@@ -56,7 +56,13 @@ export default function SupportPage() {
         <ContactCard 
           icon={<MessageSquare className="text-green-500" />} 
           title="WhatsApp" 
-          link={`https://wa.me/${config?.whatsapp_number}`} 
+          link={`https://wa.me/${
+            config?.whatsapp_number
+              ? (config.whatsapp_number.replace(/[^0-9]/g, '').startsWith('0')
+                ? '62' + config.whatsapp_number.replace(/[^0-9]/g, '').slice(1)
+                : config.whatsapp_number.replace(/[^0-9]/g, ''))
+              : ''
+          }`} 
           desc="Chat Admin Langsung"
         />
         <ContactCard 

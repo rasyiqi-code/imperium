@@ -478,7 +478,18 @@ export default function ManageMembers() {
                   </button>
                 )}
 
-                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                {/* Format nomor WhatsApp agar diawali dengan kode negara 62 (Indonesia) jika diawali dengan 0 */}
+                <a 
+                  href={`https://wa.me/${
+                    selectedMember.whatsapp_number
+                      ? (selectedMember.whatsapp_number.replace(/[^0-9]/g, '').startsWith('0')
+                        ? '62' + selectedMember.whatsapp_number.replace(/[^0-9]/g, '').slice(1)
+                        : selectedMember.whatsapp_number.replace(/[^0-9]/g, ''))
+                      : ''
+                  }`} 
+                  target="_blank" 
+                  className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                >
                   <MessageSquare size={14} /> Chat WhatsApp
                 </a>
                 
