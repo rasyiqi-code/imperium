@@ -17,6 +17,7 @@ export default function AdminSettings() {
   const [midtransServerKey, setMidtransServerKey] = useState('')
   const [midtransPublicKey, setMidtransPublicKey] = useState('')
   const [midtransIsProduction, setMidtransIsProduction] = useState(false)
+  const [midtransUpgradeMode, setMidtransUpgradeMode] = useState('stacking')
   const [savingMidtrans, setSavingMidtrans] = useState(false)
   const [enabledPayments, setEnabledPayments] = useState<string[]>([])
   const [syncing, setSyncing] = useState(false)
@@ -37,6 +38,7 @@ export default function AdminSettings() {
         setMidtransServerKey(settings.midtrans_server_key || '')
         setMidtransPublicKey(settings.midtrans_public_key || '')
         setMidtransIsProduction(!!settings.midtrans_is_production)
+        setMidtransUpgradeMode(settings.midtrans_upgrade_mode || 'stacking')
         setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
       }
       setLoading(false)
@@ -96,7 +98,8 @@ export default function AdminSettings() {
           clientKey: midtransClientKey,
           serverKey: midtransServerKey,
           publicKey: midtransPublicKey,
-          isProduction: midtransIsProduction
+          isProduction: midtransIsProduction,
+          upgradeMode: midtransUpgradeMode
         })
       })
       const data = await res.json()
@@ -253,6 +256,36 @@ export default function AdminSettings() {
             >
               <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${midtransIsProduction ? 'left-6' : 'left-1'}`} />
             </button>
+          </div>
+
+          <div className="space-y-2 text-left pt-3 border-t border-neutral-800">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Sistem Upgrade Member</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
+              <button
+                type="button"
+                onClick={() => setMidtransUpgradeMode('stacking')}
+                className={`p-3 rounded-lg border text-left transition-all cursor-pointer ${
+                  midtransUpgradeMode === 'stacking'
+                    ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
+                    : 'border-neutral-800 bg-black text-neutral-400 hover:border-neutral-700'
+                }`}
+              >
+                <p className="text-[10px] font-bold uppercase">Akumulasi Durasi (Stacking)</p>
+                <p className="text-[9px] text-neutral-500 mt-1 leading-normal font-medium">Masa aktif paket baru ditambahkan ke akhir masa aktif lama.</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMidtransUpgradeMode('proration')}
+                className={`p-3 rounded-lg border text-left transition-all cursor-pointer ${
+                  midtransUpgradeMode === 'proration'
+                    ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
+                    : 'border-neutral-800 bg-black text-neutral-400 hover:border-neutral-700'
+                }`}
+              >
+                <p className="text-[10px] font-bold uppercase">Potong Harga / Prorasi (Proration)</p>
+                <p className="text-[9px] text-neutral-500 mt-1 leading-normal font-medium">Harga paket baru dikurangi sisa hari aktif lama. Masa aktif baru di-reset mulai hari ini.</p>
+              </button>
+            </div>
           </div>
 
           <button 

@@ -115,6 +115,7 @@ export interface Database {
           midtrans_public_key: string | null;
           midtrans_is_production: boolean;
           midtrans_enabled_payments: string[] | null;
+          midtrans_upgrade_mode: string | null;
           updated_at?: string;
         };
         Insert: { 
@@ -128,6 +129,7 @@ export interface Database {
           midtrans_public_key?: string | null;
           midtrans_is_production?: boolean;
           midtrans_enabled_payments?: string[] | null;
+          midtrans_upgrade_mode?: string | null;
           updated_at?: string;
         };
         Update: Partial<{ 
@@ -140,7 +142,9 @@ export interface Database {
           midtrans_public_key: string | null;
           midtrans_is_production: boolean;
           midtrans_enabled_payments: string[] | null;
+          midtrans_upgrade_mode: string | null;
         }>;
+
       };
     };
   };

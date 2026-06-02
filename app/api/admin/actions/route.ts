@@ -57,18 +57,53 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Pricing plan not found' }, { status: 404 })
         }
 
-        // Fetch current active member to extend expiry date if valid
+        // Fetch current active member details (needed for proration check)
         const { data: currentMember } = await supabaseServer
           .from('data_member_vip')
-          .select('tanggal_berakhir, status_aktif')
+          .select('*')
           .eq('id_user_auth', userId)
-          .maybeSingle();
+          .maybeSingle() as any;
+
+        // Fetch Midtrans settings from database to get upgrade mode
+        const { data: settings } = await supabaseServer
+          .from('admin_settings')
+          .select('midtrans_upgrade_mode')
+          .eq('id', 1)
+          .maybeSingle() as any;
+        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
-        if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-          const currentExpiry = new Date(currentMember.tanggal_berakhir);
-          if (currentExpiry > baseDate) {
-            baseDate = currentExpiry;
+        let finalAmount = plan.harga;
+
+        if (upgradeMode === 'proration') {
+          if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+            const today = new Date();
+            const expiry = new Date(currentMember.tanggal_berakhir);
+
+            if (expiry > today) {
+              const created = currentMember.dibuat_pada 
+                ? new Date(currentMember.dibuat_pada) 
+                : (currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000));
+
+              let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
+              if (totalDays <= 0) totalDays = 30;
+
+              let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+              if (remainingDays < 0) remainingDays = 0;
+
+              const oldPaidAmount = Number(currentMember.harga_bayar) || 0;
+              const remainingValue = oldPaidAmount * (remainingDays / totalDays);
+
+              finalAmount = Math.max(10000, plan.harga - remainingValue);
+            }
+          }
+        } else {
+          // Stacking mode: extend from existing expiry date if future
+          if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+            const currentExpiry = new Date(currentMember.tanggal_berakhir);
+            if (currentExpiry > baseDate) {
+              baseDate = currentExpiry;
+            }
           }
         }
 
@@ -90,13 +125,13 @@ export async function POST(request: Request) {
             id_user_auth: userId,
             email_member: targetUser.email,
             nama_paket: plan.nama_paket,
-            harga_bayar: plan.harga,
+            harga_bayar: finalAmount,
             status_aktif: 'aktif',
             kode_invite_unik: 'imperium-vip-invite',
             tanggal_berakhir: expiryDate.toISOString()
           });
 
-        if (vipErr) throw vipErr
+        if (vipErr) throw vipErr;
 
 
         // Send Email Notification
@@ -537,20 +572,22 @@ export async function POST(request: Request) {
       }
 
       case 'updateMidtransSettings': {
-        const { clientKey, serverKey, publicKey, isProduction } = body
+        const { clientKey, serverKey, publicKey, isProduction, upgradeMode } = body
         const { error: settingErr } = await supabaseServer
           .from('admin_settings')
           .update({
             midtrans_client_key: clientKey || null,
             midtrans_server_key: serverKey || null,
             midtrans_public_key: publicKey || null,
-            midtrans_is_production: Boolean(isProduction)
+            midtrans_is_production: Boolean(isProduction),
+            midtrans_upgrade_mode: upgradeMode || 'stacking'
           })
           .eq('id', 1)
         if (settingErr) throw settingErr
 
         return NextResponse.json({ success: true })
       }
+
 
       case 'syncMidtransPaymentMethods': {
         // Probe Midtrans Core API to discover which payment types are actually enabled

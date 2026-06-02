@@ -43,8 +43,10 @@ model admin_settings {
   midtrans_public_key String?
   midtrans_is_production Boolean? @default(false)
   midtrans_enabled_payments Json?   @default("[]") @db.JsonB
+  midtrans_upgrade_mode     String?   @default("stacking")
 
   @@schema("public")
+
 }
 
 model data_member_vip {

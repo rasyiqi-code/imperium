@@ -77,23 +77,36 @@ export async function POST(request: Request) {
 
         const durationDays = (paketErr || !paket) ? 30 : paket.durasi_hari;
 
-        // Fetch current active member to extend expiry date if valid
-        const { data: currentMember } = await supabaseServer
-          .from('data_member_vip')
-          .select('tanggal_berakhir, status_aktif')
-          .eq('id_user_auth', userId)
-          .maybeSingle();
+        // Fetch Midtrans settings from database to get upgrade mode
+        const { data: settings } = await supabaseServer
+          .from('admin_settings')
+          .select('midtrans_upgrade_mode')
+          .eq('id', 1)
+          .maybeSingle() as any;
+        
+        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
-        if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-          const currentExpiry = new Date(currentMember.tanggal_berakhir);
-          if (currentExpiry > baseDate) {
-            baseDate = currentExpiry;
+
+        if (upgradeMode === 'stacking') {
+          // Fetch current active member to extend expiry date if valid
+          const { data: currentMember } = await supabaseServer
+            .from('data_member_vip')
+            .select('tanggal_berakhir, status_aktif')
+            .eq('id_user_auth', userId)
+            .maybeSingle();
+
+          if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+            const currentExpiry = new Date(currentMember.tanggal_berakhir);
+            if (currentExpiry > baseDate) {
+              baseDate = currentExpiry;
+            }
           }
         }
 
         const expiryDate = new Date(baseDate);
         expiryDate.setDate(expiryDate.getDate() + durationDays);
+
 
         // 5. Update Status Pembayaran in data_pembayaran
         const { error: errPay } = await supabaseServer

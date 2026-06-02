@@ -27,13 +27,14 @@ export async function POST() {
     // Fetch Midtrans settings from database
     const { data: settings } = await supabaseServer
       .from('admin_settings')
-      .select('midtrans_client_key, midtrans_server_key, midtrans_is_production')
+      .select('midtrans_client_key, midtrans_server_key, midtrans_is_production, midtrans_upgrade_mode')
       .eq('id', 1)
       .maybeSingle() as any;
 
     const isProduction = settings?.midtrans_is_production === true;
     const clientKey = settings?.midtrans_client_key || '';
     const serverKey = settings?.midtrans_server_key || '';
+    const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
     const config = {
       merchantCode: clientKey,
@@ -71,18 +72,20 @@ export async function POST() {
 
             const durationDays = paket ? paket.durasi_hari : 30;
 
-            // Fetch current active member to extend expiry date if valid
-            const { data: currentMember } = await supabaseServer
-              .from('data_member_vip')
-              .select('tanggal_berakhir, status_aktif')
-              .eq('id_user_auth', user.id)
-              .maybeSingle();
-
             let baseDate = new Date();
-            if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-              const currentExpiry = new Date(currentMember.tanggal_berakhir);
-              if (currentExpiry > baseDate) {
-                baseDate = currentExpiry;
+            if (upgradeMode === 'stacking') {
+              // Fetch current active member to extend expiry date if valid
+              const { data: currentMember } = await supabaseServer
+                .from('data_member_vip')
+                .select('tanggal_berakhir, status_aktif')
+                .eq('id_user_auth', user.id)
+                .maybeSingle();
+
+              if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+                const currentExpiry = new Date(currentMember.tanggal_berakhir);
+                if (currentExpiry > baseDate) {
+                  baseDate = currentExpiry;
+                }
               }
             }
 
