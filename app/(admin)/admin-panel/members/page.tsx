@@ -26,13 +26,21 @@ export default function ManageMembers() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const fetchMembers = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (error) return []
-    return (data as Profile[]) || []
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getMembers' })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch members')
+      return (data.members as Profile[]) || []
+    } catch (err) {
+      console.error('Error fetching members:', err)
+      return []
+    }
   }, [])
+
 
   const refreshData = useCallback(async () => {
     setLoading(true)

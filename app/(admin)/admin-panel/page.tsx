@@ -38,11 +38,18 @@ export default function AdminDashboard() {
   const getAdminData = async () => {
     setLoading(true)
     try {
-      const { data: pData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
+      const resMembers = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getMembers' })
+      })
+      const dataMembers = await resMembers.json()
+      if (!resMembers.ok) throw new Error(dataMembers.error || 'Failed to fetch members')
+
       const { data: payData } = await supabase.from('data_pembayaran').select('harga_bayar').eq('status_pembayaran', 'success')
       const { data: planData } = await supabase.from('data_paket_vip').select('*').order('harga', { ascending: true })
 
-      const profiles = (pData as Profile[]) || []
+      const profiles = (dataMembers.members as Profile[]) || []
       const payments = (payData as any[]) || []
       const pricingPlans = (planData as PaketVIP[]) || []
 
@@ -58,6 +65,7 @@ export default function AdminDashboard() {
       setLoading(false)
     }
   }
+
 
 
   useEffect(() => { getAdminData() }, [])

@@ -590,6 +590,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true });
       }
 
+      case 'getMembers': {
+        const { data: members, error } = await supabaseServer
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return NextResponse.json({ success: true, members });
+      }
+
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
     }
@@ -598,3 +608,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 })
   }
 }
+
