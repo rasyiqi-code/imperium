@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
-import { supabaseServer } from '@/lib/supabaseServer';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
@@ -18,12 +18,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch Midtrans settings
-    const { data: settings } = await supabaseServer
-      .from('admin_settings')
-      .select('midtrans_server_key, midtrans_is_production')
-      .eq('id', 1)
-      .maybeSingle() as any;
+    // Ambil pengaturan Midtrans menggunakan Prisma
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        midtrans_server_key: true,
+        midtrans_is_production: true
+      }
+    });
 
     const isProduction = settings?.midtrans_is_production === true;
     const serverKey = settings?.midtrans_server_key || '';

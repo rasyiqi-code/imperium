@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+import { prisma } from '@/lib/prisma';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 
 export async function GET() {
   try {
-    // 1. Authenticate user server-side using client session cookies
+    // 1. Otentikasi user di sisi server menggunakan cookie sesi client
     const supabase = await createSupabaseServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -12,15 +12,18 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 2. Fetch public Midtrans settings using service role client
-    const { data: settings, error } = await supabaseServer
-      .from('admin_settings')
-      .select('midtrans_client_key, midtrans_is_production, midtrans_upgrade_mode')
-      .eq('id', 1)
-      .maybeSingle() as any;
+    // 2. Ambil pengaturan publik Midtrans menggunakan Prisma
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        midtrans_client_key: true,
+        midtrans_is_production: true,
+        midtrans_upgrade_mode: true
+      }
+    });
 
-    if (error) {
-      console.error('Failed to load Midtrans config settings:', error);
+    if (!settings) {
+      console.error('Pengaturan Midtrans tidak ditemukan di database.');
       return NextResponse.json({ error: 'Failed to load configuration' }, { status: 500 });
     }
 

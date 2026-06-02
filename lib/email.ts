@@ -1,4 +1,4 @@
-import { supabaseServer } from './supabaseServer';
+import { prisma } from './prisma';
 
 export async function sendEmail({
   to,
@@ -10,15 +10,18 @@ export async function sendEmail({
   html: string;
 }) {
   try {
-    // 1. Fetch settings from db using service role
-    const { data: settings, error } = await supabaseServer
-      .from('admin_settings')
-      .select('email_notif_active, resend_api_key, resend_sender_email')
-      .eq('id', 1)
-      .maybeSingle() as any;
+    // 1. Ambil pengaturan email dari database menggunakan Prisma
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        email_notif_active: true,
+        resend_api_key: true,
+        resend_sender_email: true,
+      }
+    });
 
-    if (error || !settings) {
-      console.error('Failed to load email settings:', error);
+    if (!settings) {
+      console.error('Gagal memuat pengaturan email: Pengaturan tidak ditemukan.');
       return;
     }
 

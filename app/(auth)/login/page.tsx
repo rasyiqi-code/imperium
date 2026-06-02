@@ -33,17 +33,17 @@ export default function LoginPage() {
       if (error) throw error
 
       if (data?.user) {
-        // Ambil data plan dengan type safety dari tabel profiles
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('plan')
-          .eq('id', data.user.id)
-          .maybeSingle()
+        // Ambil data plan secara aman dari server-side API Actions
+        const res = await fetch('/api/user/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getUserPlan' })
+        })
+        
+        const resData = await res.json()
+        if (!res.ok) throw new Error(resData.error || 'Gagal mengambil informasi plan pengguna.')
 
-        if (profileError) throw profileError
-
-        // Casting tipe data secara aman
-        const userProfile = profile as unknown as UserProfile
+        const userPlan = resData.plan
 
         // Sinkronkan session ke server
         router.refresh()
@@ -51,7 +51,7 @@ export default function LoginPage() {
         // Jeda sebentar biar cookie nempel sempurna sebelum redirect
         setTimeout(() => {
           setLoading(false)
-          if (userProfile?.plan === 'admin') {
+          if (userPlan === 'admin') {
             window.location.href = '/admin-panel'
           } else {
             window.location.href = '/dashboard'

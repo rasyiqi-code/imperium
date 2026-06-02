@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
-import { supabaseServer } from '@/lib/supabaseServer';
+import { prisma } from '@/lib/prisma';
 
 type PaymentType =
   | 'qris'
@@ -238,23 +238,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 2. Fetch package
-    const { data: paket, error: dbError } = await supabaseServer
-      .from('data_paket_vip')
-      .select('*')
-      .eq('id', paketId)
-      .single();
+    // 2. Ambil paket menggunakan Prisma
+    const paket = await prisma.data_paket_vip.findUnique({
+      where: { id: paketId }
+    });
 
-    if (dbError || !paket) {
+    if (!paket) {
       return NextResponse.json({ error: 'Paket tidak ditemukan' }, { status: 404 });
     }
 
-    // 3. Fetch Midtrans settings
-    const { data: settings } = (await supabaseServer
-      .from('admin_settings')
-      .select('midtrans_server_key, midtrans_is_production, midtrans_upgrade_mode')
-      .eq('id', 1)
-      .maybeSingle()) as any;
+    // 3. Ambil pengaturan Midtrans menggunakan Prisma
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        midtrans_server_key: true,
+        midtrans_is_production: true,
+        midtrans_upgrade_mode: true
+      }
+    });
 
     const isProduction = settings?.midtrans_is_production === true;
     const serverKey = settings?.midtrans_server_key || '';
@@ -267,20 +268,16 @@ export async function POST(request: Request) {
     let finalAmount = Number(paket.harga);
 
     if (upgradeMode === 'proration') {
-      const { data: currentMember } = await supabaseServer
-        .from('data_member_vip')
-        .select('*')
-        .eq('id_user_auth', user.id)
-        .maybeSingle() as any;
+      const currentMember = await prisma.data_member_vip.findUnique({
+        where: { id_user_auth: user.id }
+      });
 
       if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
         const today = new Date();
         const expiry = new Date(currentMember.tanggal_berakhir);
 
         if (expiry > today) {
-          const created = currentMember.dibuat_pada 
-            ? new Date(currentMember.dibuat_pada) 
-            : (currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000));
+          const created = currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
           let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
           if (totalDays <= 0) totalDays = 30;
@@ -302,18 +299,20 @@ export async function POST(request: Request) {
     const origin = request.headers.get('origin') || 'http://localhost:3000';
     const callbackUrl = `${origin}/dashboard/upgrade`;
 
-    // 5. Insert pending payment
-    const { error: insertError } = await supabaseServer.from('data_pembayaran').insert({
-      id_user_auth: user.id,
-      email_member: user.email || '',
-      nama_paket: paket.nama_paket,
-      harga_bayar: finalAmount,
-      bukti_transfer: orderId,
-      status_pembayaran: 'pending',
-    });
-
-    if (insertError) {
-      console.error('Gagal mencatat transaksi pending:', insertError.message);
+    // 5. Insert pending payment menggunakan Prisma
+    try {
+      await prisma.data_pembayaran.create({
+        data: {
+          id_user_auth: user.id,
+          email_member: user.email || '',
+          nama_paket: paket.nama_paket,
+          harga_bayar: finalAmount,
+          bukti_transfer: orderId,
+          status_pembayaran: 'pending'
+        }
+      });
+    } catch (insertError: any) {
+      console.error('Gagal mencatat transaksi pending:', insertError.message || insertError);
       return NextResponse.json({ error: 'Gagal memproses transaksi' }, { status: 500 });
     }
 
@@ -350,7 +349,9 @@ export async function POST(request: Request) {
 
     if (chargeResult.status_code && !['200', '201'].includes(chargeResult.status_code)) {
       console.error('Midtrans Charge Error:', chargeResult);
-      await supabaseServer.from('data_pembayaran').delete().eq('bukti_transfer', orderId);
+      await prisma.data_pembayaran.deleteMany({
+        where: { bukti_transfer: orderId }
+      });
       return NextResponse.json(
         { error: chargeResult.status_message || 'Gagal membuat transaksi' },
         { status: 400 },

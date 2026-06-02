@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+import { prisma } from '@/lib/prisma';
 import { paymentManager } from '@crediblemark/buayar';
 import { sendEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    // Fetch Midtrans settings from database
-    const { data: settings } = await supabaseServer
-      .from('admin_settings')
-      .select('midtrans_client_key, midtrans_server_key, midtrans_is_production')
-      .eq('id', 1)
-      .maybeSingle() as any;
+    // Ambil pengaturan Midtrans dari database menggunakan Prisma
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        midtrans_client_key: true,
+        midtrans_server_key: true,
+        midtrans_is_production: true
+      }
+    });
 
     const isProduction = settings?.midtrans_is_production === true;
     const clientKey = settings?.midtrans_client_key || '';
@@ -23,7 +26,7 @@ export async function POST(request: Request) {
       sandbox: !isProduction,
     };
 
-    // 1. Verify callback signature from Midtrans using Buayar SDK
+    // 1. Verifikasi callback signature dari Midtrans menggunakan Buayar SDK
     const verifyResult = await paymentManager.verifyCallback("midtrans", body, config);
 
     if (!verifyResult.isValid) {
@@ -31,12 +34,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // 2. Query official transaction status to prevent replay/tampering attacks
+    // 2. Kueri status transaksi riil untuk mencegah serangan replay/pemalsuan
     const statusResponse = await paymentManager.checkTransaction("midtrans", {
       merchantOrderId: body.order_id
     }, config);
 
-    if (!statusResponse.success) {
+    if (!statusResponse.success || !statusResponse.rawResponse) {
       console.error("Failed to check status with Midtrans API", body.order_id);
       return NextResponse.json({ error: "Failed to verify transaction status" }, { status: 400 });
     }
@@ -56,45 +59,40 @@ export async function POST(request: Request) {
     if (transactionStatus === 'capture' || transactionStatus === 'settlement') {
       if (fraudStatus === 'accept' || !fraudStatus) {
         
-        // 3. Retrieve payment record from data_pembayaran by matching orderId (stored in bukti_transfer)
-        const { data: payment, error: paymentErr } = await supabaseServer
-          .from('data_pembayaran')
-          .select('*')
-          .eq('bukti_transfer', orderId)
-          .single();
+        // 3. Ambil entri pembayaran dari database mencocokkan orderId (bukti_transfer)
+        const payment = await prisma.data_pembayaran.findFirst({
+          where: { bukti_transfer: orderId }
+        });
 
-        if (paymentErr || !payment) {
+        if (!payment) {
           console.error("Webhook Error: Payment record not found in database for order_id:", orderId);
           return NextResponse.json({ error: "Payment record not found" }, { status: 400 });
         }
 
-        // 4. Fetch the package details from data_paket_vip to calculate duration
-        const { data: paket, error: paketErr } = await supabaseServer
-          .from('data_paket_vip')
-          .select('durasi_hari')
-          .eq('nama_paket', payment.nama_paket)
-          .single();
+        // 4. Ambil detail paket untuk mendapatkan durasi hari
+        const paket = await prisma.data_paket_vip.findFirst({
+          where: { nama_paket: payment.nama_paket as string },
+          select: { durasi_hari: true }
+        });
 
-        const durationDays = (paketErr || !paket) ? 30 : paket.durasi_hari;
+        const durationDays = paket ? (paket.durasi_hari || 30) : 30;
 
-        // Fetch Midtrans settings from database to get upgrade mode
-        const { data: settings } = await supabaseServer
-          .from('admin_settings')
-          .select('midtrans_upgrade_mode')
-          .eq('id', 1)
-          .maybeSingle() as any;
+        // Ambil pengaturan Midtrans dari database menggunakan Prisma untuk mode perpanjangan
+        const settingsUpgrade = await prisma.admin_settings.findUnique({
+          where: { id: 1 },
+          select: { midtrans_upgrade_mode: true }
+        });
         
-        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
+        const upgradeMode = settingsUpgrade?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
 
         if (upgradeMode === 'stacking') {
-          // Fetch current active member to extend expiry date if valid
-          const { data: currentMember } = await supabaseServer
-            .from('data_member_vip')
-            .select('tanggal_berakhir, status_aktif')
-            .eq('id_user_auth', userId)
-            .maybeSingle();
+          // Ambil keanggotaan aktif saat ini untuk memperpanjang durasi
+          const currentMember = await prisma.data_member_vip.findUnique({
+            where: { id_user_auth: userId },
+            select: { tanggal_berakhir: true, status_aktif: true }
+          });
 
           if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
             const currentExpiry = new Date(currentMember.tanggal_berakhir);
@@ -108,53 +106,50 @@ export async function POST(request: Request) {
         expiryDate.setDate(expiryDate.getDate() + durationDays);
 
 
-        // 5. Update Status Pembayaran in data_pembayaran
-        const { error: errPay } = await supabaseServer
-          .from('data_pembayaran')
-          .update({ status_pembayaran: 'success' })
-          .eq('id', payment.id);
+        // 5. Perbarui status pembayaran di tabel data_pembayaran menggunakan Prisma
+        await prisma.data_pembayaran.update({
+          where: { id: payment.id },
+          data: { status_pembayaran: 'success' }
+        });
 
+        // 6. Bersihkan keanggotaan ganda lama dan buat data keanggotaan baru
+        await prisma.data_member_vip.deleteMany({
+          where: { id_user_auth: userId }
+        });
 
-        // 6. Clear duplicate membership and insert a fresh active VIP membership record
-        await supabaseServer
-          .from('data_member_vip')
-          .delete()
-          .eq('id_user_auth', userId);
-
-        const { error: errVip } = await supabaseServer
-          .from('data_member_vip')
-          .insert({
+        await prisma.data_member_vip.create({
+          data: {
             id_user_auth: userId,
             email_member: payment.email_member,
             nama_paket: payment.nama_paket,
-            harga_bayar: payment.harga_bayar,
+            harga_bayar: Number(payment.harga_bayar),
             status_aktif: 'aktif',
-            tanggal_berakhir: expiryDate.toISOString()
-          });
+            tanggal_berakhir: expiryDate
+          }
+        });
 
-        // 7. Update User Profile Plan to VIP
-        const { error: errProf } = await supabaseServer
-          .from('profiles')
-          .update({ plan: 'vip', plan_status: 'vip' })
-          .eq('id', userId);
+        // 7. Perbarui Plan Profil Pengguna menjadi VIP
+        await prisma.profiles.update({
+          where: { id: userId },
+          data: { plan: 'vip', plan_status: 'vip' }
+        });
 
-        // 8. Insert Success Notification
-        await supabaseServer
-          .from('notifications')
-          .insert({
+        // 8. Catat Notifikasi Sukses
+        await prisma.notifications.create({
+          data: {
             user_id: userId,
             title: 'Pembayaran Sukses!',
             message: 'Selamat! Akun VIP Imperium kamu sudah aktif.',
             type: 'success'
-          });
+          }
+        });
 
-        // 9. Send Email Notification via Resend
+        // 9. Kirim Email Notifikasi via Resend
         try {
-          const { data: targetUser } = await supabaseServer
-            .from('profiles')
-            .select('full_name')
-            .eq('id', userId)
-            .single();
+          const targetUser = await prisma.profiles.findUnique({
+            where: { id: userId },
+            select: { full_name: true }
+          });
 
           const expiryDateFormatted = expiryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
           const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
@@ -206,17 +201,13 @@ export async function POST(request: Request) {
         } catch (mailErr) {
           console.error("Gagal mengirim email transaksi sukses:", mailErr);
         }
-
-        if (errPay || errVip || errProf) {
-          console.error("Database Update Error:", { errPay, errVip, errProf });
-        }
       }
     } else if (transactionStatus === 'deny' || transactionStatus === 'cancel' || transactionStatus === 'expire') {
-      // Update status to failed
-      await supabaseServer
-        .from('data_pembayaran')
-        .update({ status_pembayaran: 'failed' })
-        .eq('bukti_transfer', orderId);
+      // Perbarui status menjadi failed
+      await prisma.data_pembayaran.updateMany({
+        where: { bukti_transfer: orderId },
+        data: { status_pembayaran: 'failed' }
+      });
     }
 
     return NextResponse.json({ status: 'OK' });
