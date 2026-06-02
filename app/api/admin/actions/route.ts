@@ -1,35 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { supabaseServer } from '@/lib/supabaseServer'
+import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { sendEmail } from '@/lib/email'
 import { paymentManager } from '@crediblemark/buayar'
 
-interface MemberVip {
-  id: string;
-  id_user_auth: string;
-  email_member: string;
-  nama_paket: string;
-  harga_bayar: number;
-  status_aktif: string;
-  kode_invite_unik: string;
-  tanggal_berakhir: string;
-  dibuat_pada?: string;
-  created_at?: string;
-}
-
-interface AdminSettings {
-  id: number;
-  midtrans_upgrade_mode?: string | null;
-  midtrans_server_key?: string | null;
-  midtrans_client_key?: string | null;
-  midtrans_public_key?: string | null;
-  midtrans_is_production?: boolean | null;
-  midtrans_enabled_payments?: string[] | null;
-}
-
 export async function POST(request: Request) {
   try {
-    // 1. Authenticate user using client session cookies
+    // 1. Otentikasi pengguna menggunakan cookie sesi client
     const clientSupabase = await createSupabaseServerClient()
     const { data: { user }, error: authError } = await clientSupabase.auth.getUser()
 
@@ -37,18 +16,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 2. Verify admin role on server side using service role
-    const { data: profile, error: profileError } = await supabaseServer
-      .from('profiles')
-      .select('plan')
-      .eq('id', user.id)
-      .single()
+    // 2. Verifikasi role admin di sisi server menggunakan Prisma
+    const profile = await prisma.profiles.findUnique({
+      where: { id: user.id },
+      select: { plan: true }
+    })
 
-    if (profileError || profile?.plan !== 'admin') {
+    if (!profile || profile.plan !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // 3. Process the admin action
+    // 3. Proses tindakan admin
     const body = await request.json()
     const { action } = body
 
@@ -58,45 +36,40 @@ export async function POST(request: Request) {
         if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
         if (!planId) return NextResponse.json({ error: 'Missing planId' }, { status: 400 })
         
-        // Get target user details to copy email/name
-        const { data: targetUser, error: targetErr } = await supabaseServer
-          .from('profiles')
-          .select('email, full_name')
-          .eq('id', userId)
-          .single()
+        // Ambil detail target pengguna menggunakan Prisma
+        const targetUser = await prisma.profiles.findUnique({
+          where: { id: userId },
+          select: { email: true, full_name: true }
+        })
         
-        if (targetErr || !targetUser) {
+        if (!targetUser || !targetUser.email) {
           return NextResponse.json({ error: 'User not found' }, { status: 404 })
         }
 
-        // Get plan details dynamically
-        const { data: plan, error: planErr } = await supabaseServer
-          .from('data_paket_vip')
-          .select('*')
-          .eq('id', planId)
-          .single()
+        // Ambil detail paket VIP secara dinamis menggunakan Prisma
+        const plan = await prisma.data_paket_vip.findUnique({
+          where: { id: planId }
+        })
 
-        if (planErr || !plan) {
+        if (!plan) {
           return NextResponse.json({ error: 'Pricing plan not found' }, { status: 404 })
         }
 
-        // Fetch current active member details (needed for proration check)
-        const { data: currentMember } = await supabaseServer
-          .from('data_member_vip')
-          .select('*')
-          .eq('id_user_auth', userId)
-          .maybeSingle() as unknown as { data: MemberVip | null };
+        // Ambil info membership aktif saat ini (berguna untuk kalkulasi proration)
+        const currentMember = await prisma.data_member_vip.findUnique({
+          where: { id_user_auth: userId }
+        })
 
-        // Fetch Midtrans settings from database to get upgrade mode
-        const { data: settings } = await supabaseServer
-          .from('admin_settings')
-          .select('midtrans_upgrade_mode')
-          .eq('id', 1)
-          .maybeSingle() as unknown as { data: AdminSettings | null };
+        // Ambil setelan Midtrans dari database untuk mendapatkan upgrade mode
+        const settings = await prisma.admin_settings.findUnique({
+          where: { id: 1 },
+          select: { midtrans_upgrade_mode: true }
+        })
         const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
-        let finalAmount = plan.harga;
+        const planHarga = Number(plan.harga);
+        let finalAmount = planHarga;
 
         if (upgradeMode === 'proration') {
           if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
@@ -104,9 +77,7 @@ export async function POST(request: Request) {
             const expiry = new Date(currentMember.tanggal_berakhir);
 
             if (expiry > today) {
-              const created = currentMember.dibuat_pada 
-                ? new Date(currentMember.dibuat_pada) 
-                : (currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000));
+              const created = currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
               let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
               if (totalDays <= 0) totalDays = 30;
@@ -117,11 +88,11 @@ export async function POST(request: Request) {
               const oldPaidAmount = Number(currentMember.harga_bayar) || 0;
               const remainingValue = oldPaidAmount * (remainingDays / totalDays);
 
-              finalAmount = Math.max(10000, plan.harga - remainingValue);
+              finalAmount = Math.max(10000, planHarga - remainingValue);
             }
           }
         } else {
-          // Stacking mode: extend from existing expiry date if future
+          // Stacking mode: perpanjang masa aktif dari tanggal berakhir sebelumnya jika di masa depan
           if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
             const currentExpiry = new Date(currentMember.tanggal_berakhir);
             if (currentExpiry > baseDate) {
@@ -133,31 +104,32 @@ export async function POST(request: Request) {
         const expiryDate = new Date(baseDate);
         expiryDate.setDate(expiryDate.getDate() + plan.durasi_hari);
 
-        // Update profiles to vip
-        const { error: profErr } = await supabaseServer
-          .from('profiles')
-          .update({ plan: 'vip', plan_status: 'vip' })
-          .eq('id', userId);
-        if (profErr) throw profErr;
+        // Menjalankan transaksi Prisma untuk integritas data
+        await prisma.$transaction([
+          // Update profile ke status VIP
+          prisma.profiles.update({
+            where: { id: userId },
+            data: { plan: 'vip', plan_status: 'vip' }
+          }),
+          // Hapus entri data member vip sebelumnya jika ada
+          prisma.data_member_vip.deleteMany({
+            where: { id_user_auth: userId }
+          }),
+          // Buat entri data member vip baru
+          prisma.data_member_vip.create({
+            data: {
+              id_user_auth: userId,
+              email_member: targetUser.email,
+              nama_paket: plan.nama_paket,
+              harga_bayar: finalAmount,
+              status_aktif: 'aktif',
+              kode_invite_unik: 'imperium-vip-invite',
+              tanggal_berakhir: expiryDate
+            }
+          })
+        ])
 
-        // Sync VIP membership details
-        await supabaseServer.from('data_member_vip').delete().eq('id_user_auth', userId);
-        const { error: vipErr } = await supabaseServer
-          .from('data_member_vip')
-          .insert({
-            id_user_auth: userId,
-            email_member: targetUser.email,
-            nama_paket: plan.nama_paket,
-            harga_bayar: finalAmount,
-            status_aktif: 'aktif',
-            kode_invite_unik: 'imperium-vip-invite',
-            tanggal_berakhir: expiryDate.toISOString()
-          });
-
-        if (vipErr) throw vipErr;
-
-
-        // Send Email Notification
+        // Kirim email notifikasi
         const expiryDateFormatted = expiryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
         const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
   <div style="text-align: center; margin-bottom: 24px;">
@@ -213,19 +185,17 @@ export async function POST(request: Request) {
         const { userId } = body
         if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
 
-        // Revert profiles to free
-        const { error: profErr } = await supabaseServer
-          .from('profiles')
-          .update({ plan: 'free', plan_status: 'free' })
-          .eq('id', userId)
-        if (profErr) throw profErr
-
-        // Update VIP active status to nonaktif
-        const { error: vipErr } = await supabaseServer
-          .from('data_member_vip')
-          .update({ status_aktif: 'nonaktif' })
-          .eq('id_user_auth', userId)
-        if (vipErr) throw vipErr
+        // Transaksi Prisma untuk menonaktifkan status VIP
+        await prisma.$transaction([
+          prisma.profiles.update({
+            where: { id: userId },
+            data: { plan: 'free', plan_status: 'free' }
+          }),
+          prisma.data_member_vip.update({
+            where: { id_user_auth: userId },
+            data: { status_aktif: 'nonaktif' }
+          })
+        ])
 
         return NextResponse.json({ success: true })
       }
@@ -234,21 +204,20 @@ export async function POST(request: Request) {
         const { ids } = body
         if (!ids || !Array.isArray(ids)) return NextResponse.json({ error: 'Missing ids' }, { status: 400 })
 
-        // Prevent self deletion
+        // Mencegah penghapusan akun sendiri
         if (ids.includes(user.id)) {
           return NextResponse.json({ error: 'Anda tidak dapat menghapus akun Anda sendiri!' }, { status: 400 })
         }
 
-        // Clear user data from related tables
-        await supabaseServer.from('data_member_vip').delete().in('id_user_auth', ids)
-        await supabaseServer.from('data_pembayaran').delete().in('id_user_auth', ids)
-        await supabaseServer.from('notifications').delete().in('user_id', ids)
+        // Hapus semua data relasi user di database menggunakan Prisma
+        await prisma.$transaction([
+          prisma.data_member_vip.deleteMany({ where: { id_user_auth: { in: ids } } }),
+          prisma.data_pembayaran.deleteMany({ where: { id_user_auth: { in: ids } } }),
+          prisma.notifications.deleteMany({ where: { user_id: { in: ids } } }),
+          prisma.profiles.deleteMany({ where: { id: { in: ids } } })
+        ])
 
-        // Delete from profiles table
-        const { error: profErr } = await supabaseServer.from('profiles').delete().in('id', ids)
-        if (profErr) throw profErr
-
-        // Delete users from Supabase Auth system to prevent orphaned accounts
+        // Hapus akun dari sistem Supabase Auth (diperlukan menggunakan API admin service role Supabase)
         for (const id of ids) {
           try {
             await supabaseServer.auth.admin.deleteUser(id)
@@ -264,71 +233,63 @@ export async function POST(request: Request) {
         const { paymentId } = body
         if (!paymentId) return NextResponse.json({ error: 'Missing paymentId' }, { status: 400 })
 
-        // Fetch pending payment details
-        const { data: payment, error: payGetErr } = await supabaseServer
-          .from('data_pembayaran')
-          .select('*')
-          .eq('id', paymentId)
-          .single()
+        // Ambil rincian pembayaran pending menggunakan Prisma
+        const payment = await prisma.data_pembayaran.findUnique({
+          where: { id: paymentId }
+        })
 
-        if (payGetErr || !payment) {
+        if (!payment || !payment.id_user_auth) {
           return NextResponse.json({ error: 'Payment record not found' }, { status: 404 })
         }
 
-        // Fetch dynamic package duration from data_paket_vip
-        const { data: paket } = await supabaseServer
-          .from('data_paket_vip')
-          .select('durasi_hari')
-          .eq('nama_paket', payment.nama_paket)
-          .single()
+        // Ambil durasi paket secara dinamis berdasarkan nama paket
+        const paket = await prisma.data_paket_vip.findFirst({
+          where: { nama_paket: payment.nama_paket }
+        })
 
         const durationDays = paket ? paket.durasi_hari : 30
         const expiryDate = new Date()
         expiryDate.setDate(expiryDate.getDate() + durationDays)
 
-        // 1. Update Status Pembayaran
-        const { error: payErr } = await supabaseServer
-          .from('data_pembayaran')
-          .update({ status_pembayaran: 'success' })
-          .eq('id', paymentId)
-        if (payErr) throw payErr
-
-        // 2. Update Plan di Profiles
-        const { error: profErr } = await supabaseServer
-          .from('profiles')
-          .update({ plan: 'vip', plan_status: 'vip' })
-          .eq('id', payment.id_user_auth)
-        if (profErr) throw profErr
-
-        // 3. Sync ke Data Member VIP
-        await supabaseServer.from('data_member_vip').delete().eq('id_user_auth', payment.id_user_auth)
-        const { error: vipErr } = await supabaseServer
-          .from('data_member_vip')
-          .insert({
-            id_user_auth: payment.id_user_auth,
-            email_member: payment.email_member,
-            nama_paket: payment.nama_paket,
-            harga_bayar: payment.harga_bayar,
-            status_aktif: 'aktif',
-            kode_invite_unik: 'imperium-vip-invite',
-            tanggal_berakhir: expiryDate.toISOString()
+        // Konfirmasi pembayaran, update plan user ke VIP, sinkronisasi member VIP, dan kirim notifikasi via transaksi Prisma
+        await prisma.$transaction([
+          prisma.data_pembayaran.update({
+            where: { id: paymentId },
+            data: { status_pembayaran: 'success' }
+          }),
+          prisma.profiles.update({
+            where: { id: payment.id_user_auth },
+            data: { plan: 'vip', plan_status: 'vip' }
+          }),
+          prisma.data_member_vip.deleteMany({
+            where: { id_user_auth: payment.id_user_auth }
+          }),
+          prisma.data_member_vip.create({
+            data: {
+              id_user_auth: payment.id_user_auth,
+              email_member: payment.email_member,
+              nama_paket: payment.nama_paket,
+              harga_bayar: Number(payment.harga_bayar),
+              status_aktif: 'aktif',
+              kode_invite_unik: 'imperium-vip-invite',
+              tanggal_berakhir: expiryDate
+            }
+          }),
+          prisma.notifications.create({
+            data: {
+              user_id: payment.id_user_auth,
+              title: 'Pembayaran Sukses!',
+              message: 'Selamat! Akun VIP Imperium kamu sudah aktif.',
+              type: 'success'
+            }
           })
-        if (vipErr) throw vipErr
+        ])
 
-        // 4. Send Success Notification
-        await supabaseServer.from('notifications').insert({
-          user_id: payment.id_user_auth,
-          title: 'Pembayaran Sukses!',
-          message: 'Selamat! Akun VIP Imperium kamu sudah aktif.',
-          type: 'success'
+        // Dapatkan nama lengkap pengguna untuk keperluan pengiriman email
+        const targetUser = await prisma.profiles.findUnique({
+          where: { id: payment.id_user_auth },
+          select: { full_name: true }
         })
-
-        // Fetch user full_name for email
-        const { data: targetUser } = await supabaseServer
-          .from('profiles')
-          .select('full_name')
-          .eq('id', payment.id_user_auth)
-          .single()
 
         const expiryDateFormatted = expiryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
         const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
@@ -374,7 +335,7 @@ export async function POST(request: Request) {
 
         await sendEmail({
           to: payment.email_member,
-          subject: '[Imperium Crypto] Pembayaran Terkonfirmasi - Akun VIP Aktif!',
+          subject: '[Imperium Crypto] Pembayaran VIP Terkonfirmasi - Akun VIP Aktif!',
           html: mailHtml,
         })
 
@@ -385,29 +346,29 @@ export async function POST(request: Request) {
         const { paymentId } = body
         if (!paymentId) return NextResponse.json({ error: 'Missing paymentId' }, { status: 400 })
 
-        // Fetch details before updating
-        const { data: payment } = await supabaseServer
-          .from('data_pembayaran')
-          .select('*')
-          .eq('id', paymentId)
-          .single()
+        // Dapatkan rincian pembayaran sebelum diupdate
+        const payment = await prisma.data_pembayaran.findUnique({
+          where: { id: paymentId }
+        })
 
-        const { error: payErr } = await supabaseServer
-          .from('data_pembayaran')
-          .update({ status_pembayaran: 'failed' })
-          .eq('id', paymentId)
-        if (payErr) throw payErr
+        if (!payment) {
+          return NextResponse.json({ error: 'Payment record not found' }, { status: 404 })
+        }
 
-        if (payment) {
-          const { data: targetUser } = await supabaseServer
-            .from('profiles')
-            .select('full_name')
-            .eq('id', payment.id_user_auth)
-            .single()
+        // Tandai pembayaran sebagai gagal/ditolak
+        await prisma.data_pembayaran.update({
+          where: { id: paymentId },
+          data: { status_pembayaran: 'failed' }
+        })
 
-          const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
+        const targetUser = await prisma.profiles.findUnique({
+          where: { id: payment.id_user_auth || undefined },
+          select: { full_name: true }
+        })
+
+        const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
   <div style="text-align: center; margin-bottom: 24px;">
-    <h2 style="color: #ef4444; font-size: 24px; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Imperium Crypto</h2>
+    <h2 style="color: #type-red; font-size: 24px; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Imperium Crypto</h2>
     <p style="color: #6b7280; font-size: 12px; margin-top: 4px; text-transform: uppercase;">Payment Rejected</p>
   </div>
   <div style="margin-bottom: 24px;">
@@ -445,12 +406,11 @@ export async function POST(request: Request) {
   </div>
 </div>`
 
-          await sendEmail({
-            to: payment.email_member,
-            subject: '[Imperium Crypto] Pembayaran VIP Ditolak',
-            html: mailHtml,
-          })
-        }
+        await sendEmail({
+          to: payment.email_member,
+          subject: '[Imperium Crypto] Pembayaran VIP Ditolak',
+          html: mailHtml,
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -473,16 +433,16 @@ export async function POST(request: Request) {
           ? fitur.map((f: unknown) => String(f).trim()).filter(Boolean)
           : []
 
-        const { error: planErr } = await supabaseServer
-          .from('data_paket_vip')
-          .update({
+        // Perbarui pricing plan lewat Prisma
+        await prisma.data_paket_vip.update({
+          where: { id: planId },
+          data: {
             nama_paket,
             harga: parsedHarga,
             durasi_hari: parsedDurasi,
             fitur: cleanedFitur
-          })
-          .eq('id', planId)
-        if (planErr) throw planErr
+          }
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -507,15 +467,15 @@ export async function POST(request: Request) {
           ? fitur.map((f: unknown) => String(f).trim()).filter(Boolean)
           : []
 
-        const { error: planErr } = await supabaseServer
-          .from('data_paket_vip')
-          .insert({
+        // Buat pricing plan baru lewat Prisma
+        await prisma.data_paket_vip.create({
+          data: {
             nama_paket: String(nama_paket).trim(),
             harga: parsedHarga,
             durasi_hari: parsedDurasi,
             fitur: cleanedFitur
-          })
-        if (planErr) throw planErr
+          }
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -524,20 +484,20 @@ export async function POST(request: Request) {
         const { config } = body
         if (!config) return NextResponse.json({ error: 'Missing config' }, { status: 400 })
 
-        // Whitelist allowed fields to prevent arbitrary column updates or primary key changes
+        // Whitelist field konfigurasi yang diizinkan untuk update
         const allowedKeys = ['whatsapp_number', 'telegram_link', 'support_email', 'operational_hours']
-        const filteredConfig: Record<string, unknown> = {}
+        const filteredConfig: Record<string, string | null> = {}
         for (const key of allowedKeys) {
           if (config[key] !== undefined) {
             filteredConfig[key] = config[key]
           }
         }
 
-        const { error: configErr } = await supabaseServer
-          .from('support_config')
-          .update(filteredConfig)
-          .eq('id', 1)
-        if (configErr) throw configErr
+        // Perbarui support config lewat Prisma
+        await prisma.support_config.update({
+          where: { id: 1 },
+          data: filteredConfig
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -546,10 +506,14 @@ export async function POST(request: Request) {
         const { faq } = body
         if (!faq || !faq.question || !faq.answer) return NextResponse.json({ error: 'Missing faq details' }, { status: 400 })
 
-        const { error: faqErr } = await supabaseServer
-          .from('support_faqs')
-          .insert([faq])
-        if (faqErr) throw faqErr
+        // Tambah FAQ lewat Prisma
+        await prisma.support_faqs.create({
+          data: {
+            question: faq.question,
+            answer: faq.answer,
+            sort_order: Number(faq.sort_order) || 0
+          }
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -558,11 +522,10 @@ export async function POST(request: Request) {
         const { faqId } = body
         if (!faqId) return NextResponse.json({ error: 'Missing faqId' }, { status: 400 })
 
-        const { error: faqErr } = await supabaseServer
-          .from('support_faqs')
-          .delete()
-          .eq('id', faqId)
-        if (faqErr) throw faqErr
+        // Hapus FAQ lewat Prisma
+        await prisma.support_faqs.delete({
+          where: { id: faqId }
+        })
 
         return NextResponse.json({ success: true })
       }
@@ -571,54 +534,58 @@ export async function POST(request: Request) {
         const { dbField, value } = body
         if (!dbField) return NextResponse.json({ error: 'Missing dbField' }, { status: 400 })
 
-        const { error: settingErr } = await supabaseServer
-          .from('admin_settings')
-          .update({ [dbField]: value })
-          .eq('id', 1)
-        if (settingErr) throw settingErr
+        // Toggle toggle setting lewat Prisma
+        await prisma.admin_settings.update({
+          where: { id: 1 },
+          data: { [dbField]: value }
+        })
 
         return NextResponse.json({ success: true })
       }
 
       case 'updateResendSettings': {
         const { apiKey, senderEmail } = body
-        const { error: settingErr } = await supabaseServer
-          .from('admin_settings')
-          .update({
+        
+        // Simpan setelan Resend lewat Prisma
+        await prisma.admin_settings.update({
+          where: { id: 1 },
+          data: {
             resend_api_key: apiKey || null,
             resend_sender_email: senderEmail || null
-          })
-          .eq('id', 1)
-        if (settingErr) throw settingErr
+          }
+        })
 
         return NextResponse.json({ success: true })
       }
 
       case 'updateMidtransSettings': {
         const { clientKey, serverKey, publicKey, isProduction, upgradeMode } = body
-        const { error: settingErr } = await supabaseServer
-          .from('admin_settings')
-          .update({
+        
+        // Simpan setelan Midtrans lewat Prisma
+        await prisma.admin_settings.update({
+          where: { id: 1 },
+          data: {
             midtrans_client_key: clientKey || null,
             midtrans_server_key: serverKey || null,
             midtrans_public_key: publicKey || null,
             midtrans_is_production: Boolean(isProduction),
             midtrans_upgrade_mode: upgradeMode || 'stacking'
-          })
-          .eq('id', 1)
-        if (settingErr) throw settingErr
+          }
+        })
 
         return NextResponse.json({ success: true })
       }
 
-
       case 'syncMidtransPaymentMethods': {
-        // Probe Midtrans Core API to discover which payment types are actually enabled
-        const { data: mtSettings } = await supabaseServer
-          .from('admin_settings')
-          .select('midtrans_server_key, midtrans_client_key, midtrans_is_production')
-          .eq('id', 1)
-          .maybeSingle() as unknown as { data: AdminSettings | null };
+        // Ambil data server key Midtrans melalui Prisma
+        const mtSettings = await prisma.admin_settings.findUnique({
+          where: { id: 1 },
+          select: {
+            midtrans_server_key: true,
+            midtrans_client_key: true,
+            midtrans_is_production: true
+          }
+        })
 
         const sKey = mtSettings?.midtrans_server_key || '';
         const cKey = mtSettings?.midtrans_client_key || '';
@@ -640,16 +607,14 @@ export async function POST(request: Request) {
 
         const enabled = probeResult.enabled;
 
-        // Save enabled methods to database
-        const { error: saveErr } = await supabaseServer
-          .from('admin_settings')
-          .update({ midtrans_enabled_payments: enabled as string[] })
-          .eq('id', 1);
-        if (saveErr) throw saveErr;
+        // Simpan daftar payment methods yang aktif ke database melalui Prisma
+        await prisma.admin_settings.update({
+          where: { id: 1 },
+          data: { midtrans_enabled_payments: enabled as Prisma.InputJsonValue }
+        });
 
         return NextResponse.json({ success: true, enabled });
       }
-
 
       case 'updateEnabledPayments': {
         const { enabledPayments } = body;
@@ -657,54 +622,71 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'enabledPayments harus berupa array' }, { status: 400 });
         }
 
-        const { error: saveErr } = await supabaseServer
-          .from('admin_settings')
-          .update({ midtrans_enabled_payments: enabledPayments as string[] })
-          .eq('id', 1);
-        if (saveErr) throw saveErr;
+        // Perbarui enabled payments lewat Prisma
+        await prisma.admin_settings.update({
+          where: { id: 1 },
+          data: { midtrans_enabled_payments: enabledPayments as Prisma.InputJsonValue }
+        });
 
         return NextResponse.json({ success: true });
       }
 
       case 'getMembers': {
-        // Ambil parameter paginasi dan filter plan dari body request
+        // Ambil parameter paginasi dan filter dari body
         const { limit = 10, offset = 0, plan = 'all' } = body;
         
-        let query = supabaseServer
-          .from('profiles')
-          .select('*', { count: 'exact' });
-
-        // Filter berdasarkan plan jika ditentukan (selain 'all')
+        // Membangun where clause berdasarkan filter plan
+        const whereClause: { plan?: string } = {}
         if (plan && plan !== 'all') {
-          query = query.eq('plan', plan);
+          whereClause.plan = plan;
         }
 
-        const { data: members, count, error } = await query
-          .order('created_at', { ascending: false })
-          .range(offset, offset + limit - 1);
+        // Query profil member dan total count secara paralel melalui Prisma transaction
+        const [members, count] = await prisma.$transaction([
+          prisma.profiles.findMany({
+            where: whereClause,
+            orderBy: { created_at: 'desc' },
+            skip: offset,
+            take: limit
+          }),
+          prisma.profiles.count({
+            where: whereClause
+          })
+        ])
 
-        if (error) throw error;
+        // Map data profiles agar created_at dikirim sebagai string ISO yang konsisten
+        let enrichedMembers = members.map(m => ({
+          ...m,
+          created_at: m.created_at.toISOString()
+        }));
 
-        // Ambil data aktivasi dan kedaluwarsa VIP secara paralel untuk user yang di-fetch
-        let enrichedMembers = members || [];
         if (enrichedMembers.length > 0) {
           const userIds = enrichedMembers.map(m => m.id);
-          const { data: vipData, error: vipErr } = await supabaseServer
-            .from('data_member_vip')
-            .select('id_user_auth, created_at, tanggal_berakhir, nama_paket')
-            .in('id_user_auth', userIds);
           
-          if (!vipErr && vipData) {
+          // Ambil data aktivasi dan kadaluarsa VIP dari tabel data_member_vip menggunakan Prisma
+          const vipData = await prisma.data_member_vip.findMany({
+            where: { id_user_auth: { in: userIds } },
+            select: { id_user_auth: true, created_at: true, tanggal_berakhir: true, nama_paket: true }
+          })
+          
+          if (vipData && vipData.length > 0) {
             const vipMap = new Map(vipData.map(v => [v.id_user_auth, v]));
             enrichedMembers = enrichedMembers.map(m => {
               const vipInfo = vipMap.get(m.id);
               return {
                 ...m,
-                vip_activated_at: vipInfo ? vipInfo.created_at : null,
-                vip_expired_at: vipInfo ? vipInfo.tanggal_berakhir : null,
+                vip_activated_at: vipInfo?.created_at ? vipInfo.created_at.toISOString() : null,
+                vip_expired_at: vipInfo?.tanggal_berakhir ? vipInfo.tanggal_berakhir.toISOString() : null,
                 vip_plan_name: vipInfo ? vipInfo.nama_paket : null
               };
             });
+          } else {
+            enrichedMembers = enrichedMembers.map(m => ({
+              ...m,
+              vip_activated_at: null,
+              vip_expired_at: null,
+              vip_plan_name: null
+            }));
           }
         }
 
@@ -720,4 +702,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 })
   }
 }
-
