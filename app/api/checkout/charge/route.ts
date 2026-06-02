@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 import { prisma } from '@/lib/prisma';
+import { calculateProratedPrice } from '@/lib/payment';
 
 type PaymentType =
   | 'qris'
@@ -24,6 +25,60 @@ const VALID_TYPES: PaymentType[] = [
   'akulaku', 'kredivo',
 ];
 
+interface ChargePayload {
+  transaction_details: {
+    order_id: string;
+    gross_amount: number;
+  };
+  customer_details: {
+    first_name: string;
+    email: string;
+  };
+  item_details: {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  custom_field1: string;
+  payment_type?: string;
+  qris?: { acquirer: string };
+  gopay?: { enable_callback: boolean; callback_url: string };
+  shopeepay?: { callback_url: string };
+  echannel?: { bill_info1: string; bill_info2: string };
+  bank_transfer?: { bank: string };
+  cstore?: { store: string; message: string };
+  kredivo?: { seller_details: { address: { city: string } } };
+  [key: string]: unknown;
+}
+
+interface MidtransAction {
+  name: string;
+  url: string;
+}
+
+interface MidtransVaNumber {
+  bank: string;
+  va_number: string;
+}
+
+interface MidtransChargeResponse {
+  status_code?: string;
+  status_message?: string;
+  order_id: string;
+  transaction_status: string;
+  expiry_time: string;
+  gross_amount: string;
+  actions?: MidtransAction[];
+  bill_key?: string;
+  biller_code?: string;
+  permata_va_number?: string;
+  va_numbers?: MidtransVaNumber[];
+  store?: string;
+  payment_code?: string;
+  redirect_url?: string;
+}
+
 function buildChargePayload(
   orderId: string,
   amount: number,
@@ -32,8 +87,8 @@ function buildChargePayload(
   customerEmail: string,
   paketNama: string,
   callbackBaseUrl: string,
-) {
-  const base: any = {
+): ChargePayload {
+  const base: ChargePayload = {
     transaction_details: {
       order_id: orderId,
       gross_amount: amount,
@@ -123,7 +178,7 @@ function buildChargePayload(
   }
 }
 
-function parseChargeResponse(result: any, paymentType: PaymentType) {
+function parseChargeResponse(result: MidtransChargeResponse, paymentType: PaymentType) {
   const base = {
     orderId: result.order_id,
     transactionStatus: result.transaction_status,
@@ -133,14 +188,14 @@ function parseChargeResponse(result: any, paymentType: PaymentType) {
 
   // ─── QRIS ───────────────────────────
   if (paymentType === 'qris') {
-    const qrAction = result.actions?.find((a: any) => a.name === 'generate-qr-code');
+    const qrAction = result.actions?.find((a: MidtransAction) => a.name === 'generate-qr-code');
     return { ...base, type: 'qris' as const, qrUrl: qrAction?.url || '' };
   }
 
   // ─── GoPay ──────────────────────────
   if (paymentType === 'gopay') {
-    const qrAction = result.actions?.find((a: any) => a.name === 'generate-qr-code');
-    const dlAction = result.actions?.find((a: any) => a.name === 'deeplink-redirect');
+    const qrAction = result.actions?.find((a: MidtransAction) => a.name === 'generate-qr-code');
+    const dlAction = result.actions?.find((a: MidtransAction) => a.name === 'deeplink-redirect');
     return {
       ...base,
       type: 'qris' as const,
@@ -151,7 +206,7 @@ function parseChargeResponse(result: any, paymentType: PaymentType) {
 
   // ─── ShopeePay ──────────────────────
   if (paymentType === 'shopeepay') {
-    const dlAction = result.actions?.find((a: any) => a.name === 'deeplink-redirect');
+    const dlAction = result.actions?.find((a: MidtransAction) => a.name === 'deeplink-redirect');
     return {
       ...base,
       type: 'redirect' as const,
@@ -265,33 +320,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Midtrans belum dikonfigurasi' }, { status: 500 });
     }
 
-    let finalAmount = Number(paket.harga);
+    // Ambil info membership aktif saat ini (berguna untuk kalkulasi proration)
+    const currentMember = upgradeMode === 'proration'
+      ? await prisma.data_member_vip.findUnique({ where: { id_user_auth: user.id } })
+      : null;
 
-    if (upgradeMode === 'proration') {
-      const currentMember = await prisma.data_member_vip.findUnique({
-        where: { id_user_auth: user.id }
-      });
-
-      if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-        const today = new Date();
-        const expiry = new Date(currentMember.tanggal_berakhir);
-
-        if (expiry > today) {
-          const created = currentMember.created_at ? new Date(currentMember.created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-          let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000));
-          if (totalDays <= 0) totalDays = 30;
-
-          let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
-          if (remainingDays < 0) remainingDays = 0;
-
-          const oldPaidAmount = Number(currentMember.harga_bayar) || 0;
-          const remainingValue = oldPaidAmount * (remainingDays / totalDays);
-
-          finalAmount = Math.max(10000, Number(paket.harga) - remainingValue);
-        }
-      }
-    }
+    const finalAmount = calculateProratedPrice(currentMember, Number(paket.harga), upgradeMode);
 
     // 4. Generate order ID & build callback URL
     const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -311,8 +345,9 @@ export async function POST(request: Request) {
           status_pembayaran: 'pending'
         }
       });
-    } catch (insertError: any) {
-      console.error('Gagal mencatat transaksi pending:', insertError.message || insertError);
+    } catch (insertError: unknown) {
+      const err = insertError as Error;
+      console.error('Gagal mencatat transaksi pending:', err.message || err);
       return NextResponse.json({ error: 'Gagal memproses transaksi' }, { status: 500 });
     }
 
@@ -345,7 +380,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(payload),
     });
 
-    const chargeResult = await chargeRes.json();
+    const chargeResult = (await chargeRes.json()) as MidtransChargeResponse;
 
     if (chargeResult.status_code && !['200', '201'].includes(chargeResult.status_code)) {
       console.error('Midtrans Charge Error:', chargeResult);
@@ -361,8 +396,9 @@ export async function POST(request: Request) {
     // 8. Parse and return
     const parsed = parseChargeResponse(chargeResult, paymentType as PaymentType);
     return NextResponse.json(parsed);
-  } catch (error: any) {
-    console.error('Charge Error:', error);
-    return NextResponse.json({ error: error.message || 'Gagal membuat transaksi' }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Charge Error:', err);
+    return NextResponse.json({ error: err.message || 'Gagal membuat transaksi' }, { status: 500 });
   }
 }

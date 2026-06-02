@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { prisma } from '@/lib/prisma'
+import { calculateProratedPrice } from '@/lib/payment'
 
 export async function POST(request: Request) {
   try {
@@ -145,32 +146,12 @@ export async function POST(request: Request) {
           select: { midtrans_upgrade_mode: true }
         })
 
-        let finalPrice = Number(plan.harga)
+        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking'
+        const currentMember = upgradeMode === 'proration'
+          ? await prisma.data_member_vip.findUnique({ where: { id_user_auth: user.id } })
+          : null
 
-        if (settings?.midtrans_upgrade_mode === 'proration') {
-          const currentMember = await prisma.data_member_vip.findUnique({
-            where: { id_user_auth: user.id }
-          })
-
-          if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
-            const today = new Date()
-            const expiry = new Date(currentMember.tanggal_berakhir)
-
-            if (expiry > today) {
-              const created = currentMember.created_at || new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
-              let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000))
-              if (totalDays <= 0) totalDays = 30
-
-              let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
-              if (remainingDays < 0) remainingDays = 0
-
-              const oldPaidAmount = Number(currentMember.harga_bayar) || 0
-              const remainingValue = oldPaidAmount * (remainingDays / totalDays)
-
-              finalPrice = Math.max(10000, Number(plan.harga) - remainingValue)
-            }
-          }
-        }
+        const finalPrice = calculateProratedPrice(currentMember, Number(plan.harga), upgradeMode)
 
         // Simpan data bukti transfer secara aman via Prisma
         await prisma.data_pembayaran.create({

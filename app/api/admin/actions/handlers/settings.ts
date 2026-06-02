@@ -1,0 +1,144 @@
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
+import { paymentManager } from '@crediblemark/buayar'
+
+interface SettingsBody {
+  dbField?: string
+  value?: boolean
+  apiKey?: string
+  senderEmail?: string
+  clientKey?: string
+  serverKey?: string
+  publicKey?: string
+  isProduction?: boolean
+  upgradeMode?: string
+  enabledPayments?: string[]
+}
+
+/**
+ * Toggle boolean status untuk setelan sistem (email_notif_active, maintenance_mode, dsb).
+ */
+export async function toggleSetting(body: SettingsBody): Promise<Response> {
+  const { dbField, value } = body
+  if (!dbField) return NextResponse.json({ error: 'Missing dbField' }, { status: 400 })
+
+  // Toggle toggle setting lewat Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: { [dbField]: value }
+  })
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Memperbarui pengaturan Resend API.
+ */
+export async function updateResendSettings(body: SettingsBody): Promise<Response> {
+  const { apiKey, senderEmail } = body
+  
+  // Simpan setelan Resend lewat Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: {
+      resend_api_key: apiKey || null,
+      resend_sender_email: senderEmail || null
+    }
+  })
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Memperbarui pengaturan kredensial Midtrans.
+ */
+export async function updateMidtransSettings(body: SettingsBody): Promise<Response> {
+  const { clientKey, serverKey, publicKey, isProduction, upgradeMode } = body
+  
+  // Simpan setelan Midtrans lewat Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: {
+      midtrans_client_key: clientKey || null,
+      midtrans_server_key: serverKey || null,
+      midtrans_public_key: publicKey || null,
+      midtrans_is_production: Boolean(isProduction),
+      midtrans_upgrade_mode: upgradeMode || 'stacking'
+    }
+  })
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Menyinkronkan daftar metode pembayaran dari Midtrans Dashboard.
+ */
+export async function syncMidtransPaymentMethods(): Promise<Response> {
+  // Ambil data server key Midtrans melalui Prisma
+  const mtSettings = await prisma.admin_settings.findUnique({
+    where: { id: 1 },
+    select: {
+      midtrans_server_key: true,
+      midtrans_client_key: true,
+      midtrans_is_production: true
+    }
+  })
+
+  const sKey = mtSettings?.midtrans_server_key || ''
+  const cKey = mtSettings?.midtrans_client_key || ''
+  if (!sKey) {
+    return NextResponse.json({ error: 'Server key Midtrans belum dikonfigurasi' }, { status: 400 })
+  }
+
+  const isProd = mtSettings?.midtrans_is_production === true
+
+  const probeResult = await paymentManager.probePaymentMethods('midtrans', {
+    merchantCode: cKey,
+    apiKey: sKey,
+    sandbox: !isProd,
+  })
+
+  if (!probeResult.success) {
+    return NextResponse.json({ error: probeResult.error || 'Gagal melakukan probe metode pembayaran' }, { status: 500 })
+  }
+
+  const enabled = probeResult.enabled
+
+  // Simpan daftar payment methods yang aktif ke database melalui Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: { midtrans_enabled_payments: enabled as Prisma.InputJsonValue }
+  })
+
+  return NextResponse.json({ success: true, enabled })
+}
+
+/**
+ * Memperbarui daftar metode pembayaran yang diizinkan untuk digunakan di website.
+ */
+export async function updateEnabledPayments(body: SettingsBody): Promise<Response> {
+  const { enabledPayments } = body
+  if (!Array.isArray(enabledPayments)) {
+    return NextResponse.json({ error: 'enabledPayments harus berupa array' }, { status: 400 })
+  }
+
+  // Perbarui enabled payments lewat Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: { midtrans_enabled_payments: enabledPayments as Prisma.InputJsonValue }
+  })
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Mengambil seluruh setelan admin sistem.
+ */
+export async function getAdminSettings(): Promise<Response> {
+  // Ambil pengaturan admin sistem via Prisma
+  const settings = await prisma.admin_settings.findUnique({
+    where: { id: 1 }
+  })
+  return NextResponse.json({ success: true, settings })
+}
