@@ -19,6 +19,7 @@ export interface MemberVIP {
   id_discord_user?: string | null;
   tanggal_berakhir?: string | null;
   dibuat_pada?: string;
+  created_at?: string | null;
 }
 
 export interface AdminInternal {

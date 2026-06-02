@@ -7,6 +7,8 @@ import {
   Upload, CheckCircle2, RefreshCw, 
   ArrowLeft, Info, ChevronDown 
 } from 'lucide-react'
+import { User } from '@supabase/supabase-js'
+import { PaketVIP, MemberVIP } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
 
 function ConfirmContent() {
@@ -19,12 +21,12 @@ function ConfirmContent() {
   const [fetching, setFetching] = useState(true)
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   
-  const [listPaket, setListPaket] = useState<any[]>([])
-  const [selectedPaket, setSelectedPaket] = useState<any>(null)
+  const [listPaket, setListPaket] = useState<PaketVIP[]>([])
+  const [selectedPaket, setSelectedPaket] = useState<PaketVIP | null>(null)
   const [upgradeMode, setUpgradeMode] = useState('stacking')
-  const [currentMember, setCurrentMember] = useState<any>(null)
+  const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
 
   // Load Data dengan Guard
   useEffect(() => {
@@ -33,32 +35,36 @@ function ConfirmContent() {
     async function initPage() {
       try {
         setFetching(true)
-        // Ambil User & Paket sekaligus
-        const [authRes, pricingRes, configData] = await Promise.all([
-          supabase.auth.getUser(),
-          (supabase.from('data_paket_vip') as any).select('*'),
-          fetch('/api/config/midtrans').then(res => res.json()).catch(() => ({ upgradeMode: 'stacking' }))
-        ])
-
+        const authRes = await supabase.auth.getUser()
         if (!isMounted) return
 
         const user = authRes.data?.user;
         if (user) {
           setUser(user)
-          const { data } = await supabase.from('data_member_vip').select('*').eq('id_user_auth', user.id).maybeSingle();
-          if (data) setCurrentMember(data)
-        }
-        
-        if (configData && configData.upgradeMode) {
-          setUpgradeMode(configData.upgradeMode)
-        }
+          
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getUpgradeData' })
+          })
+          const data = await res.json()
 
-        if (pricingRes.data && pricingRes.data.length > 0) {
-          setListPaket(pricingRes.data)
-          const initial = planParam 
-            ? pricingRes.data.find((p: any) => p.id === planParam) || pricingRes.data[0]
-            : pricingRes.data[0]
-          setSelectedPaket(initial)
+          if (isMounted && res.ok) {
+            const memberData = data.memberData
+            const packages = data.paketList || []
+            const upMode = data.upgradeMode
+
+            if (memberData) setCurrentMember(memberData)
+            setUpgradeMode(upMode)
+
+            if (packages.length > 0) {
+              setListPaket(packages)
+              const initial = planParam 
+                ? packages.find((p: PaketVIP) => p.id === planParam) || packages[0]
+                : packages[0]
+              setSelectedPaket(initial)
+            }
+          }
         }
       } catch (err) {
         console.error("Init error:", err)
@@ -154,17 +160,18 @@ function ConfirmContent() {
 
       const { data: { publicUrl } } = supabase.storage.from('pembayaran').getPublicUrl(fileName)
 
-      // 2. Insert ke data_pembayaran
-      const finalPrice = getProratedPrice(Number(selectedPaket.harga))
-      const { error: dbErr } = await (supabase.from('data_pembayaran') as any).insert([{
-        id_user_auth: user.id,
-        email_member: user.email,
-        nama_paket: selectedPaket.nama_paket, 
-        harga_bayar: finalPrice,
-        bukti_transfer: publicUrl,
-        status_pembayaran: 'pending'
-      }])
-      if (dbErr) throw dbErr
+      // 2. Kirim data transaksi secara aman ke backend
+      const res = await fetch('/api/user/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'submitManualPayment',
+          planId: selectedPaket.id,
+          publicUrl
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan transaksi pembayaran')
       
       showAlert({
         title: 'Pembayaran Terkirim',
@@ -174,10 +181,11 @@ function ConfirmContent() {
           router.push('/dashboard')
         }
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Pengiriman Gagal',
-        message: `Terjadi kesalahan: ${err.message}`,
+        message: `Terjadi kesalahan: ${error.message}`,
         type: 'danger'
       })
     } finally {

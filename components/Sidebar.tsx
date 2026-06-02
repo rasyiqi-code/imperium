@@ -30,19 +30,27 @@ export default function Sidebar({ role }: SidebarProps) {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name, plan')
-          .eq('id', user.id)
-          .single()
-        
-        const profileData = profile as { full_name: string | null; plan: string | null } | null
-        
-        setUserData({
-          email: user.email || '',
-          name: profileData?.full_name || user.email?.split('@')[0] || 'User',
-          plan: profileData?.plan || 'free'
-        })
+        try {
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getProfileData' })
+          })
+          const data = await res.json()
+          if (res.ok && data.profile) {
+            const profileData = data.profile
+            const vipData = data.vipData
+            const isVip = profileData?.plan === 'vip' || vipData?.status_aktif === 'aktif' || vipData?.status_aktif === 'vip'
+            
+            setUserData({
+              email: user.email || '',
+              name: profileData?.full_name || user.email?.split('@')[0] || 'User',
+              plan: isVip ? 'vip' : (profileData?.plan || 'free')
+            })
+          }
+        } catch (err) {
+          console.error("Gagal mendapatkan data user:", err)
+        }
       }
     }
     getUser()

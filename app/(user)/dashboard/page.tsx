@@ -9,19 +9,7 @@ import { Crown, Lock, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 // Samakan dengan interface di lib/types.ts lu biar gak bentrok
-interface ProfileData {
-  full_name: string | null
-}
-
-interface MembershipData {
-  id_user_auth: string
-  nomor_wa: string | null
-  status_aktif: any // Pake any di internal fetcher biar luwes pas ditarik
-  nama_paket: string | null
-  harga_bayar: number | null
-  dibuat_pada: string | null
-  tanggal_berakhir: string | null
-}
+import { StatusAktif } from '@/lib/types'
 
 
 export default function UserDashboard() {
@@ -41,37 +29,34 @@ export default function UserDashboard() {
           console.error("Payment sync failed:", e)
         }
 
-        // Ambil Nama dari profiles
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single()
+        try {
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getDashboardData' })
+          })
+          const data = await res.json()
+          
+          if (res.ok) {
+            const p = data.profile
+            const m = data.membership
 
-        // Ambil Membership dari data_member_vip
-        const { data: membership } = await supabase
-          .from('data_member_vip')
-          .select('*')
-          .eq('id_user_auth', user.id)
-          .maybeSingle()
-        
-        const p = profile as ProfileData | null
-        const m = membership as MembershipData | null
-
-        // Gabungkan data dengan Type Assertion yang bener buat status_aktif
-        const mergedData: MemberVIP = {
-          id_user_auth: user.id,
-          email_member: user.email || '',
-          nama_member: p?.full_name || user.user_metadata?.full_name || 'Member',
-          nomor_wa: m?.nomor_wa || user.user_metadata?.whatsapp_number || '',
-          // KRUSIAL: Tambahin 'as any' atau casting ke type spesifik biar TS gak rewel
-          status_aktif: (m?.status_aktif || 'free') as any, 
-          nama_paket: m?.nama_paket || null,
-          harga_bayar: m?.harga_bayar || 0,
-          dibuat_pada: m?.dibuat_pada || new Date().toISOString(),
-          tanggal_berakhir: m?.tanggal_berakhir || null
+            const mergedData: MemberVIP = {
+              id_user_auth: user.id,
+              email_member: user.email || '',
+              nama_member: p?.full_name || user.user_metadata?.full_name || 'Member',
+              nomor_wa: m?.nomor_wa || user.user_metadata?.whatsapp_number || '',
+              status_aktif: (m?.status_aktif || 'free') as StatusAktif, 
+              nama_paket: m?.nama_paket || null,
+              harga_bayar: m?.harga_bayar || 0,
+              dibuat_pada: m?.created_at || new Date().toISOString(),
+              tanggal_berakhir: m?.tanggal_berakhir || null
+            }
+            setMember(mergedData)
+          }
+        } catch (err) {
+          console.error("Gagal memuat data dashboard:", err)
         }
-        setMember(mergedData)
       }
       setLoading(false)
     }

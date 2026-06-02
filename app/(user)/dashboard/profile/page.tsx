@@ -28,33 +28,30 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
-        // 1. Fetch user metadata from profiles table
-        const { data: profData } = await supabase
-          .from('profiles')
-          .select('full_name, whatsapp_number, plan')
-          .eq('id', user.id)
-          .maybeSingle() as any
+        const res = await fetch('/api/user/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getProfileData' })
+        })
+        const data = await res.json()
 
-        // 2. Fetch membership active status from data_member_vip
-        const { data: vipData } = await supabase
-          .from('data_member_vip')
-          .select('status_aktif, tanggal_berakhir')
-          .eq('id_user_auth', user.id)
-          .maybeSingle() as any
+        if (res.ok) {
+          const profData = data.profile
+          const vipData = data.vipData
+          const isVip = profData?.plan === 'vip' || vipData?.status_aktif === 'aktif' || vipData?.status_aktif === 'vip'
 
-        const isVip = profData?.plan === 'vip' || vipData?.status_aktif === 'aktif' || vipData?.status_aktif === 'vip'
+          const dataProfile = {
+            id_user_auth: user.id,
+            nama_member: profData?.full_name || user.user_metadata?.full_name || 'Member Imperium',
+            email_member: user.email || '',
+            nomor_wa: profData?.whatsapp_number || user.user_metadata?.whatsapp_number || '',
+            status_vip: isVip ? 'VIP MEMBER' : 'PAKET GRATIS',
+            masa_aktif: vipData?.tanggal_berakhir || null
+          }
 
-        const dataProfile = {
-          id_user_auth: user.id,
-          nama_member: profData?.full_name || user.user_metadata?.full_name || 'Member Imperium',
-          email_member: user.email || '',
-          nomor_wa: profData?.whatsapp_number || user.user_metadata?.whatsapp_number || '',
-          status_vip: isVip ? 'VIP MEMBER' : 'PAKET GRATIS',
-          masa_aktif: vipData?.tanggal_berakhir || null
+          setProfile(dataProfile)
+          setTempProfile(dataProfile)
         }
-
-        setProfile(dataProfile)
-        setTempProfile(dataProfile)
       }
     } catch (err) {
       console.error("Fetch profile error:", err)
@@ -64,21 +61,34 @@ export default function ProfilePage() {
   }, [])
 
   useEffect(() => {
-    fetchProfile()
+    let isMounted = true
+    const deferFetch = () => {
+      if (isMounted) {
+        fetchProfile()
+      }
+    }
+    const timer = setTimeout(deferFetch, 0)
+    return () => {
+      isMounted = false
+      clearTimeout(timer)
+    }
   }, [fetchProfile])
 
   const handleUpdate = async () => {
     setUpdating(true)
     try {
-      // 3. Save name and whatsapp number in profiles table
-      const { error } = await (supabase.from('profiles') as any)
-        .update({
-          full_name: tempProfile.nama_member,
-          whatsapp_number: tempProfile.nomor_wa
+      const res = await fetch('/api/user/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateProfile',
+          fullName: tempProfile.nama_member,
+          whatsappNumber: tempProfile.nomor_wa
         })
-        .eq('id', profile.id_user_auth)
+      })
+      const data = await res.json()
 
-      if (!error) {
+      if (res.ok && data.success) {
         setProfile({ ...tempProfile })
         setIsEditing(false)
         showAlert({
@@ -89,14 +99,15 @@ export default function ProfilePage() {
       } else {
         showAlert({
           title: 'Gagal Memperbarui',
-          message: error.message,
+          message: data.error || 'Gagal memperbarui profil',
           type: 'danger'
         })
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error
       showAlert({
         title: 'Error',
-        message: `Gagal: ${err.message}`,
+        message: `Gagal: ${error.message}`,
         type: 'danger'
       })
     } finally {

@@ -1,25 +1,46 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { MessageSquare, Send, Mail, ChevronRight, ExternalLink, LifeBuoy, RefreshCw } from 'lucide-react'
+import { MessageSquare, Send, Mail, RefreshCw } from 'lucide-react'
+
+interface SupportConfig {
+  whatsapp_number: string
+  telegram_link: string
+  support_email: string
+  operational_hours: string
+}
+
+interface FAQ {
+  id: string
+  question: string
+  answer: string
+  sort_order: number
+}
 
 export default function SupportPage() {
-  const [config, setConfig] = useState<any>(null)
-  const [faqs, setFaqs] = useState<any[]>([])
+  const [config, setConfig] = useState<SupportConfig | null>(null)
+  const [faqs, setFaqs] = useState<FAQ[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadSupport() {
-      // Ambil Kontak & FAQ sekaligus
-      const [resConfig, resFaqs] = await Promise.all([
-        supabase.from('support_config').select('*').eq('id', 1).maybeSingle(),
-        supabase.from('support_faqs').select('*').order('sort_order', { ascending: true })
-      ])
-      
-      if (resConfig.data) setConfig(resConfig.data)
-      if (resFaqs.data) setFaqs(resFaqs.data)
-      setLoading(false)
+      try {
+        const res = await fetch('/api/user/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getSupportPageData' })
+        })
+        const data = await res.json()
+        
+        if (res.ok) {
+          if (data.config) setConfig(data.config)
+          if (data.faqs) setFaqs(data.faqs)
+        }
+      } catch (err) {
+        console.error("Gagal memuat data support:", err)
+      } finally {
+        setLoading(false)
+      }
     }
     loadSupport()
   }, [])
@@ -72,9 +93,16 @@ export default function SupportPage() {
   )
 }
 
-function ContactCard({ icon, title, link, desc }: any) {
+interface ContactCardProps {
+  icon: React.ReactNode
+  title: string
+  link?: string
+  desc: string
+}
+
+function ContactCard({ icon, title, link, desc }: ContactCardProps) {
   return (
-    <a href={link} target="_blank" className="p-5 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-yellow-500/50 transition-all group text-left">
+    <a href={link || '#'} target="_blank" className="p-5 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-yellow-500/50 transition-all group text-left">
       <div className="mb-4 p-3 bg-black rounded-xl w-fit border border-neutral-800">{icon}</div>
       <p className="text-xs font-bold uppercase text-white">{title}</p>
       <p className="text-[10px] font-bold text-neutral-500 uppercase">{desc}</p>

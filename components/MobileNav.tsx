@@ -12,15 +12,21 @@ export default function MobileNav() {
 
   useEffect(() => {
     async function getPlan() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data } = await (supabase.from('profiles') as any)
-          .select('plan')
-          .eq('id', user.id)
-          .single()
-        if (data?.plan) {
-          setPlan(data.plan)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getUserPlan' })
+          })
+          const data = await res.json()
+          if (res.ok && data.plan) {
+            setPlan(data.plan)
+          }
         }
+      } catch (err) {
+        console.error("Gagal mendapatkan plan:", err)
       }
     }
     getPlan()

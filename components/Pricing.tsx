@@ -13,15 +13,17 @@ export default function Pricing() {
 
   useEffect(() => {
     async function loadPaket() {
-      const { data } = await supabase
-        .from('data_paket_vip')
-        .select('*')
-        .order('harga', { ascending: true });
-
-      if (data) {
-        setPaketList(data as PaketVIP[]);
+      try {
+        const res = await fetch('/api/packages')
+        const data = await res.json()
+        if (res.ok && data.packages) {
+          setPaketList(data.packages as PaketVIP[])
+        }
+      } catch (err) {
+        console.error("Gagal memuat paket VIP:", err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false);
     }
     loadPaket();
   }, []);

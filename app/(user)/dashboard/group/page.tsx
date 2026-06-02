@@ -14,32 +14,31 @@ export default function GroupPage() {
     async function loadData() {
       try {
         const authRes = await supabase.auth.getUser()
-        const supportRes = await (supabase.from('support_config') as any).select('*').eq('id', 1).maybeSingle()
 
         if (authRes.data?.user) {
-          const { data: profile } = await (supabase.from('profiles') as any)
-            .select('plan')
-            .eq('id', authRes.data.user.id)
-            .maybeSingle()
-          
-          if (profile?.plan === 'vip' || profile?.plan === 'admin') {
-            setIsVip(true)
-          }
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getGroupData' })
+          })
+          const data = await res.json()
 
-          // Fetch VIP member invite link if they are VIP
-          if (profile?.plan === 'vip') {
-            const { data: vipData } = await (supabase.from('data_member_vip') as any)
-              .select('kode_invite_unik')
-              .eq('id_user_auth', authRes.data.user.id)
-              .maybeSingle()
-            if (vipData?.kode_invite_unik) {
+          if (res.ok) {
+            const profile = data.profile
+            const vipData = data.vipData
+            
+            if (profile?.plan === 'vip' || profile?.plan === 'admin') {
+              setIsVip(true)
+            }
+
+            if (profile?.plan === 'vip' && vipData?.kode_invite_unik) {
               setVipLink(`https://discord.gg/${vipData.kode_invite_unik}`)
             }
-          }
-        }
 
-        if (supportRes.data?.telegram_link) {
-          setFreeLink(supportRes.data.telegram_link)
+            if (data.telegramLink) {
+              setFreeLink(data.telegramLink)
+            }
+          }
         }
       } catch (err) {
         console.error("Error loading group page data:", err)

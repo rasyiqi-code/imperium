@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { PaketVIP } from '@/lib/types'
+import { PaketVIP, MemberVIP } from '@/lib/types'
 import PricingCard from '@/components/PricingCard'
 import PaymentModal from '@/components/PaymentModal'
 import { RefreshCw, CreditCard, ShieldCheck } from 'lucide-react'
@@ -13,40 +13,45 @@ export default function UpgradePage() {
   const [loading, setLoading] = useState(true)
   const [showPayment, setShowPayment] = useState(false)
   const [upgradeMode, setUpgradeMode] = useState('stacking')
-  const [currentMember, setCurrentMember] = useState<any>(null)
+  const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
 
   useEffect(() => {
     async function loadPaket() {
-      const [authRes, paketRes, configData] = await Promise.all([
-        supabase.auth.getUser(),
-        supabase.from('data_paket_vip').select('*').order('harga', { ascending: true }),
-        fetch('/api/config/midtrans').then(res => res.json()).catch(() => ({ upgradeMode: 'stacking' }))
-      ])
+      try {
+        const authRes = await supabase.auth.getUser()
+        const user = authRes.data?.user
 
-      const user = authRes.data?.user;
-      let memberData: any = null;
-      if (user) {
-        const { data } = await supabase.from('data_member_vip').select('*').eq('id_user_auth', user.id).maybeSingle();
-        memberData = data;
-      }
+        if (user) {
+          const res = await fetch('/api/user/actions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'getUpgradeData' })
+          })
+          const data = await res.json()
 
-      if (configData && configData.upgradeMode) {
-        setUpgradeMode(configData.upgradeMode)
-      }
-      if (memberData) {
-        setCurrentMember(memberData)
-      }
+          if (res.ok) {
+            const packages = (data.paketList as PaketVIP[]) || []
+            const memberData = data.memberData
+            const upMode = data.upgradeMode
 
-      if (!paketRes.error && paketRes.data) {
-        const packages = paketRes.data as PaketVIP[]
-        setPaketList(packages)
-        if (packages.length > 0) {
-          const activePkg = memberData && (memberData.status_aktif === 'aktif' || memberData.status_aktif === 'vip') ? memberData.nama_paket : null;
-          const selectable = packages.find(p => p.nama_paket !== activePkg) || packages[0];
-          setSelectedId(selectable.id);
+            setUpgradeMode(upMode)
+            if (memberData) {
+              setCurrentMember(memberData)
+            }
+
+            setPaketList(packages)
+            if (packages.length > 0) {
+              const activePkg = memberData && (memberData.status_aktif === 'aktif' || memberData.status_aktif === 'vip') ? memberData.nama_paket : null;
+              const selectable = packages.find(p => p.nama_paket !== activePkg) || packages[0];
+              setSelectedId(selectable.id);
+            }
+          }
         }
+      } catch (err) {
+        console.error("Gagal memuat data paket upgrade:", err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     loadPaket()
   }, [])

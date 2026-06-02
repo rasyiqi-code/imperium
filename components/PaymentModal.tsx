@@ -111,35 +111,39 @@ export default function PaymentModal({
   useEffect(() => {
     if (!isOpen) return
 
-    setStep('loading')
-    setSelectedMethod(null)
-    setChargeData(null)
-    setErrorMsg('')
+    const timer = setTimeout(() => {
+      setStep('loading')
+      setSelectedMethod(null)
+      setChargeData(null)
+      setErrorMsg('')
 
-    const fetchMethods = async () => {
-      try {
-        const res = await fetch('/api/config/payment-methods')
-        if (!res.ok) throw new Error('Gagal memuat metode pembayaran')
-        const data = await res.json()
+      const fetchMethods = async () => {
+        try {
+          const res = await fetch('/api/config/payment-methods')
+          if (!res.ok) throw new Error('Gagal memuat metode pembayaran')
+          const data = await res.json()
 
-        if (data.needsSync || !data.methods?.length) {
-          setMethods([])
-          setErrorMsg('Metode pembayaran belum dikonfigurasi. Admin perlu sync dari Dashboard Midtrans.')
+          if (data.needsSync || !data.methods?.length) {
+            setMethods([])
+            setErrorMsg('Metode pembayaran belum dikonfigurasi. Admin perlu sync dari Dashboard Midtrans.')
+            setStep('error')
+            return
+          }
+
+          setMethods(data.methods)
+          setStep('select')
+        } catch (err: unknown) {
+          const error = err as Error
+          setErrorMsg(error.message || 'Gagal memuat metode pembayaran')
           setStep('error')
-          return
         }
-
-        setMethods(data.methods)
-        setStep('select')
-      } catch (err: any) {
-        setErrorMsg(err.message || 'Gagal memuat metode pembayaran')
-        setStep('error')
       }
-    }
 
-    fetchMethods()
+      fetchMethods()
+    }, 0)
 
     return () => {
+      clearTimeout(timer)
       if (pollRef.current) clearInterval(pollRef.current)
       if (countdownRef.current) clearInterval(countdownRef.current)
     }
@@ -147,18 +151,22 @@ export default function PaymentModal({
 
   // Countdown timer
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null
     if (step === 'paying' && chargeData?.expiryTime) {
-      setCountdown(getExpiryCountdown(chargeData.expiryTime))
-      countdownRef.current = setInterval(() => {
-        const val = getExpiryCountdown(chargeData.expiryTime)
-        setCountdown(val)
-        if (val === '00:00:00' && countdownRef.current) {
-          clearInterval(countdownRef.current)
-        }
-      }, 1000)
-      return () => {
-        if (countdownRef.current) clearInterval(countdownRef.current)
-      }
+      timer = setTimeout(() => {
+        setCountdown(getExpiryCountdown(chargeData.expiryTime))
+        countdownRef.current = setInterval(() => {
+          const val = getExpiryCountdown(chargeData.expiryTime)
+          setCountdown(val)
+          if (val === '00:00:00' && countdownRef.current) {
+            clearInterval(countdownRef.current)
+          }
+        }, 1000)
+      }, 0)
+    }
+    return () => {
+      if (timer) clearTimeout(timer)
+      if (countdownRef.current) clearInterval(countdownRef.current)
     }
   }, [step, chargeData])
 
@@ -213,8 +221,9 @@ export default function PaymentModal({
 
       setStep('paying')
       startPolling(data.orderId)
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Terjadi kesalahan')
+    } catch (err: unknown) {
+      const error = err as Error
+      setErrorMsg(error.message || 'Terjadi kesalahan')
       setStep('error')
     } finally {
       setLoading(false)

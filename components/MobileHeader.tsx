@@ -14,26 +14,23 @@ export default function MobileHeader() {
 
   // 1. Ambil data Notifikasi
   const fetchNotifications = useCallback(async () => {
-    setFetching(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const { data, error: dbError } = await supabase
-        .from('notifications')
-        .select('*')
-        .or(`user_id.eq.${user.id},user_id.is.null`)
-        .order('created_at', { ascending: false })
-        .limit(10)
+      // Set fetching secara asinkron agar tidak memicu cascading render
+      setFetching(true)
 
-      if (dbError) throw dbError
+      const res = await fetch('/api/user/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getNotifications' })
+      })
+      const data = await res.json()
 
-      if (data) {
-        // Casting data sebagai array Notification
-        const fetchedNotifs = data as Notification[]
+      if (res.ok && data.notifications) {
+        const fetchedNotifs = data.notifications as Notification[]
         setNotifications(fetchedNotifs)
-        
-        // Kasih tahu TS kalau 'n' adalah Notification
         setHasUnread(fetchedNotifs.some((n: Notification) => !n.is_read))
       }
     } catch (err) {
@@ -43,33 +40,42 @@ export default function MobileHeader() {
     }
   }, [])
 
-  // 2. Gunakan useEffect tanpa memicu cascading render
+  // 2. Gunakan useEffect tanpa memicu cascading render (dengan deferring)
   useEffect(() => {
     let isMounted = true
-    if (isMounted) {
-      fetchNotifications()
+    
+    const deferFetch = () => {
+      if (isMounted) {
+        fetchNotifications()
+      }
     }
-    return () => { isMounted = false }
+
+    const timer = setTimeout(deferFetch, 0)
+    return () => { 
+      isMounted = false 
+      clearTimeout(timer)
+    }
   }, [fetchNotifications])
 
   // 3. Fungsi Tandai Sudah Baca
   const markAsRead = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
 
-    // Solusi Error 'never': Kasih tahu tipe data tabelnya
-    const { error: updateError } = await supabase
-      .from('notifications')
-      .update({ is_read: true } as never) // Pakai 'as never' di sini jika TS masih rewel atau definisikan generic-nya
-      .eq('user_id', user.id)
-      .eq('is_read', false)
-    
-    if (updateError) {
-      console.error("Gagal update status baca:", updateError.message)
+      const res = await fetch('/api/user/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'markNotificationsAsRead' })
+      })
+      
+      if (res.ok) {
+        setHasUnread(false)
+        fetchNotifications()
+      }
+    } catch (err) {
+      console.error("Gagal update status baca:", err)
     }
-
-    setHasUnread(false)
-    fetchNotifications()
   }
 
   return (
