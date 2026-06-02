@@ -461,11 +461,13 @@ export default function ManageMembers() {
               
               {/* Grid Tombol Aksi */}
               <div className="pt-4 border-t border-neutral-900">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  
+                  {/* Tombol 1: Upgrade / Perpanjang VIP */}
                   <button 
                     onClick={() => handleUpgrade(selectedMember)}
                     disabled={isProcessing}
-                    className={`w-full py-3.5 rounded-xl font-black tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-2.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       selectedMember.plan === 'vip' 
                       ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
                       : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
@@ -474,20 +476,25 @@ export default function ManageMembers() {
                     {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : selectedMember.plan === 'vip' ? <><PlusCircle size={14} /> Perpanjang VIP</> : 'Upgrade ke VIP'}
                   </button>
 
+                  {/* Tombol 2: Nonaktifkan VIP (Selalu Tampil, Disabled jika Free) */}
                   {selectedMember.plan === 'vip' ? (
                     <button 
                       onClick={() => handleDeactivate(selectedMember)}
                       disabled={isProcessing}
-                      className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
                     </button>
                   ) : (
-                    <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
-                      <Trash2 size={14} /> Hapus Akun
+                    <button 
+                      disabled
+                      className="w-full py-2.5 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
+                    >
+                      <UserMinus size={14} /> Nonaktifkan VIP
                     </button>
                   )}
 
+                  {/* Tombol 3: Chat WhatsApp */}
                   {/* Format nomor WhatsApp agar diawali dengan kode negara 62 (Indonesia) jika diawali dengan 0 */}
                   <a 
                     href={`https://wa.me/${
@@ -498,16 +505,20 @@ export default function ManageMembers() {
                         : ''
                     }`} 
                     target="_blank" 
-                    className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <MessageSquare size={14} /> Chat WhatsApp
                   </a>
 
-                  {selectedMember.plan === 'vip' && (
-                    <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
-                      <Trash2 size={14} /> Hapus Akun
-                    </button>
-                  )}
+                  {/* Tombol 4: Hapus Akun */}
+                  <button 
+                    onClick={() => deleteMembers([selectedMember.id])} 
+                    disabled={isProcessing}
+                    className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Trash2 size={14} /> Hapus Akun
+                  </button>
+
                 </div>
               </div>
             </div>
