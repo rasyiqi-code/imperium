@@ -78,18 +78,18 @@ export default function UserDashboard() {
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto animate-in fade-in duration-500 text-left">
 
       {/* ===== Welcome Header ===== */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
         <div>
           {/* Badge status di atas nama */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full border text-[10px] font-bold tracking-widest uppercase
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 mb-2.5 rounded-full border text-[9px] font-bold tracking-widest uppercase
             bg-neutral-900 border-neutral-800 text-neutral-500">
             <span className={`h-1.5 w-1.5 rounded-full ${isVip ? 'bg-green-400' : 'bg-neutral-600'}`} />
             {isVip ? 'Member VIP' : 'Member Free'}
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Selamat Datang, <span className="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">{firstName}</span>!
+          <h1 className="text-xl font-black uppercase tracking-tight text-white">
+            Selamat Datang, <span className="text-yellow-500">{firstName}</span>!
           </h1>
-          <p className="text-neutral-400 mt-2 text-sm">Pantau status membership dan akses komunitas eksklusif kamu.</p>
+          <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Pantau status membership dan akses komunitas eksklusif kamu.</p>
         </div>
         
         <button 

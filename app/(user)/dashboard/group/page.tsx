@@ -59,11 +59,11 @@ export default function GroupPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-      <div className="w-20 h-20 bg-[#5865F2]/10 rounded-3xl flex items-center justify-center text-[#5865F2] mb-6 border border-[#5865F2]/20">
-        <MessageSquare size={40} />
+      <div className="w-16 h-16 bg-[#5865F2]/10 rounded-2xl flex items-center justify-center text-[#5865F2] mb-5 border border-[#5865F2]/20">
+        <MessageSquare size={32} />
       </div>
-      <h1 className="text-2xl font-black text-white uppercase tracking-tighter">Komunitas Imperium</h1>
-      <p className="text-neutral-500 text-sm mt-2 max-w-xs">Pilih grup diskusi sesuai tingkat membership kamu.</p>
+      <h1 className="text-xl font-black text-white uppercase tracking-tight">Komunitas <span className="text-yellow-500">Imperium</span></h1>
+      <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider max-w-xs">Pilih grup diskusi sesuai tingkat membership kamu.</p>
 
       <div className="w-full mt-10 space-y-4 max-w-md">
         {/* Link Free */}

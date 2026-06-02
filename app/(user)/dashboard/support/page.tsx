@@ -58,13 +58,9 @@ export default function SupportPage() {
     <div className="p-4 md:p-6 space-y-5 max-w-7xl mx-auto animate-in fade-in duration-500 text-left">
 
       {/* ===== Page Header ===== */}
-      <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-2 rounded-full border text-[9px] font-bold tracking-widest uppercase bg-neutral-900 border-neutral-800 text-neutral-500">
-          <Headphones size={10} />
-          Bantuan &amp; Support
-        </div>
-        <h1 className="text-2xl font-extrabold text-white tracking-tight uppercase">Support &amp; FAQ</h1>
-        <p className="text-neutral-400 text-xs mt-0.5">Hubungi tim kami atau temukan jawaban dari pertanyaan umum.</p>
+      <div className="border-b border-neutral-800 pb-4 mb-6">
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">Support &amp; <span className="text-yellow-500">FAQ</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Hubungi tim kami atau temukan jawaban dari pertanyaan umum.</p>
       </div>
 
       {/* ===== Grid Kontak ===== */}

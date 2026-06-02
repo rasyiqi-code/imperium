@@ -135,9 +135,9 @@ export default function ProfilePage() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight uppercase">Profil Saya</h1>
-        <p className="text-neutral-400 text-sm mt-1">Kelola informasi akun dan data membership kamu.</p>
+      <div className="border-b border-neutral-800 pb-4 mb-6">
+        <h1 className="text-xl font-black uppercase tracking-tight text-white">Profil <span className="text-yellow-500">Saya</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola informasi akun dan data membership kamu.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
