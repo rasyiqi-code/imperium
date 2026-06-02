@@ -76,7 +76,23 @@ export async function POST(request: Request) {
           .single();
 
         const durationDays = (paketErr || !paket) ? 30 : paket.durasi_hari;
-        const expiryDate = new Date();
+
+        // Fetch current active member to extend expiry date if valid
+        const { data: currentMember } = await supabaseServer
+          .from('data_member_vip')
+          .select('tanggal_berakhir, status_aktif')
+          .eq('id_user_auth', userId)
+          .maybeSingle();
+
+        let baseDate = new Date();
+        if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+          const currentExpiry = new Date(currentMember.tanggal_berakhir);
+          if (currentExpiry > baseDate) {
+            baseDate = currentExpiry;
+          }
+        }
+
+        const expiryDate = new Date(baseDate);
         expiryDate.setDate(expiryDate.getDate() + durationDays);
 
         // 5. Update Status Pembayaran in data_pembayaran
@@ -84,6 +100,7 @@ export async function POST(request: Request) {
           .from('data_pembayaran')
           .update({ status_pembayaran: 'success' })
           .eq('id', payment.id);
+
 
         // 6. Clear duplicate membership and insert a fresh active VIP membership record
         await supabaseServer

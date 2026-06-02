@@ -57,18 +57,33 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Pricing plan not found' }, { status: 404 })
         }
 
-        const expiryDate = new Date()
-        expiryDate.setDate(expiryDate.getDate() + plan.durasi_hari)
+        // Fetch current active member to extend expiry date if valid
+        const { data: currentMember } = await supabaseServer
+          .from('data_member_vip')
+          .select('tanggal_berakhir, status_aktif')
+          .eq('id_user_auth', userId)
+          .maybeSingle();
+
+        let baseDate = new Date();
+        if (currentMember && (currentMember.status_aktif === 'aktif' || currentMember.status_aktif === 'vip') && currentMember.tanggal_berakhir) {
+          const currentExpiry = new Date(currentMember.tanggal_berakhir);
+          if (currentExpiry > baseDate) {
+            baseDate = currentExpiry;
+          }
+        }
+
+        const expiryDate = new Date(baseDate);
+        expiryDate.setDate(expiryDate.getDate() + plan.durasi_hari);
 
         // Update profiles to vip
         const { error: profErr } = await supabaseServer
           .from('profiles')
           .update({ plan: 'vip', plan_status: 'vip' })
-          .eq('id', userId)
-        if (profErr) throw profErr
+          .eq('id', userId);
+        if (profErr) throw profErr;
 
         // Sync VIP membership details
-        await supabaseServer.from('data_member_vip').delete().eq('id_user_auth', userId)
+        await supabaseServer.from('data_member_vip').delete().eq('id_user_auth', userId);
         const { error: vipErr } = await supabaseServer
           .from('data_member_vip')
           .insert({
@@ -79,7 +94,8 @@ export async function POST(request: Request) {
             status_aktif: 'aktif',
             kode_invite_unik: 'imperium-vip-invite',
             tanggal_berakhir: expiryDate.toISOString()
-          })
+          });
+
         if (vipErr) throw vipErr
 
 

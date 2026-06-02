@@ -100,14 +100,13 @@ export default function UserDashboard() {
           <p className="text-neutral-400 mt-2 font-medium">Akses komunitas dan pantau status membership kamu.</p>
         </div>
         
-        {!isVip && (
-          <button 
-            onClick={goToUpgrade}
-            className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-black transition-all flex items-center gap-2 shadow-xl shadow-yellow-500/20 active:scale-95 uppercase text-xs tracking-wider"
-          >
-            <Crown size={20} /> UPGRADE KE VIP
-          </button>
-        )}
+        <button 
+          onClick={goToUpgrade}
+          className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-black transition-all flex items-center gap-2 shadow-xl shadow-yellow-500/20 active:scale-95 uppercase text-xs tracking-wider"
+        >
+          <Crown size={20} /> {isVip ? 'PERPANJANG / UBAH PAKET' : 'UPGRADE KE VIP'}
+        </button>
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
