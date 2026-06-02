@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { supabaseServer } from '@/lib/supabaseServer'
 import { sendEmail } from '@/lib/email'
+import { paymentManager } from '@crediblemark/buayar'
 
 export async function POST(request: Request) {
   try {
@@ -520,6 +521,60 @@ export async function POST(request: Request) {
         if (settingErr) throw settingErr
 
         return NextResponse.json({ success: true })
+      }
+
+      case 'syncMidtransPaymentMethods': {
+        // Probe Midtrans Core API to discover which payment types are actually enabled
+        const { data: mtSettings } = await supabaseServer
+          .from('admin_settings')
+          .select('midtrans_server_key, midtrans_client_key, midtrans_is_production')
+          .eq('id', 1)
+          .maybeSingle() as any;
+
+        const sKey = mtSettings?.midtrans_server_key || '';
+        const cKey = mtSettings?.midtrans_client_key || '';
+        if (!sKey) {
+          return NextResponse.json({ error: 'Server key Midtrans belum dikonfigurasi' }, { status: 400 })
+        }
+
+        const isProd = mtSettings?.midtrans_is_production === true;
+
+        const probeResult = await paymentManager.probePaymentMethods('midtrans', {
+          merchantCode: cKey,
+          apiKey: sKey,
+          sandbox: !isProd,
+        });
+
+        if (!probeResult.success) {
+          return NextResponse.json({ error: probeResult.error || 'Gagal melakukan probe metode pembayaran' }, { status: 500 });
+        }
+
+        const enabled = probeResult.enabled;
+
+        // Save enabled methods to database
+        const { error: saveErr } = await supabaseServer
+          .from('admin_settings')
+          .update({ midtrans_enabled_payments: enabled as any })
+          .eq('id', 1);
+        if (saveErr) throw saveErr;
+
+        return NextResponse.json({ success: true, enabled });
+      }
+
+
+      case 'updateEnabledPayments': {
+        const { enabledPayments } = body;
+        if (!Array.isArray(enabledPayments)) {
+          return NextResponse.json({ error: 'enabledPayments harus berupa array' }, { status: 400 });
+        }
+
+        const { error: saveErr } = await supabaseServer
+          .from('admin_settings')
+          .update({ midtrans_enabled_payments: enabledPayments as any })
+          .eq('id', 1);
+        if (saveErr) throw saveErr;
+
+        return NextResponse.json({ success: true });
       }
 
       default:

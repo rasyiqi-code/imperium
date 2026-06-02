@@ -3,7 +3,7 @@
 import { useState, useEffect, ReactNode } from 'react'
 import { supabase, Database } from '@/lib/supabase'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw 
+  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap 
 } from 'lucide-react'
 
 export default function AdminSettings() {
@@ -18,6 +18,8 @@ export default function AdminSettings() {
   const [midtransPublicKey, setMidtransPublicKey] = useState('')
   const [midtransIsProduction, setMidtransIsProduction] = useState(false)
   const [savingMidtrans, setSavingMidtrans] = useState(false)
+  const [enabledPayments, setEnabledPayments] = useState<string[]>([])
+  const [syncing, setSyncing] = useState(false)
 
   useEffect(() => {
     async function initSettings() {
@@ -35,6 +37,7 @@ export default function AdminSettings() {
         setMidtransServerKey(settings.midtrans_server_key || '')
         setMidtransPublicKey(settings.midtrans_public_key || '')
         setMidtransIsProduction(!!settings.midtrans_is_production)
+        setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
       }
       setLoading(false)
     }
@@ -266,6 +269,107 @@ export default function AdminSettings() {
             )}
           </button>
         </form>
+      </div>
+
+      {/* Metode Pembayaran Aktif */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-bold text-neutral-500 uppercase tracking-widest px-1">Metode Pembayaran Aktif</h3>
+        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-left">
+              <CreditCard size={16} className="text-yellow-500" />
+              <div>
+                <p className="text-xs font-bold uppercase text-white">Payment Channels</p>
+                <p className="text-[9px] text-neutral-500 font-bold uppercase mt-1">
+                  {enabledPayments.length} metode aktif
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                setSyncing(true)
+                try {
+                  const res = await fetch('/api/admin/actions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'syncMidtransPaymentMethods' }),
+                  })
+                  const data = await res.json()
+                  if (!res.ok) throw new Error(data.error || 'Gagal sync')
+                  setEnabledPayments(data.enabled || [])
+                  alert(`Berhasil sync! ${data.enabled?.length || 0} metode pembayaran aktif.`)
+                } catch (err: any) {
+                  alert(err.message || 'Gagal sync payment methods')
+                } finally {
+                  setSyncing(false)
+                }
+              }}
+              disabled={syncing}
+              className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-yellow-500/20 disabled:opacity-50 transition-all"
+            >
+              {syncing ? (
+                <><RefreshCw size={12} className="animate-spin" /> Syncing...</>
+              ) : (
+                <><Zap size={12} /> Sync dari Midtrans</>
+              )}
+            </button>
+          </div>
+
+          {enabledPayments.length > 0 && (
+            <div className="space-y-2 pt-3 border-t border-neutral-800">
+              {[
+                { id: 'qris', label: 'QRIS' },
+                { id: 'gopay', label: 'GoPay' },
+                { id: 'shopeepay', label: 'ShopeePay' },
+                { id: 'bca', label: 'BCA VA' },
+                { id: 'bni', label: 'BNI VA' },
+                { id: 'bri', label: 'BRI VA' },
+                { id: 'mandiri', label: 'Mandiri Bill' },
+                { id: 'permata', label: 'Permata VA' },
+                { id: 'cimb', label: 'CIMB Niaga VA' },
+                { id: 'alfamart', label: 'Alfamart' },
+                { id: 'indomaret', label: 'Indomaret' },
+                { id: 'akulaku', label: 'Akulaku' },
+                { id: 'kredivo', label: 'Kredivo' },
+              ].map(method => {
+                const isActive = enabledPayments.includes(method.id)
+                return (
+                  <div key={method.id} className="flex items-center justify-between py-1.5">
+                    <span className={`text-xs font-bold uppercase ${isActive ? 'text-white' : 'text-neutral-600'}`}>
+                      {method.label}
+                    </span>
+                    <button
+                      onClick={async () => {
+                        const updated = isActive
+                          ? enabledPayments.filter(id => id !== method.id)
+                          : [...enabledPayments, method.id]
+                        setEnabledPayments(updated)
+                        try {
+                          await fetch('/api/admin/actions', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'updateEnabledPayments', enabledPayments: updated }),
+                          })
+                        } catch {
+                          setEnabledPayments(enabledPayments) // rollback
+                        }
+                      }}
+                      className={`w-10 h-5 rounded-full relative transition-all duration-300 ${isActive ? 'bg-yellow-500' : 'bg-neutral-800 border border-neutral-700'}`}
+                    >
+                      <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${isActive ? 'left-6' : 'left-1'}`} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {enabledPayments.length === 0 && (
+            <p className="text-[10px] text-neutral-600 font-bold uppercase text-center py-3">
+              Tekan &quot;Sync dari Midtrans&quot; untuk mendeteksi metode pembayaran yang aktif
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Logout Button */}

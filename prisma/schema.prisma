@@ -42,6 +42,7 @@ model admin_settings {
   midtrans_server_key String?
   midtrans_public_key String?
   midtrans_is_production Boolean? @default(false)
+  midtrans_enabled_payments Json?   @default("[]") @db.JsonB
 
   @@schema("public")
 }
