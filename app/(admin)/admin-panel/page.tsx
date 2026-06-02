@@ -10,8 +10,11 @@ import {
   History,
   Search,
   Trash2,
-  ShieldCheck
+  ShieldCheck,
+  X
 } from 'lucide-react'
+import { PaketVIP } from '@/lib/types'
+
 
 interface Profile {
   id: string;
@@ -25,24 +28,30 @@ interface Profile {
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalUser: 0, vipAktif: 0, omzet: 0 })
   const [allUsers, setAllUsers] = useState<Profile[]>([])
+  const [plans, setPlans] = useState<PaketVIP[]>([])
+  const [upgradeUser, setUpgradeUser] = useState<Profile | null>(null)
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+
 
   const getAdminData = async () => {
     setLoading(true)
     try {
       const { data: pData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
       const { data: payData } = await supabase.from('data_pembayaran').select('harga_bayar').eq('status_pembayaran', 'success')
+      const { data: planData } = await supabase.from('data_paket_vip').select('*').order('harga', { ascending: true })
 
       const profiles = (pData as Profile[]) || []
       const payments = (payData as any[]) || []
+      const pricingPlans = (planData as PaketVIP[]) || []
 
       const totalOmzet = payments.reduce((acc, curr) => acc + (Number(curr.harga_bayar) || 0), 0)
       const vipAktifCount = profiles.filter(p => p.plan?.toLowerCase() === 'vip').length
 
       setStats({ totalUser: profiles.length, vipAktif: vipAktifCount, omzet: totalOmzet })
       setAllUsers(profiles)
+      setPlans(pricingPlans)
     } catch (error) {
       console.error("Error syncing admin dashboard:", error)
     } finally {
@@ -50,18 +59,20 @@ export default function AdminDashboard() {
     }
   }
 
+
   useEffect(() => { getAdminData() }, [])
 
-  const handleUpgradeManual = async (user: Profile) => {
-    const confirm = window.confirm(`Upgrade ${user.email} ke VIP Manual? (Omzet + Rp 948.000)`)
+  const handleUpgradeManual = async (user: Profile, plan: PaketVIP) => {
+    const confirm = window.confirm(`Upgrade ${user.email} ke VIP secara Manual menggunakan ${plan.nama_paket} (Omzet + Rp ${plan.harga.toLocaleString('id-ID')})?`)
     if (!confirm) return
 
+    setUpgradeUser(null)
     setActionLoading(user.id)
     try {
       const res = await fetch('/api/admin/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'upgradeManual', userId: user.id })
+        body: JSON.stringify({ action: 'upgradeManual', userId: user.id, planId: plan.id })
       })
       const data = await res.json()
       if (res.ok) {
@@ -76,6 +87,7 @@ export default function AdminDashboard() {
       setActionLoading(null)
     }
   }
+
 
   const handleDeleteUser = async (id: string) => {
     const confirm = window.confirm("Hapus user ini secara permanen?")
@@ -181,15 +193,16 @@ export default function AdminDashboard() {
                   {user.plan || 'FREE'}
                 </div>
                 
-                {user.plan?.toLowerCase() !== 'vip' && (
+                 {user.plan?.toLowerCase() !== 'vip' && (
                   <button 
-                    onClick={() => handleUpgradeManual(user)}
+                    onClick={() => setUpgradeUser(user)}
                     disabled={actionLoading === user.id}
-                    className="p-2.5 bg-green-500/10 text-green-500 rounded-xl border border-green-500/20 hover:bg-green-500 hover:text-black transition-all active:scale-95"
+                    className="p-2.5 bg-green-500/10 text-green-500 rounded-xl border border-green-500/20 hover:bg-green-500 hover:text-black transition-all active:scale-95 shadow-md"
                   >
                     {actionLoading === user.id ? <RefreshCw size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
                   </button>
                 )}
+
 
                 <button 
                   onClick={() => handleDeleteUser(user.id)}
@@ -208,6 +221,47 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* UPGRADE MANUAL PLAN SELECTION MODAL */}
+      {upgradeUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200 text-left">
+          <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-wider text-white">Pilih Paket VIP</h3>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase mt-0.5 tracking-tight truncate max-w-[280px]">User: {upgradeUser.email}</p>
+              </div>
+              <button 
+                onClick={() => setUpgradeUser(null)} 
+                className="w-8 h-8 rounded-full bg-neutral-850 hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+              >
+                <X size={16}/>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+              {plans.length > 0 ? plans.map((plan) => (
+                <button
+                  key={plan.id}
+                  onClick={() => handleUpgradeManual(upgradeUser, plan)}
+                  className="w-full text-left p-4 rounded-xl border border-neutral-800 bg-neutral-950 hover:bg-neutral-800/40 hover:border-yellow-500/30 transition-all active:scale-[0.98] flex justify-between items-center group cursor-pointer"
+                >
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-white group-hover:text-yellow-500 transition-colors">{plan.nama_paket}</h4>
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1">Durasi: {plan.durasi_hari} Hari</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-black text-yellow-500">Rp {plan.harga.toLocaleString('id-ID')}</p>
+                  </div>
+                </button>
+              )) : (
+                <div className="p-6 text-center text-xs font-bold text-neutral-600 uppercase tracking-widest">
+                  Belum ada paket pricing terdaftar
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

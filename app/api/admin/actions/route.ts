@@ -31,8 +31,9 @@ export async function POST(request: Request) {
 
     switch (action) {
       case 'upgradeManual': {
-        const { userId } = body
+        const { userId, planId } = body
         if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
+        if (!planId) return NextResponse.json({ error: 'Missing planId' }, { status: 400 })
         
         // Get target user details to copy email/name
         const { data: targetUser, error: targetErr } = await supabaseServer
@@ -45,8 +46,19 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'User not found' }, { status: 404 })
         }
 
+        // Get plan details dynamically
+        const { data: plan, error: planErr } = await supabaseServer
+          .from('data_paket_vip')
+          .select('*')
+          .eq('id', planId)
+          .single()
+
+        if (planErr || !plan) {
+          return NextResponse.json({ error: 'Pricing plan not found' }, { status: 404 })
+        }
+
         const expiryDate = new Date()
-        expiryDate.setDate(expiryDate.getDate() + 365)
+        expiryDate.setDate(expiryDate.getDate() + plan.durasi_hari)
 
         // Update profiles to vip
         const { error: profErr } = await supabaseServer
@@ -62,13 +74,14 @@ export async function POST(request: Request) {
           .insert({
             id_user_auth: userId,
             email_member: targetUser.email,
-            nama_paket: 'Paket 1 Tahun',
-            harga_bayar: 948000,
+            nama_paket: plan.nama_paket,
+            harga_bayar: plan.harga,
             status_aktif: 'aktif',
             kode_invite_unik: 'imperium-vip-invite',
             tanggal_berakhir: expiryDate.toISOString()
           })
         if (vipErr) throw vipErr
+
 
         // Send Email Notification
         const expiryDateFormatted = expiryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
