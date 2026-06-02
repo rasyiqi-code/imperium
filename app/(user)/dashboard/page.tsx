@@ -97,7 +97,7 @@ export default function UserDashboard() {
       </div>
 
       {/* ===== Status & Discord Cards ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
         <StatusCard member={member} />
         <DiscordCard member={member} />
       </div>

@@ -107,6 +107,32 @@ export default function StatusCard({ member }: Props) {
               : 'Belum ada paket aktif'}
         </p>
       </div>
+
+      {/* Grid Informasi Tambahan untuk VIP */}
+      {isVip && (
+        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-neutral-800/60">
+          <div className="p-2.5 bg-neutral-950/40 border border-neutral-800/50 rounded-xl text-left">
+            <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">Tanggal Bergabung</p>
+            <p className="text-xs font-extrabold text-white mt-1">
+              {member?.dibuat_pada 
+                ? new Date(member.dibuat_pada).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                : '—'
+              }
+            </p>
+          </div>
+          <div className="p-2.5 bg-neutral-950/40 border border-neutral-800/50 rounded-xl text-left">
+            <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">Sisa Masa Aktif</p>
+            <p className="text-xs font-extrabold text-yellow-500 mt-1">
+              {(() => {
+                if (!member?.tanggal_berakhir) return '—'
+                const diff = new Date(member.tanggal_berakhir).getTime() - new Date().getTime()
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+                return days > 0 ? `${days} Hari` : '0 Hari'
+              })()}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
