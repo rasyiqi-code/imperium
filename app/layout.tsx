@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ModalProvider from "@/components/ModalProvider";
 
 export const metadata: Metadata = {
   title: "Imperium - Komunitas Crypto Profesional",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="id" className="scroll-smooth">
       <head />
       <body className="relative min-h-screen overflow-x-hidden bg-linear-to-br from-black via-neutral-900 to-black text-white antialiased">
-        {children}
+        <ModalProvider>
+          {children}
+        </ModalProvider>
       </body>
     </html>
   );

@@ -16,6 +16,7 @@ import {
   HeadphonesIcon
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useModal } from '@/components/ModalProvider'
 
 interface SidebarProps {
   role: 'admin' | 'user'
@@ -69,10 +70,20 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const menus = role === 'admin' ? adminMenus : userMenus
 
-  const handleLogout = async () => {
-    if (!confirm('Yakin ingin keluar?')) return
-    await supabase.auth.signOut()
-    window.location.href = '/login'
+  const { showConfirm } = useModal()
+
+  const handleLogout = () => {
+    showConfirm({
+      title: 'Keluar Portal',
+      message: 'Apakah Anda yakin ingin keluar dari portal Imperium Crypto?',
+      type: 'warning',
+      confirmText: 'Keluar',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        await supabase.auth.signOut()
+        window.location.href = '/login'
+      }
+    })
   }
 
   return (

@@ -2,11 +2,13 @@
 
 import { useState, useEffect, ReactNode } from 'react'
 import { supabase, Database } from '@/lib/supabase'
+import { useModal } from '@/components/ModalProvider'
 import { 
   Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap 
 } from 'lucide-react'
 
 export default function AdminSettings() {
+  const { showAlert, showConfirm } = useModal()
   const [loading, setLoading] = useState(true)
   const [adminEmail, setAdminEmail] = useState('')
   const [resendApiKey, setResendApiKey] = useState('')
@@ -46,21 +48,47 @@ export default function AdminSettings() {
     initSettings()
   }, [])
 
-  const handleLogout = async () => {
-    if (!confirm('Keluar dari Admin Panel?')) return
-    await supabase.auth.signOut()
-    window.location.href = '/login'
+  const handleLogout = () => {
+    showConfirm({
+      title: 'Keluar Admin Panel',
+      message: 'Apakah Anda yakin ingin keluar dari Admin Panel?',
+      type: 'warning',
+      confirmText: 'Keluar',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        await supabase.auth.signOut()
+        window.location.href = '/login'
+      }
+    })
   }
 
-  const handleResetPassword = async () => {
+  const handleResetPassword = () => {
     if (!adminEmail) return
-    const confirmReset = confirm(`Kirim link ganti password ke ${adminEmail}?`)
-    if (!confirmReset) return
-    const { error } = await supabase.auth.resetPasswordForEmail(adminEmail, {
-      redirectTo: `${window.location.origin}/admin-panel/settings`,
+    showConfirm({
+      title: 'Reset Password',
+      message: `Kirim link ganti password ke ${adminEmail}?`,
+      type: 'info',
+      confirmText: 'Kirim',
+      cancelText: 'Batal',
+      onConfirm: async () => {
+        const { error } = await supabase.auth.resetPasswordForEmail(adminEmail, {
+          redirectTo: `${window.location.origin}/admin-panel/settings`,
+        })
+        if (error) {
+          showAlert({
+            title: 'Gagal Reset Password',
+            message: error.message,
+            type: 'danger'
+          })
+        } else {
+          showAlert({
+            title: 'Berhasil',
+            message: 'Link reset password sudah dikirim ke email!',
+            type: 'success'
+          })
+        }
+      }
     })
-    if (error) alert(error.message)
-    else alert('Link reset password sudah dikirim ke email!')
   }
 
   const handleSaveResendSettings = async (e: React.FormEvent) => {
@@ -78,9 +106,17 @@ export default function AdminSettings() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal menyimpan pengaturan Resend')
-      alert('Pengaturan Resend berhasil disimpan!')
+      showAlert({
+        title: 'Berhasil',
+        message: 'Pengaturan Resend berhasil disimpan!',
+        type: 'success'
+      })
     } catch (err: any) {
-      alert(err.message || 'Gagal menyimpan pengaturan Resend!')
+      showAlert({
+        title: 'Simpan Gagal',
+        message: err.message || 'Gagal menyimpan pengaturan Resend!',
+        type: 'danger'
+      })
     } finally {
       setSavingResend(false)
     }
@@ -104,9 +140,17 @@ export default function AdminSettings() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal menyimpan pengaturan Midtrans')
-      alert('Pengaturan Midtrans berhasil disimpan!')
+      showAlert({
+        title: 'Berhasil',
+        message: 'Pengaturan Midtrans berhasil disimpan!',
+        type: 'success'
+      })
     } catch (err: any) {
-      alert(err.message || 'Gagal menyimpan pengaturan Midtrans!')
+      showAlert({
+        title: 'Simpan Gagal',
+        message: err.message || 'Gagal menyimpan pengaturan Midtrans!',
+        type: 'danger'
+      })
     } finally {
       setSavingMidtrans(false)
     }
@@ -330,9 +374,17 @@ export default function AdminSettings() {
                   const data = await res.json()
                   if (!res.ok) throw new Error(data.error || 'Gagal sync')
                   setEnabledPayments(data.enabled || [])
-                  alert(`Berhasil sync! ${data.enabled?.length || 0} metode pembayaran aktif.`)
+                  showAlert({
+                    title: 'Sync Berhasil',
+                    message: `Berhasil sync! ${data.enabled?.length || 0} metode pembayaran aktif.`,
+                    type: 'success'
+                  })
                 } catch (err: any) {
-                  alert(err.message || 'Gagal sync payment methods')
+                  showAlert({
+                    title: 'Sync Gagal',
+                    message: err.message || 'Gagal sync payment methods',
+                    type: 'danger'
+                  })
                 } finally {
                   setSyncing(false)
                 }
@@ -434,6 +486,7 @@ function SettingItem({ icon, title, value, isLink }: { icon: ReactNode, title: s
 }
 
 function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: string, desc: string, dbField: 'email_notif_active' | 'maintenance_mode' }) {
+  const { showAlert } = useModal()
   const [active, setActive] = useState(false)
   const [syncing, setSyncing] = useState(false)
 
@@ -464,7 +517,11 @@ function ToggleItem({ icon, title, desc, dbField }: { icon: ReactNode, title: st
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal update setting')
     } catch (err: any) {
-      alert(err.message || "Gagal update setting di database!")
+      showAlert({
+        title: 'Error Update',
+        message: err.message || "Gagal update setting di database!",
+        type: 'danger'
+      })
       setActive(!newState) // Rollback UI kalau error
     } finally {
       setSyncing(false)
