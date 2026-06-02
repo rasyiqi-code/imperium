@@ -105,7 +105,7 @@ export default function PaymentAdmin() {
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left">
       <div className="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-black/40 backdrop-blur-md py-4 border-b border-neutral-900 mb-6">
-        <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-850 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
+        <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
           <Search className="text-neutral-500 mr-3" size={16} />
           <input 
             type="text" placeholder="Cari Email..." 
@@ -113,7 +113,7 @@ export default function PaymentAdmin() {
             value={search} onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex bg-neutral-950/50 p-1 rounded-xl border border-neutral-850/80 backdrop-blur-md self-start md:self-auto">
+        <div className="flex bg-neutral-950/50 p-1 rounded-xl border border-neutral-800/80 backdrop-blur-md self-start md:self-auto">
           {(['pending', 'success', 'failed', 'all'] as const).map((f) => (
             <button 
               key={f} onClick={() => setFilter(f)}
@@ -127,7 +127,7 @@ export default function PaymentAdmin() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((pay) => (
-          <div key={pay.id} className="p-5 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-850 hover:border-neutral-700/50 shadow-lg hover:shadow-black/30 flex flex-col gap-4 transition-all duration-300 group relative overflow-hidden">
+          <div key={pay.id} className="p-5 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 hover:border-neutral-700/50 shadow-lg hover:shadow-black/30 flex flex-col gap-4 transition-all duration-300 group relative overflow-hidden">
             <div className="absolute -right-6 -top-6 w-16 h-16 bg-neutral-500/2 blur-xl rounded-full pointer-events-none group-hover:bg-yellow-500/2 duration-300" />
             
             <div className="flex justify-between items-start">
@@ -149,7 +149,7 @@ export default function PaymentAdmin() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3.5 bg-neutral-900/20 border border-neutral-850/80 rounded-xl">
+            <div className="flex items-center justify-between p-3.5 bg-neutral-900/20 border border-neutral-800/80 rounded-xl">
               <span className="text-xs font-black text-white tracking-wider">Rp {pay.harga_bayar.toLocaleString('id-ID')}</span>
               {pay.bukti_transfer && pay.bukti_transfer.startsWith('IMP-') ? (
                 <span className="text-[10px] font-black text-neutral-500 tracking-widest">MIDTRANS ONLINE</span>

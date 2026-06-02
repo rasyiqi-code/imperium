@@ -191,7 +191,7 @@ export default function ManageMembers() {
       {/* Search & Bulk Action Bar */}
       <div className="bg-neutral-950/40 border-b border-neutral-900 p-4 md:p-6 sticky top-0 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-850 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
+          <div className="relative flex-1 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-4 py-2.5">
             <Search className="text-neutral-500 mr-3" size={16} />
             <input 
               type="text" placeholder="Cari member..." 
@@ -208,7 +208,7 @@ export default function ManageMembers() {
                 <Trash2 size={14} /> Hapus ({selectedIds.length})
               </button>
             )}
-            <button onClick={refreshData} className="p-2.5 bg-neutral-900/80 border border-neutral-850 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
+            <button onClick={refreshData} className="p-2.5 bg-neutral-900/80 border border-neutral-800 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
               <RefreshCw size={18} className={isProcessing ? 'animate-spin' : ''} />
             </button>
           </div>
@@ -219,7 +219,7 @@ export default function ManageMembers() {
         {/* Mobile Card View */}
         <div className="grid grid-cols-1 gap-3 md:hidden">
           {filteredMembers.map(m => (
-            <div key={m.id} className={`p-4 rounded-xl border transition-all duration-300 ${selectedIds.includes(m.id) ? 'bg-yellow-500/5 border-yellow-500/30' : 'bg-neutral-950/20 backdrop-blur-md border-neutral-850 hover:border-neutral-800'}`}>
+            <div key={m.id} className={`p-4 rounded-xl border transition-all duration-300 ${selectedIds.includes(m.id) ? 'bg-yellow-500/5 border-yellow-500/30' : 'bg-neutral-950/20 backdrop-blur-md border-neutral-800 hover:border-neutral-800'}`}>
               <div className="flex justify-between items-start mb-3">
                 <div className="flex gap-3">
                   <button onClick={() => toggleSelectOne(m.id)} className={selectedIds.includes(m.id) ? 'text-yellow-500' : 'text-neutral-600'}>
@@ -244,7 +244,7 @@ export default function ManageMembers() {
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden md:block bg-neutral-950/30 backdrop-blur-md border border-neutral-850/80 rounded-2xl overflow-hidden shadow-2xl">
+        <div className="hidden md:block bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl overflow-hidden shadow-2xl">
           <table className="w-full text-left">
             <thead className="bg-neutral-950/50 text-[10px] font-black uppercase text-neutral-500 border-b border-neutral-900 tracking-wider">
               <tr>
@@ -289,7 +289,7 @@ export default function ManageMembers() {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setSelectedMember(null)} />
           
-          <div className="relative w-full max-w-sm bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-sm bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-neutral-900 bg-neutral-950/50">
               <h3 className="font-black uppercase tracking-wider text-white text-xs leading-none">Member Detail</h3>
               <button onClick={() => setSelectedMember(null)} className="text-neutral-500 hover:text-white transition-all cursor-pointer"><X size={18} /></button>
@@ -323,7 +323,7 @@ export default function ManageMembers() {
                   </button>
                 )}
 
-                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-850/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
                   <MessageSquare size={14} /> Chat WhatsApp
                 </a>
                 

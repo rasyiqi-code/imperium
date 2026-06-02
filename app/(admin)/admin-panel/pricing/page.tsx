@@ -171,7 +171,7 @@ export default function PricingEditor() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {plans.map((plan) => (
-          <div key={plan.id} className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-850 hover:border-yellow-500/30 shadow-lg hover:shadow-yellow-500/2 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+          <div key={plan.id} className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 hover:border-yellow-500/30 shadow-lg hover:shadow-yellow-500/2 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-start mb-4">
                 <div className="h-10 w-10 bg-yellow-500/5 border border-yellow-500/15 rounded-xl flex items-center justify-center text-yellow-500 group-hover:scale-105 transition-transform duration-300">
@@ -210,12 +210,12 @@ export default function PricingEditor() {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setEditModal(null)} />
           
-          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
               <h3 className="text-xs font-black uppercase tracking-wider text-white">Edit Pricing Plan</h3>
               <button 
                 onClick={() => setEditModal(null)} 
-                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
               >
                 <X size={14}/>
               </button>
@@ -228,7 +228,7 @@ export default function PricingEditor() {
                   type="text" 
                   value={editModal.nama_paket} 
                   onChange={e => setEditModal({...editModal, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
                 />
               </div>
 
@@ -239,7 +239,7 @@ export default function PricingEditor() {
                     type="number" 
                     value={editModal.harga} 
                     onChange={e => setEditModal({...editModal, harga: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
+                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -248,7 +248,7 @@ export default function PricingEditor() {
                     type="number" 
                     value={editModal.durasi_hari} 
                     onChange={e => setEditModal({...editModal, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
+                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                   />
                 </div>
               </div>
@@ -259,7 +259,7 @@ export default function PricingEditor() {
                   rows={3}
                   value={editModal.fitur?.join(', ') || ''} 
                   onChange={e => setEditModal({...editModal, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
                   placeholder="CONTOH: SINYAL VIP, MENTORSHIP"
                 />
               </div>
@@ -282,12 +282,12 @@ export default function PricingEditor() {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setShowAddModal(false)} />
           
-          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
               <h3 className="text-xs font-black uppercase tracking-wider text-white">Tambah Paket Pricing Baru</h3>
               <button 
                 onClick={() => setShowAddModal(false)} 
-                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
               >
                 <X size={14}/>
               </button>
@@ -300,7 +300,7 @@ export default function PricingEditor() {
                   type="text" 
                   value={newPlan.nama_paket} 
                   onChange={e => setNewPlan({...newPlan, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
                   placeholder="CONTOH: PAKET 3 BULAN"
                 />
               </div>
@@ -312,7 +312,7 @@ export default function PricingEditor() {
                     type="number" 
                     value={newPlan.harga} 
                     onChange={e => setNewPlan({...newPlan, harga: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
+                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                     placeholder="299000"
                   />
                 </div>
@@ -322,7 +322,7 @@ export default function PricingEditor() {
                     type="number" 
                     value={newPlan.durasi_hari} 
                     onChange={e => setNewPlan({...newPlan, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
+                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                     placeholder="90"
                   />
                 </div>
@@ -334,7 +334,7 @@ export default function PricingEditor() {
                   rows={3}
                   value={newPlan.fitur?.join(', ') || ''} 
                   onChange={e => setNewPlan({...newPlan, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
                   placeholder="SINYAL VIP, MENTORSHIP, AKADEMI CRYPTO"
                 />
               </div>

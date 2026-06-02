@@ -114,7 +114,7 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="px-4 py-2 bg-neutral-900 border border-neutral-850 hover:border-neutral-800 text-neutral-400 hover:text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer"
+                  className="px-4 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all active:scale-[0.98] cursor-pointer"
                 >
                   {options.cancelText}
                 </button>

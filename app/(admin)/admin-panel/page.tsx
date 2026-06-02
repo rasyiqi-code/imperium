@@ -178,7 +178,7 @@ export default function AdminDashboard() {
       {/* Stats Section */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {/* Total Users */}
-        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-800/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-blue-500/10 transition-all duration-300" />
           <div className="h-10 w-10 bg-blue-500/5 border border-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
             <Users size={18} />
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* VIP Active */}
-        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-800/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-20 h-20 bg-green-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-green-500/10 transition-all duration-300" />
           <div className="h-10 w-10 bg-green-500/5 border border-green-500/20 text-green-400 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
             <TrendingUp size={18} />
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Total Omzet */}
-        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-850/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl col-span-2 md:col-span-1 relative overflow-hidden group transition-all duration-300">
+        <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-800/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl col-span-2 md:col-span-1 relative overflow-hidden group transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-20 h-20 bg-yellow-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-yellow-500/10 transition-all duration-300" />
           <div className="h-10 w-10 bg-yellow-500/5 border border-yellow-500/20 text-yellow-500 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
             <Wallet size={18} />
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Search Input */}
-      <div className="relative flex items-center bg-neutral-950/30 border border-neutral-850 rounded-2xl px-4 py-3.5 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300">
+      <div className="relative flex items-center bg-neutral-950/30 border border-neutral-800 rounded-2xl px-4 py-3.5 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300">
         <Search className="text-neutral-500 mr-3" size={16} />
         <input 
           type="text"
@@ -221,8 +221,8 @@ export default function AdminDashboard() {
       </div>
 
       {/* Database View */}
-      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-850/80 rounded-2xl overflow-hidden shadow-2xl relative">
-        <div className="p-5 border-b border-neutral-850/80 flex justify-between items-center bg-neutral-950/50">
+      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl overflow-hidden shadow-2xl relative">
+        <div className="p-5 border-b border-neutral-800/80 flex justify-between items-center bg-neutral-950/50">
           <div className="flex items-center gap-2">
             <History size={16} className="text-yellow-500" />
             <h3 className="text-xs font-black uppercase tracking-widest text-white">Recent Members</h3>
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setUpgradeUser(null)} />
           
-          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-850 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-wider text-white">Pilih Paket VIP</h3>
@@ -294,7 +294,7 @@ export default function AdminDashboard() {
               </div>
               <button 
                 onClick={() => setUpgradeUser(null)} 
-                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-850 hover:border-neutral-700 text-neutral-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
+                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
               >
                 <X size={14}/>
               </button>
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
                 <button
                   key={plan.id}
                   onClick={() => handleUpgradeManual(upgradeUser, plan)}
-                  className="w-full text-left p-4 rounded-2xl border border-neutral-850 bg-neutral-900/20 hover:bg-neutral-850/40 hover:border-yellow-500/20 transition-all duration-300 flex justify-between items-center group cursor-pointer active:scale-[0.98]"
+                  className="w-full text-left p-4 rounded-2xl border border-neutral-800 bg-neutral-900/20 hover:bg-neutral-800/40 hover:border-yellow-500/20 transition-all duration-300 flex justify-between items-center group cursor-pointer active:scale-[0.98]"
                 >
                   <div className="space-y-1">
                     <h4 className="text-xs font-black uppercase text-white group-hover:text-yellow-500 transition-colors">{plan.nama_paket}</h4>
