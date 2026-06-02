@@ -45,7 +45,7 @@ export default function ProfilePage() {
             nama_member: profData?.full_name || user.user_metadata?.full_name || 'Member Imperium',
             email_member: user.email || '',
             nomor_wa: profData?.whatsapp_number || user.user_metadata?.whatsapp_number || '',
-            status_vip: isVip ? 'VIP MEMBER' : 'PAKET GRATIS',
+            status_vip: isVip ? 'VIP Member' : 'Paket Gratis',
             masa_aktif: vipData?.tanggal_berakhir || null
           }
 
@@ -142,8 +142,8 @@ export default function ProfilePage() {
           </button>
         </div>
         <div>
-          <h1 className="text-2xl font-black text-white italic uppercase tracking-tight">Profil Saya</h1>
-          <p className="text-neutral-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">ID: {profile.id_user_auth.slice(0,8)}</p>
+          <h1 className="text-2xl font-black text-white italic tracking-tight">Profil Saya</h1>
+          <p className="text-neutral-500 text-[10px] font-black tracking-[0.2em] mt-1">ID: {profile.id_user_auth.slice(0,8)}</p>
         </div>
       </div>
 
@@ -160,15 +160,15 @@ export default function ProfilePage() {
             <Gem size={24} />
           </div>
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-0.5">Membership</div>
-            <div className={`text-sm font-black italic tracking-tight ${profile.status_vip === 'VIP MEMBER' ? 'text-yellow-500' : 'text-white'}`}>
+            <div className="text-[10px] font-black tracking-[0.2em] text-neutral-500 mb-0.5">Membership</div>
+            <div className={`text-sm font-black italic tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-500' : 'text-white'}`}>
               {profile.status_vip}
             </div>
           </div>
         </div>
-        {profile.status_vip === 'VIP MEMBER' && profile.masa_aktif && (
+        {profile.status_vip === 'VIP Member' && profile.masa_aktif && (
           <div className="text-right">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 italic flex items-center justify-end gap-1">
+            <div className="text-[10px] font-black tracking-[0.2em] text-neutral-500 italic flex items-center justify-end gap-1">
               <Calendar size={10} /> Expired
             </div>
             <div className="text-[11px] font-bold text-white mt-0.5">
@@ -181,7 +181,7 @@ export default function ProfilePage() {
       {/* Form Data */}
       <div className="bg-neutral-900/50 border border-neutral-800 p-6 rounded-3xl space-y-6">
         <div className="space-y-2 opacity-50">
-          <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 text-center block">E-Mail</label>
+          <label className="text-[10px] font-black text-neutral-500 tracking-widest ml-1 text-center block">E-Mail</label>
           <div className="flex items-center gap-4 p-4 bg-black/40 border border-neutral-800 rounded-2xl">
             <Mail size={18} className="text-neutral-600" />
             <span className="text-neutral-400 text-sm font-medium">{profile.email_member}</span>
@@ -189,7 +189,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 text-center block">Nama Member</label>
+          <label className="text-[10px] font-black text-neutral-400 tracking-widest ml-1 text-center block">Nama Member</label>
           {isEditing ? (
             <input 
               type="text"
@@ -199,13 +199,13 @@ export default function ProfilePage() {
             />
           ) : (
             <div className="flex items-center justify-center gap-4 p-4 bg-black/20 border border-neutral-800 rounded-2xl">
-              <span className="text-white text-sm font-bold tracking-wide uppercase">{profile.nama_member}</span>
+              <span className="text-white text-sm font-bold tracking-wide">{profile.nama_member}</span>
             </div>
           )}
         </div>
-
+ 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 text-center block">WhatsApp</label>
+          <label className="text-[10px] font-black text-neutral-400 tracking-widest ml-1 text-center block">WhatsApp</label>
           {isEditing ? (
             <input 
               type="tel"
@@ -215,7 +215,7 @@ export default function ProfilePage() {
             />
           ) : (
             <div className="flex items-center justify-center gap-4 p-4 bg-black/20 border border-neutral-800 rounded-2xl">
-              <span className="text-white text-sm font-bold tracking-wide uppercase">{profile.nomor_wa}</span>
+              <span className="text-white text-sm font-bold tracking-wide">{profile.nomor_wa}</span>
             </div>
           )}
         </div>
@@ -225,7 +225,7 @@ export default function ProfilePage() {
         <button 
           onClick={handleUpdate}
           disabled={updating}
-          className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all uppercase text-sm tracking-widest"
+          className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-sm tracking-widest"
         >
           {updating ? <RefreshCw className="animate-spin" size={20} /> : <><Save size={20} /> Simpan Perubahan</>}
         </button>
@@ -244,7 +244,7 @@ export default function ProfilePage() {
               }
             })
           }}
-          className="w-full bg-red-500/5 text-red-500 py-4 rounded-2xl font-bold border border-red-500/20 flex items-center justify-center gap-2 text-xs uppercase tracking-tighter hover:bg-red-500/10 transition-all active:scale-95"
+          className="w-full bg-red-500/5 text-red-500 py-4 rounded-2xl font-bold border border-red-500/20 flex items-center justify-center gap-2 text-xs tracking-tighter hover:bg-red-500/10 transition-all active:scale-95"
         >
           <LogOut size={18} /> Logout Akun
         </button>

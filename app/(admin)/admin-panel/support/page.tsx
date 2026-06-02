@@ -184,33 +184,33 @@ export default function AdminSupportManager() {
 
       {/* Title */}
       <div className="border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black uppercase tracking-tight text-white">Support <span className="text-yellow-500">Manager</span></h1>
-        <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Kelola kontak bantuan operasional WhatsApp, Telegram, email, dan FAQ member</p>
+        <h1 className="text-xl font-black tracking-tight text-white">Support <span className="text-yellow-500">Manager</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola kontak bantuan operasional WhatsApp, Telegram, email, dan FAQ member</p>
       </div>
 
       {/* SECTION KONTAK */}
       <div className="space-y-4">
-        <h3 className="text-xs font-black text-neutral-500 uppercase tracking-widest px-1 flex items-center gap-2">
+        <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1 flex items-center gap-2">
           <MessageSquare size={14} className="text-yellow-500" /> Kontak Support
         </h3>
         <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider ml-1">WhatsApp</label>
-            <input type="text" value={config.whatsapp_number} onChange={(e) => setConfig({ ...config, whatsapp_number: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600" />
+            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">WhatsApp</label>
+            <input type="text" value={config.whatsapp_number} onChange={(e) => setConfig({ ...config, whatsapp_number: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider ml-1">Telegram</label>
-            <input type="text" value={config.telegram_link} onChange={(e) => setConfig({ ...config, telegram_link: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600" />
+            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Telegram</label>
+            <input type="text" value={config.telegram_link} onChange={(e) => setConfig({ ...config, telegram_link: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider ml-1">Email</label>
-            <input type="text" value={config.support_email} onChange={(e) => setConfig({ ...config, support_email: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600" />
+            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Email</label>
+            <input type="text" value={config.support_email} onChange={(e) => setConfig({ ...config, support_email: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider ml-1">Operasional</label>
-            <input type="text" value={config.operational_hours} onChange={(e) => setConfig({ ...config, operational_hours: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600" />
+            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Operasional</label>
+            <input type="text" value={config.operational_hours} onChange={(e) => setConfig({ ...config, operational_hours: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
           </div>
-          <button onClick={handleUpdateConfig} disabled={isSaving} className="md:col-span-2 py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 cursor-pointer pt-1">
+          <button onClick={handleUpdateConfig} disabled={isSaving} className="md:col-span-2 py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 cursor-pointer pt-1">
             {isSaving ? <RefreshCw className="animate-spin" size={14} /> : <Save size={14} />} Simpan Perubahan
           </button>
         </div>
@@ -219,17 +219,17 @@ export default function AdminSupportManager() {
       {/* SECTION FAQ */}
       <div className="space-y-4">
         <div className="flex justify-between items-center px-1">
-          <h3 className="text-xs font-black text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+          <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1 flex items-center gap-2">
             <HelpCircle size={14} className="text-yellow-500" /> FAQ Member
           </h3>
-          <button onClick={() => setShowFaqModal(true)} className="bg-yellow-500/5 text-yellow-500 px-3.5 py-2 rounded-xl border border-yellow-500/15 text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500 hover:text-black transition-all duration-300 cursor-pointer"><Plus size={12} className="inline mr-1" /> Tambah</button>
+          <button onClick={() => setShowFaqModal(true)} className="bg-yellow-500/5 text-yellow-500 px-3.5 py-2 rounded-xl border border-yellow-500/15 text-[10px] font-black tracking-widest hover:bg-yellow-500 hover:text-black transition-all duration-300 cursor-pointer"><Plus size={12} className="inline mr-1" /> Tambah</button>
         </div>
         <div className="space-y-3">
           {faqs.map((faq) => (
             <div key={faq.id} className="p-5 bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl flex justify-between items-start hover:border-neutral-700/50 shadow-lg transition-all duration-300 group">
               <div className="text-left min-w-0 pr-4">
-                <p className="text-xs font-bold text-white uppercase group-hover:text-yellow-500 transition-all duration-300 font-sans">{faq.question}</p>
-                <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 leading-relaxed tracking-wider">{faq.answer}</p>
+                <p className="text-xs font-bold text-white group-hover:text-yellow-500 transition-all duration-300 font-sans">{faq.question}</p>
+                <p className="text-[10px] text-neutral-500 font-bold mt-1.5 leading-relaxed tracking-wider">{faq.answer}</p>
               </div>
               <button onClick={() => handleDeleteFaq(faq.id)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-red-500/30 hover:text-red-400 rounded-xl text-neutral-600 transition-all duration-300 cursor-pointer shrink-0"><Trash2 size={14} /></button>
             </div>
@@ -245,7 +245,7 @@ export default function AdminSupportManager() {
 
           <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
-              <h3 className="text-xs font-black uppercase tracking-wider text-white">Tambah FAQ</h3>
+              <h3 className="text-xs font-black tracking-wider text-white">Tambah FAQ</h3>
               <button
                 onClick={() => setShowFaqModal(false)}
                 className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
@@ -256,21 +256,21 @@ export default function AdminSupportManager() {
 
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Pertanyaan</label>
-                <input type="text" placeholder="Masukkan pertanyaan..." value={newFaq.question} onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600" />
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Pertanyaan</label>
+                <input type="text" placeholder="Masukkan pertanyaan..." value={newFaq.question} onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Jawaban</label>
-                <textarea placeholder="Masukkan jawaban..." value={newFaq.answer} onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20" />
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Jawaban</label>
+                <textarea placeholder="Masukkan jawaban..." value={newFaq.answer} onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-20" />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Sort Order</label>
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Sort Order</label>
                 <input type="number" placeholder="0" value={newFaq.sort_order} onChange={(e) => setNewFaq({ ...newFaq, sort_order: Number(e.target.value) })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
               </div>
 
-              <button onClick={handleAddFaq} className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1">
+              <button onClick={handleAddFaq} className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1">
                 Simpan FAQ
               </button>
             </div>

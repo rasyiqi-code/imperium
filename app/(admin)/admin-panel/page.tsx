@@ -104,7 +104,7 @@ export default function AdminDashboard() {
   if (loading) return (
     <div className="p-8 flex flex-col items-center justify-center min-h-screen gap-4 bg-black text-white">
       <RefreshCw className="animate-spin text-yellow-500" size={32} />
-      <span className="text-xs font-bold uppercase tracking-widest">Sinkronisasi Database...</span>
+      <span className="text-xs font-bold tracking-widest">Sinkronisasi Database...</span>
     </div>
   )
 
@@ -113,8 +113,8 @@ export default function AdminDashboard() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black uppercase tracking-tight text-white">Admin <span className="text-yellow-500">Dashboard</span></h1>
-        <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Ikhtisar data member, omzet transaksi, dan performa VIP saat ini</p>
+        <h1 className="text-xl font-black tracking-tight text-white">Admin <span className="text-yellow-500">Dashboard</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Ikhtisar data member, omzet transaksi, dan performa VIP saat ini</p>
       </div>
 
       {/* Stats Section */}
@@ -126,9 +126,9 @@ export default function AdminDashboard() {
             <Users size={18} />
           </div>
           <div className="text-2xl font-bold leading-none tracking-tight text-white">{stats.totalUser}</div>
-          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">Pendaftar</div>
+          <div className="text-[10px] font-black text-neutral-500 tracking-widest mt-2.5">Pendaftar</div>
         </div>
-
+ 
         {/* VIP Active */}
         <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-800/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl relative overflow-hidden group transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-20 h-20 bg-green-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-green-500/10 transition-all duration-300" />
@@ -136,9 +136,9 @@ export default function AdminDashboard() {
             <TrendingUp size={18} />
           </div>
           <div className="text-2xl font-bold leading-none tracking-tight text-green-400">{stats.vipAktif}</div>
-          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">VIP Aktif</div>
+          <div className="text-[10px] font-black text-neutral-500 tracking-widest mt-2.5">VIP Aktif</div>
         </div>
-
+ 
         {/* Total Omzet */}
         <div className="p-5 bg-neutral-950/40 backdrop-blur-md border border-neutral-800/80 hover:border-neutral-700/50 shadow-lg shadow-black/20 rounded-2xl col-span-2 md:col-span-1 relative overflow-hidden group transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-20 h-20 bg-yellow-500/5 blur-xl rounded-full pointer-events-none group-hover:bg-yellow-500/10 transition-all duration-300" />
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
             <Wallet size={18} />
           </div>
           <div className="text-2xl font-bold leading-none tracking-tight text-yellow-500">Rp {stats.omzet.toLocaleString('id-ID')}</div>
-          <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-2.5">Total Omzet</div>
+          <div className="text-[10px] font-black text-neutral-500 tracking-widest mt-2.5">Total Omzet</div>
         </div>
       </div>
 
@@ -156,14 +156,14 @@ export default function AdminDashboard() {
         
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-2">
+            <h3 className="text-xs font-black tracking-widest text-white flex items-center gap-2">
               <TrendingUp size={16} className="text-yellow-500 animate-pulse" />
               Tren Omzet Harian
             </h3>
-            <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1 tracking-wider">Visualisasi omzet harian 7 hari terakhir dari transaksi VIP sukses</p>
+            <p className="text-[10px] text-neutral-500 font-bold mt-1 tracking-wider">Visualisasi omzet harian 7 hari terakhir dari transaksi VIP sukses</p>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block">Puncak Omzet</span>
+            <span className="text-[10px] text-neutral-500 font-bold tracking-wider block">Puncak Omzet</span>
             <span className="text-xs font-black text-yellow-500">Rp {maxVal.toLocaleString('id-ID')}</span>
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
           {/* HTML Absolute Tooltip */}
           {hoveredIndex !== null && (
             <div 
-              className="absolute bg-neutral-950 border border-yellow-500/30 rounded-xl p-2.5 text-[9px] font-black uppercase tracking-wider text-white shadow-2xl pointer-events-none transition-all duration-150 ease-out"
+              className="absolute bg-neutral-950 border border-yellow-500/30 rounded-xl p-2.5 text-[9px] font-black tracking-wider text-white shadow-2xl pointer-events-none transition-all duration-150 ease-out"
               style={{
                 left: `${(coords[hoveredIndex].x / chartWidth) * 100}%`,
                 top: `${(coords[hoveredIndex].y / chartHeight) * 100 - 15}%`,

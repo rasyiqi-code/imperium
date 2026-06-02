@@ -151,8 +151,8 @@ export default function PaymentAdmin() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black uppercase tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
-        <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Konfirmasi pembayaran manual member dan sinkronisasi gateway Midtrans</p>
+        <h1 className="text-xl font-black tracking-tight text-white">Payment <span className="text-yellow-500">Confirmation</span></h1>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Konfirmasi pembayaran manual member dan sinkronisasi gateway Midtrans</p>
       </div>
 
       {/* Filter & Search Bar */}
@@ -163,7 +163,7 @@ export default function PaymentAdmin() {
               <Search className="text-neutral-500 mr-3" size={16} />
               <input 
                 type="text" placeholder="Cari Email..." 
-                className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
+                className="w-full bg-transparent text-xs font-bold tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
                 value={search} onChange={(e) => setSearch(e.target.value)}
               />
             </div>
@@ -177,7 +177,7 @@ export default function PaymentAdmin() {
                     setFilter(f)
                     setVisibleCount(10) // reset paginasi saat filter ganti
                   }}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${filter === f ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10' : 'text-neutral-500 hover:text-white'}`}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black capitalize tracking-wider transition-all duration-300 cursor-pointer ${filter === f ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10' : 'text-neutral-500 hover:text-white'}`}
                 >
                   {f}
                 </button>
@@ -186,7 +186,7 @@ export default function PaymentAdmin() {
 
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
             >
               <Download size={12} /> Export CSV
             </button>
@@ -205,11 +205,11 @@ export default function PaymentAdmin() {
                   <Wallet size={18} />
                 </div>
                 <div className="text-left min-w-0">
-                  <p className="text-xs font-bold uppercase text-white truncate max-w-40 md:max-w-xs">{pay.email_member}</p>
-                  <p className="text-[10px] font-bold text-neutral-500 uppercase mt-0.5 tracking-wider truncate max-w-40 md:max-w-xs leading-none">{pay.nama_paket}</p>
+                  <p className="text-xs font-bold text-white truncate max-w-40 md:max-w-xs">{pay.email_member}</p>
+                  <p className="text-[10px] font-bold text-neutral-500 mt-0.5 tracking-wider truncate max-w-40 md:max-w-xs leading-none">{pay.nama_paket}</p>
                 </div>
               </div>
-              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black capitalize tracking-widest border ${
                 pay.status_pembayaran === 'success' ? 'text-green-400 border-green-500/10 bg-green-500/5' : 
                 pay.status_pembayaran === 'failed' ? 'text-red-400 border-red-500/10 bg-red-500/5' : 
                 'text-yellow-500 border-yellow-500/15 bg-yellow-500/5'
@@ -217,13 +217,13 @@ export default function PaymentAdmin() {
                 {pay.status_pembayaran}
               </span>
             </div>
-
+ 
             <div className="flex items-center justify-between p-3.5 bg-neutral-900/20 border border-neutral-800/80 rounded-xl">
               <span className="text-xs font-black text-white tracking-wider">Rp {pay.harga_bayar.toLocaleString('id-ID')}</span>
               {pay.bukti_transfer && pay.bukti_transfer.startsWith('IMP-') ? (
                 <span className="text-[10px] font-black text-neutral-500 tracking-widest">MIDTRANS ONLINE</span>
               ) : (
-                <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-[10px] font-black text-yellow-500 uppercase hover:underline leading-none">
+                <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-[10px] font-black text-yellow-500 hover:underline leading-none">
                   Bukti <ExternalLink size={12} />
                 </a>
               )}
@@ -234,13 +234,13 @@ export default function PaymentAdmin() {
                 <button 
                   onClick={() => handleConfirmPayment(pay)}
                   disabled={processingId === pay.id}
-                  className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-black font-black rounded-xl text-[10px] uppercase tracking-wider shadow-lg shadow-green-500/10 hover:shadow-green-500/25 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-black font-black rounded-xl text-[10px] tracking-wider shadow-lg shadow-green-500/10 hover:shadow-green-500/25 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   {processingId === pay.id ? <RefreshCw className="animate-spin" size={14} /> : <CheckCircle2 size={14} />} Konfirmasi
                 </button>
                 <button 
                   onClick={() => handleReject(pay.id)}
-                  className="px-5 py-3 bg-red-500/5 text-red-400 border border-red-500/10 hover:bg-red-500 hover:text-white hover:border-red-400 rounded-xl text-[10px] font-black uppercase tracking-wider active:scale-[0.98] transition-all duration-300 cursor-pointer"
+                  className="px-5 py-3 bg-red-500/5 text-red-400 border border-red-500/10 hover:bg-red-500 hover:text-white hover:border-red-400 rounded-xl text-[10px] font-black tracking-wider active:scale-[0.98] transition-all duration-300 cursor-pointer"
                 >
                   Tolak
                 </button>
@@ -256,7 +256,7 @@ export default function PaymentAdmin() {
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setVisibleCount(prev => prev + 10)}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
           >
             Tampilkan Lebih Banyak
           </button>

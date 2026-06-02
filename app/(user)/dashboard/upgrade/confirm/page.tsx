@@ -203,16 +203,16 @@ function ConfirmContent() {
     <div className="p-4 md:p-8 space-y-6 w-full mx-auto pb-32 bg-black min-h-screen text-white font-sans text-left">
       <button onClick={() => router.back()} className="flex items-center gap-2 text-neutral-500 hover:text-white transition-all">
         <ArrowLeft size={18} />
-        <span className="text-xs font-bold uppercase tracking-widest">Kembali</span>
+        <span className="text-xs font-bold tracking-widest">Kembali</span>
       </button>
 
       <div className="space-y-1">
-        <h1 className="text-sm font-bold uppercase tracking-tight">Konfirmasi Pembayaran</h1>
-        <p className="text-xs text-neutral-500 font-bold uppercase tracking-tight leading-none">Imperium Crypto VIP Portal</p>
+        <h1 className="text-sm font-bold tracking-tight">Konfirmasi Pembayaran</h1>
+        <p className="text-xs text-neutral-500 font-bold tracking-tight leading-none">Imperium Crypto VIP Portal</p>
       </div>
 
       <div className="space-y-3">
-        <label className="text-xs font-bold text-neutral-500 uppercase px-1 tracking-widest leading-none">Pilih Paket</label>
+        <label className="text-xs font-bold text-neutral-500 px-1 tracking-widest leading-none">Pilih Paket</label>
         <div className="relative">
           <select 
             value={selectedPaket.id}
@@ -220,7 +220,7 @@ function ConfirmContent() {
               const found = listPaket.find(p => p.id === e.target.value)
               if (found) setSelectedPaket(found)
             }}
-            className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-xs font-bold uppercase outline-none appearance-none focus:border-yellow-500 transition-all cursor-pointer text-white"
+            className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-xs font-bold outline-none appearance-none focus:border-yellow-500 transition-all cursor-pointer text-white"
           >
             {listPaket.map((p) => {
               const displayPrice = getProratedPrice(Number(p.harga))
@@ -238,9 +238,9 @@ function ConfirmContent() {
 
       <div className="p-5 rounded-xl bg-neutral-900 border border-neutral-800 flex justify-between items-center">
         <div className="text-left">
-          <span className="text-xs font-bold text-neutral-500 uppercase leading-none block">Total Tagihan</span>
+          <span className="text-xs font-bold text-neutral-500 leading-none block">Total Tagihan</span>
           {getProratedPrice(Number(selectedPaket.harga)) < Number(selectedPaket.harga) && (
-            <span className="text-[10px] text-green-500 font-bold uppercase mt-1 block">Potongan Harga Prorasi Aktif</span>
+            <span className="text-[10px] text-green-500 font-bold mt-1 block">Potongan Harga Prorasi Aktif</span>
           )}
         </div>
         <div className="text-right">
@@ -249,7 +249,7 @@ function ConfirmContent() {
               Rp {Number(selectedPaket.harga).toLocaleString('id-ID')}
             </span>
           )}
-          <span className="text-sm font-bold text-yellow-500 uppercase tracking-tighter leading-none">
+          <span className="text-sm font-bold text-yellow-500 tracking-tighter leading-none">
             Rp {getProratedPrice(Number(selectedPaket.harga)).toLocaleString('id-ID')}
           </span>
         </div>
@@ -257,20 +257,20 @@ function ConfirmContent() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-3">
-          <label className="text-xs font-bold text-neutral-500 uppercase px-1 tracking-widest leading-none">Bukti Transfer</label>
+          <label className="text-xs font-bold text-neutral-500 px-1 tracking-widest leading-none">Bukti Transfer</label>
           <div className={`relative border border-dashed rounded-xl transition-all flex flex-col items-center justify-center p-8 ${preview ? 'border-yellow-500 bg-yellow-500/5' : 'border-neutral-800 bg-neutral-900 hover:border-neutral-700'}`}>
             <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
             {preview ? (
               <div className="space-y-4 w-full flex flex-col items-center">
                 <img src={preview} alt="Preview" className="h-40 rounded-lg object-contain border border-neutral-800" />
-                <p className="text-xs font-bold text-yellow-500 uppercase tracking-widest">Ganti Foto</p>
+                <p className="text-xs font-bold text-yellow-500 tracking-widest">Ganti Foto</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-3 text-neutral-500">
                 <div className="p-3 bg-black rounded-xl border border-neutral-800">
                   <Upload size={20} />
                 </div>
-                <p className="text-xs font-bold uppercase tracking-widest">Tap Untuk Upload</p>
+                <p className="text-xs font-bold tracking-widest">Tap Untuk Upload</p>
               </div>
             )}
           </div>
@@ -279,19 +279,19 @@ function ConfirmContent() {
         <div className="flex gap-3 p-4 bg-neutral-900/50 rounded-xl border border-neutral-800 items-start">
           <Info size={16} className="text-yellow-500 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="text-xs font-bold text-neutral-400 uppercase leading-relaxed tracking-tight">Instruksi Pembayaran</p>
-            <div className="text-xs text-neutral-500 font-bold uppercase space-y-1 leading-relaxed">
+            <p className="text-xs font-bold text-neutral-400 leading-relaxed tracking-tight">Instruksi Pembayaran</p>
+            <div className="text-xs text-neutral-500 font-bold space-y-1 leading-relaxed">
               <p>• Nama Pengirim Harus Terlihat Jelas</p>
               <p>• Nominal Harus Sesuai Total Tagihan</p>
               <p>• Pengecekan Jam 09:00 - 21:00 WIB</p>
             </div>
           </div>
         </div>
-
+ 
         <button 
           type="submit"
           disabled={loading || !file}
-          className="w-full py-4 bg-yellow-500 text-black rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-yellow-400 disabled:opacity-50 transition-all active:scale-95 shadow-xl shadow-yellow-500/10"
+          className="w-full py-4 bg-yellow-500 text-black rounded-xl text-xs font-bold tracking-widest flex items-center justify-center gap-2 hover:bg-yellow-400 disabled:opacity-50 transition-all active:scale-95 shadow-xl shadow-yellow-500/10"
         >
           {loading ? <RefreshCw className="animate-spin" size={18} /> : <CheckCircle2 size={18} />} Kirim Konfirmasi
         </button>

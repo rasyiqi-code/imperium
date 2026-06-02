@@ -87,7 +87,7 @@ export default function LoginPage() {
         <div className="rounded-3xl bg-neutral-900/50 p-8 shadow-2xl border border-neutral-800 backdrop-blur-xl">
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest ml-1">
+              <label className="text-xs font-bold text-neutral-400 tracking-widest ml-1">
                 Your Email
               </label>
               <div className="relative group">
@@ -105,10 +105,10 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
+                <label className="text-xs font-bold text-neutral-400 tracking-widest">
                   Password
                 </label>
-                <a href="https://wa.me/62812345678?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold uppercase tracking-widest transition">
+                <a href="https://wa.me/62812345678?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-xs text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition">
                   Lupa?
                 </a>
               </div>

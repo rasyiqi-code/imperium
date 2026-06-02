@@ -102,7 +102,7 @@ export default function Sidebar({ role }: SidebarProps) {
         </h2>
         <div className="mt-2 flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-yellow-500 animate-pulse" />
-          <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+          <p className="text-[10px] text-neutral-500 tracking-widest font-bold capitalize">
             {role} Portal
           </p>
         </div>
@@ -124,7 +124,7 @@ export default function Sidebar({ role }: SidebarProps) {
               <span className={`${isActive ? 'text-black' : 'text-neutral-500 group-hover:text-yellow-500'}`}>
                 {item.icon}
               </span>
-              <span className="text-xs uppercase font-bold tracking-wider leading-none">{item.name}</span>
+              <span className="text-xs font-bold tracking-wider leading-none">{item.name}</span>
             </Link>
           )
         })}
@@ -132,25 +132,25 @@ export default function Sidebar({ role }: SidebarProps) {
 
       <div className="mt-auto border-t border-neutral-900 pt-6 space-y-2">
         <div className="px-4 py-3 mb-2 rounded-xl bg-neutral-900/50 border border-neutral-800 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-yellow-500 flex items-center justify-center text-black font-bold text-[10px] uppercase shrink-0 leading-none">
+          <div className="h-9 w-9 rounded-xl bg-yellow-500 flex items-center justify-center text-black font-bold text-[10px] shrink-0 leading-none">
             {userData.name ? userData.name.substring(0, 2) : 'IC'}
           </div>
           <div className="flex flex-col min-w-0 text-left">
-            <span className="text-xs font-bold text-white uppercase truncate tracking-tight leading-none">
+            <span className="text-xs font-bold text-white truncate tracking-tight leading-none">
               {userData.name || 'Loading...'}
             </span>
-            <span className="text-[10px] font-bold text-neutral-500 uppercase truncate tracking-tighter mt-1 leading-none">
+            <span className="text-[10px] font-bold text-neutral-500 truncate tracking-tighter mt-1 leading-none">
               {userData.email}
             </span>
           </div>
         </div>
-
+ 
         <button
           onClick={handleLogout}
           className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-neutral-500 hover:bg-red-500/10 hover:text-red-500 transition-all duration-300 group"
         >
           <LogOut size={18} />
-          <span className="text-xs font-bold uppercase tracking-widest leading-none">Logout</span>
+          <span className="text-xs font-bold tracking-widest leading-none">Logout</span>
         </button>
       </div>
     </aside>

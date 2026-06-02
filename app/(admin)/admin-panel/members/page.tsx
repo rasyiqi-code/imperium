@@ -256,11 +256,11 @@ export default function ManageMembers() {
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
-        <h1 className="text-xl font-black uppercase tracking-tight text-white">
+        <h1 className="text-xl font-black tracking-tight text-white">
           Members <span className="text-yellow-500">Manager</span>
-          <span className="ml-2 text-xs font-normal text-neutral-400 font-mono normal-case">({totalCount} Member)</span>
+          <span className="ml-2 text-xs font-normal text-neutral-400 font-mono">({totalCount} Member)</span>
         </h1>
-        <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Kelola data member registrasi, status membership VIP, dan opsi chat langsung</p>
+        <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola data member registrasi, status membership VIP, dan opsi chat langsung</p>
       </div>
 
       {/* Search & Bulk Action Bar */}
@@ -271,7 +271,7 @@ export default function ManageMembers() {
               <Search className="text-neutral-500 mr-3" size={16} />
               <input 
                 type="text" placeholder="Cari member..." 
-                className="w-full bg-transparent text-xs font-bold uppercase tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
+                className="w-full bg-transparent text-xs font-bold tracking-wider outline-none text-white placeholder-neutral-600 animate-none"
                 value={search} onChange={(e) => setSearch(e.target.value)}
               />
             </div>
@@ -279,7 +279,7 @@ export default function ManageMembers() {
               {selectedIds.length > 0 && (
                 <button 
                   onClick={() => deleteMembers(selectedIds)} 
-                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
                 >
                   <Trash2 size={14} /> Hapus ({selectedIds.length})
                 </button>
@@ -297,7 +297,7 @@ export default function ManageMembers() {
                 <button
                   key={plan}
                   onClick={() => setSelectedPlan(plan)}
-                  className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border cursor-pointer transition-all duration-200 ${
+                  className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black capitalize tracking-wider border cursor-pointer transition-all duration-200 ${
                     selectedPlan === plan
                     ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 shadow-md shadow-yellow-500/5'
                     : 'bg-neutral-900/50 text-neutral-500 border-neutral-800 hover:text-neutral-400'
@@ -310,7 +310,7 @@ export default function ManageMembers() {
             
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
             >
               <Download size={12} /> Export CSV
             </button>
@@ -329,22 +329,22 @@ export default function ManageMembers() {
                     {selectedIds.includes(m.id) ? <CheckSquare size={20} /> : <Square size={20} />}
                   </button>
                   <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-sm font-bold uppercase truncate max-w-40 text-white">{m.full_name || 'Anonymous'}</span>
-                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
-                    <div className="text-[9px] text-neutral-500 font-bold uppercase leading-none space-y-0.5 mt-2.5">
+                    <span className="text-sm font-bold truncate max-w-40 text-white">{m.full_name || 'Anonymous'}</span>
+                    <span className="text-[10px] text-neutral-500 font-bold tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
+                    <div className="text-[9px] text-neutral-500 font-bold leading-none space-y-0.5 mt-2.5">
                       <p>Daftar: <span className="text-neutral-300">{m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
                     </div>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border ${
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg tracking-widest border ${
                   m.plan === 'vip' 
-                  ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15' 
-                  : 'bg-neutral-900/80 text-neutral-500 border-neutral-800'
+                  ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15 uppercase' 
+                  : 'bg-neutral-900/80 text-neutral-500 border-neutral-800 uppercase'
                 }`}>
                   {m.plan || 'FREE'}
                 </span>
               </div>
-              <button onClick={() => setSelectedMember(m)} className="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl text-xs font-bold uppercase transition-all duration-300 text-white cursor-pointer">Detail Member</button>
+              <button onClick={() => setSelectedMember(m)} className="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl text-xs font-bold transition-all duration-300 text-white cursor-pointer">Detail Member</button>
             </div>
           ))}
         </div>
@@ -352,7 +352,7 @@ export default function ManageMembers() {
         {/* Desktop Table View */}
         <div className="hidden md:block bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl overflow-hidden shadow-2xl">
           <table className="w-full text-left">
-            <thead className="bg-neutral-950/50 text-[10px] font-black uppercase text-neutral-500 border-b border-neutral-900 tracking-wider">
+            <thead className="bg-neutral-950/50 text-[10px] font-black capitalize text-neutral-500 border-b border-neutral-900 tracking-wider">
               <tr>
                 <th className="px-6 py-4 w-10 text-center">
                   <button onClick={toggleSelectAll} className="cursor-pointer">{selectedIds.length === filteredMembers.length ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
@@ -372,10 +372,10 @@ export default function ManageMembers() {
                     <button onClick={() => toggleSelectOne(m.id)} className="cursor-pointer">{selectedIds.includes(m.id) ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
                   </td>
                   <td className="px-6 py-4 text-left">
-                    <div className="font-bold uppercase text-white group-hover:text-yellow-500 transition-colors font-sans">{m.full_name || 'Anonymous'}</div>
-                    <div className="text-[10px] text-neutral-500 font-bold uppercase mt-0.5 tracking-tight">{m.email}</div>
+                    <div className="font-bold text-white group-hover:text-yellow-500 transition-colors font-sans">{m.full_name || 'Anonymous'}</div>
+                    <div className="text-[10px] text-neutral-500 font-bold mt-0.5 tracking-tight">{m.email}</div>
                   </td>
-                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 tracking-wider">
                     {m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                   </td>
                   {/* Paket VIP */}
@@ -391,11 +391,11 @@ export default function ManageMembers() {
                     )}
                   </td>
                   {/* Mulai VIP */}
-                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 tracking-wider">
                     {m.plan === 'vip' && m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                   </td>
                   {/* Expired VIP */}
-                  <td className="px-6 py-4 text-left text-[11px] font-bold text-yellow-500/80 uppercase tracking-wider">
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-yellow-500/80 tracking-wider">
                     {m.plan === 'vip' && m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -413,7 +413,7 @@ export default function ManageMembers() {
             <button
               onClick={loadMore}
               disabled={isProcessing}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black uppercase tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-950/40 border border-neutral-800 hover:border-neutral-700 active:scale-95 text-xs font-black tracking-widest text-neutral-400 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
             >
               {isProcessing ? (
                 <>
@@ -435,7 +435,7 @@ export default function ManageMembers() {
           
           <div className="relative w-full max-w-sm bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-neutral-900 bg-neutral-950/50">
-              <h3 className="font-black uppercase tracking-wider text-white text-xs leading-none">Member Detail</h3>
+              <h3 className="font-black tracking-wider text-white text-xs leading-none">Member Detail</h3>
               <button onClick={() => setSelectedMember(null)} className="text-neutral-500 hover:text-white transition-all cursor-pointer"><X size={18} /></button>
             </div>
             <div className="p-6 space-y-4">
@@ -458,7 +458,7 @@ export default function ManageMembers() {
                 <button 
                   onClick={() => handleUpgrade(selectedMember)}
                   disabled={isProcessing}
-                  className={`w-full py-3.5 rounded-xl font-black uppercase text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`w-full py-3.5 rounded-xl font-black tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     selectedMember.plan === 'vip' 
                     ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
                     : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
@@ -472,17 +472,17 @@ export default function ManageMembers() {
                   <button 
                     onClick={() => handleDeactivate(selectedMember)}
                     disabled={isProcessing}
-                    className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
                   </button>
                 )}
 
-                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                <a href={`https://wa.me/${selectedMember.whatsapp_number?.replace(/[^0-9]/g, '')}`} target="_blank" className="w-full py-3.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
                   <MessageSquare size={14} /> Chat WhatsApp
                 </a>
                 
-                <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                <button onClick={() => deleteMembers([selectedMember.id])} className="w-full py-3.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
                   <Trash2 size={14} /> Hapus Akun
                 </button>
               </div>
@@ -497,8 +497,8 @@ export default function ManageMembers() {
 function InfoItem({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[10px] uppercase font-bold text-neutral-500 tracking-wider flex items-center gap-1.5 leading-none">{icon} {label}</span>
-      <span className="text-xs font-bold text-white uppercase truncate">{value}</span>
+      <span className="text-[10px] font-bold text-neutral-500 tracking-wider flex items-center gap-1.5 leading-none">{icon} {label}</span>
+      <span className="text-xs font-bold text-white truncate">{value}</span>
     </div>
   )
 }

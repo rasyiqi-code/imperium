@@ -274,7 +274,7 @@ export default function PaymentModal({
               </button>
             )}
             <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-tight">
+              <h2 className="text-sm font-black text-white tracking-tight">
                 {step === 'loading' && 'Memuat...'}
                 {step === 'select' && 'Pilih Pembayaran'}
                 {step === 'paying' && 'Selesaikan Pembayaran'}
@@ -301,7 +301,7 @@ export default function PaymentModal({
         {(step === 'select' || step === 'paying') && (
           <div className="px-5 py-3 bg-neutral-900/50 border-b border-neutral-800/30 flex items-center justify-between">
             <div>
-              <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">Total Bayar</p>
+              <p className="text-[9px] font-bold text-neutral-600 tracking-widest">Total Bayar</p>
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="text-xl font-black text-yellow-500">{formatRupiah(harga)}</span>
                 {originalHarga && originalHarga > harga && (
@@ -310,7 +310,7 @@ export default function PaymentModal({
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">Paket</p>
+              <p className="text-[9px] font-bold text-neutral-600 tracking-widest">Paket</p>
               <p className="text-xs font-bold text-white">{paketNama}</p>
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function PaymentModal({
           {step === 'loading' && (
             <div className="py-12 flex flex-col items-center gap-4">
               <Loader2 size={32} className="animate-spin text-yellow-500" />
-              <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">
+              <p className="text-[10px] text-neutral-500 font-bold tracking-widest">
                 Memuat metode pembayaran...
               </p>
             </div>
@@ -332,7 +332,7 @@ export default function PaymentModal({
             <div className="space-y-4">
               {Object.entries(grouped).map(([category, items]) => (
                 <div key={category}>
-                  <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em] mb-2">
+                  <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em] mb-2">
                     {CATEGORY_LABELS[category] || category}
                   </p>
                   <div className="space-y-2">
@@ -364,7 +364,7 @@ export default function PaymentModal({
               {/* Secure badge */}
               <div className="flex items-center justify-center gap-2 pt-3 text-neutral-600">
                 <ShieldCheck size={12} />
-                <span className="text-[9px] font-black uppercase tracking-widest">
+                <span className="text-[9px] font-black tracking-widest">
                   Pembayaran Aman & Terenkripsi
                 </span>
               </div>
@@ -414,14 +414,14 @@ export default function PaymentModal({
               {chargeData.type === 'va' && (
                 <div className="space-y-3">
                   <div className="text-center">
-                    <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em] mb-1">
+                    <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em] mb-1">
                       {chargeData.bank?.toUpperCase()} {chargeData.billerCode ? 'Bill Payment' : 'Virtual Account'}
                     </p>
                   </div>
 
                   {chargeData.billerCode && (
                     <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-                      <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest mb-1">Biller Code</p>
+                      <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Biller Code</p>
                       <div className="flex items-center justify-between">
                         <p className="text-lg font-black text-white tracking-wider font-mono">{chargeData.billerCode}</p>
                         <button onClick={() => handleCopy(chargeData.billerCode!)} className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5">
@@ -433,7 +433,7 @@ export default function PaymentModal({
                   )}
 
                   <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-                    <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest mb-1">
+                    <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">
                       {chargeData.billerCode ? 'Bill Key' : 'Nomor Virtual Account'}
                     </p>
                     <div className="flex items-center justify-between">
@@ -453,12 +453,12 @@ export default function PaymentModal({
               {chargeData.type === 'cstore' && (
                 <div className="space-y-3">
                   <div className="text-center">
-                    <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em] mb-1">
+                    <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em] mb-1">
                       {chargeData.store?.toUpperCase()} — Kode Pembayaran
                     </p>
                   </div>
                   <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-                    <p className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest mb-1">Kode Pembayaran</p>
+                    <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Kode Pembayaran</p>
                     <div className="flex items-center justify-between">
                       <p className="text-xl font-black text-yellow-500 tracking-wider font-mono">{chargeData.paymentCode}</p>
                       <button onClick={() => handleCopy(chargeData.paymentCode!)} className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5">
@@ -468,7 +468,7 @@ export default function PaymentModal({
                     </div>
                   </div>
                   <div className="bg-neutral-900/50 border border-neutral-800/50 rounded-2xl p-4 space-y-2">
-                    <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em]">Cara Bayar</p>
+                    <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em]">Cara Bayar</p>
                     <ol className="space-y-1.5 text-[11px] text-neutral-500 font-medium list-decimal list-inside">
                       <li>Kunjungi gerai <span className="text-white font-bold">{chargeData.store?.charAt(0).toUpperCase()}{chargeData.store?.slice(1)}</span> terdekat</li>
                       <li>Sebutkan pembayaran melalui <span className="text-white font-bold">Midtrans</span></li>
@@ -499,7 +499,7 @@ export default function PaymentModal({
                       href={chargeData.redirectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-yellow-500 text-black text-sm font-black uppercase tracking-tight hover:bg-yellow-400 transition-all active:scale-[0.98]"
+                      className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-yellow-500 text-black text-sm font-black tracking-tight hover:bg-yellow-400 transition-all active:scale-[0.98]"
                     >
                       <ExternalLink size={16} />
                       {chargeData.redirectLabel || 'Buka Halaman Pembayaran'}
@@ -511,7 +511,7 @@ export default function PaymentModal({
               {/* Polling indicator */}
               <div className="flex items-center justify-center gap-2 text-neutral-600">
                 <Loader2 size={12} className="animate-spin" />
-                <span className="text-[9px] font-bold uppercase tracking-widest">
+                <span className="text-[9px] font-bold tracking-widest">
                   Menunggu pembayaran...
                 </span>
               </div>
@@ -532,7 +532,7 @@ export default function PaymentModal({
               </div>
               <button
                 onClick={onSuccess}
-                className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl font-black uppercase tracking-tight text-sm transition-all active:scale-[0.98] shadow-lg shadow-yellow-500/20"
+                className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl font-black tracking-tight text-sm transition-all active:scale-[0.98] shadow-lg shadow-yellow-500/20"
               >
                 Masuk ke Dashboard
               </button>
@@ -551,7 +551,7 @@ export default function PaymentModal({
               </div>
               <button
                 onClick={handleBack}
-                className="w-full bg-neutral-800 hover:bg-neutral-700 text-white py-4 rounded-2xl font-black uppercase tracking-tight text-sm transition-all active:scale-[0.98]"
+                className="w-full bg-neutral-800 hover:bg-neutral-700 text-white py-4 rounded-2xl font-black tracking-tight text-sm transition-all active:scale-[0.98]"
               >
                 Coba Lagi
               </button>
@@ -576,7 +576,7 @@ function PaymentInstructions({
 }) {
   return (
     <div className="bg-neutral-900/50 border border-neutral-800/50 rounded-2xl p-4 space-y-2">
-      <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.2em]">Cara Bayar</p>
+      <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em]">Cara Bayar</p>
       <ol className="space-y-1.5 text-[11px] text-neutral-500 font-medium list-decimal list-inside">
         <li>Buka aplikasi m-banking atau ATM <span className="text-white font-bold">{bank?.toUpperCase()}</span></li>
         <li>Pilih menu Transfer atau Bayar</li>

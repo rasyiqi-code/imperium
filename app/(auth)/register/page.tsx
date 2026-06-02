@@ -73,7 +73,7 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister} className="space-y-5">
           {/* Input Nama */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-1">Nama Lengkap</label>
+            <label className="text-[10px] font-black text-neutral-500 tracking-[0.2em] ml-1">Nama Lengkap</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
               <input
@@ -89,7 +89,7 @@ export default function RegisterPage() {
 
           {/* Input WhatsApp */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-1">WhatsApp</label>
+            <label className="text-[10px] font-black text-neutral-500 tracking-[0.2em] ml-1">WhatsApp</label>
             <div className="relative">
               <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
               <input
@@ -105,7 +105,7 @@ export default function RegisterPage() {
 
           {/* Input Email */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-1">Email Aktif</label>
+            <label className="text-[10px] font-black text-neutral-500 tracking-[0.2em] ml-1">Email Aktif</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
               <input
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
           {/* Input Password */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] ml-1">Password</label>
+            <label className="text-[10px] font-black text-neutral-500 tracking-[0.2em] ml-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
               <input
@@ -145,7 +145,7 @@ export default function RegisterPage() {
           {/* Tombol Submit */}
           <button
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 rounded-2xl bg-yellow-500 p-4 font-black text-black hover:bg-yellow-400 disabled:opacity-50 transition-all shadow-[0_10px_30px_rgba(234,179,8,0.2)] mt-8 uppercase tracking-widest text-sm"
+            className="w-full flex items-center justify-center gap-3 rounded-2xl bg-yellow-500 p-4 font-black text-black hover:bg-yellow-400 disabled:opacity-50 transition-all shadow-[0_10px_30px_rgba(234,179,8,0.2)] mt-8 tracking-widest text-sm"
           >
             {loading ? <RefreshCw className="animate-spin" size={20} /> : 'Buat Akun Sekarang'}
           </button>

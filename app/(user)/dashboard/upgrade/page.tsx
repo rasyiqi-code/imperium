@@ -89,7 +89,7 @@ export default function UpgradePage() {
   if (loading) return (
     <div className="p-10 flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <RefreshCw className="animate-spin text-yellow-500" size={40} />
-      <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">Menyiapkan Paket VIP...</p>
+      <p className="text-neutral-500 font-bold tracking-widest text-[10px]">Menyiapkan Paket VIP...</p>
     </div>
   )
 
@@ -99,7 +99,7 @@ export default function UpgradePage() {
       {/* Header */}
       <div className="text-center space-y-3">
         <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter">
-          UPGRADE <span className="text-yellow-500">VIP</span>
+          Upgrade <span className="text-yellow-500">VIP</span>
         </h1>
         <p className="text-neutral-500 text-sm md:text-base max-w-md mx-auto font-medium">
           Dapatkan akses sinyal harian dan belajar Crypto secara profesional bersama komunitas eksklusif.
@@ -131,14 +131,14 @@ export default function UpgradePage() {
           <button 
             onClick={() => setShowPayment(true)}
             disabled={!selectedId}
-            className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 uppercase tracking-tight text-sm"
+            className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 tracking-tight text-sm"
           >
-            <CreditCard size={20}/> BAYAR SEKARANG
+            <CreditCard size={20}/> Bayar Sekarang
           </button>
 
           <div className="flex items-center justify-center gap-2 text-neutral-600">
             <ShieldCheck size={14} />
-            <span className="text-[9px] font-black uppercase tracking-widest">Encrypted Payment by Midtrans</span>
+            <span className="text-[9px] font-black tracking-widest">Encrypted Payment by Midtrans</span>
           </div>
         </div>
       </div>

@@ -22,9 +22,9 @@ export default function StatusCard({ member }: Props) {
 
   return (
     <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
-      <h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-blue-400">Status Membership</h2>
+      <h2 className="text-sm font-medium tracking-wider mb-2 text-blue-400">Status Membership</h2>
       <div className="mt-2">
-        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase border ${getStatusStyle(member?.status_aktif)}`}>
+        <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize border ${getStatusStyle(member?.status_aktif)}`}>
           {member?.status_aktif || 'Belum Terdaftar'}
         </span>
       </div>

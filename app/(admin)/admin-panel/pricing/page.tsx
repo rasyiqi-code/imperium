@@ -173,12 +173,12 @@ export default function PricingEditor() {
       {/* Header Editor */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
         <div className="hidden md:block">
-          <h1 className="text-xl font-black uppercase tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
-          <p className="text-[10px] text-neutral-500 font-bold uppercase mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
+          <h1 className="text-xl font-black tracking-tight text-white">Pricing <span className="text-yellow-500">Editor</span></h1>
+          <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Atur paket membership VIP Imperium Crypto</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="w-full sm:w-auto py-3 px-5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-yellow-500/15 cursor-pointer duration-300"
+          className="w-full sm:w-auto py-3 px-5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-yellow-500/15 cursor-pointer duration-300"
         >
           <Plus size={14} /> Tambah Paket
         </button>
@@ -200,19 +200,19 @@ export default function PricingEditor() {
                 </button>
               </div>
 
-              <h3 className="text-base font-black uppercase tracking-tight text-white">{plan.nama_paket}</h3>
-              <p className="text-lg font-black text-yellow-500 mt-1 uppercase tracking-tight">
-                Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} HARI</span>
+              <h3 className="text-base font-black tracking-tight text-white">{plan.nama_paket}</h3>
+              <p className="text-lg font-black text-yellow-500 mt-1 tracking-tight">
+                Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} hari</span>
               </p>
             </div>
 
             <div className="mt-6 space-y-3 pt-6 border-t border-neutral-900/60">
               {plan.fitur && plan.fitur.length > 0 ? plan.fitur.map((feat, i) => (
-                <div key={i} className="flex items-center gap-2.5 text-[10px] font-black text-neutral-400 uppercase tracking-wide">
+                <div key={i} className="flex items-center gap-2.5 text-[10px] font-black text-neutral-400 tracking-wide">
                   <CheckCircle2 size={12} className="text-yellow-500 shrink-0" /> {feat}
                 </div>
               )) : (
-                <p className="text-[10px] text-neutral-600 uppercase font-bold tracking-widest">Belum ada fitur</p>
+                <p className="text-[10px] text-neutral-600 font-bold tracking-widest">Belum ada fitur</p>
               )}
             </div>
           </div>
@@ -227,7 +227,7 @@ export default function PricingEditor() {
           
           <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
-              <h3 className="text-xs font-black uppercase tracking-wider text-white">Edit Pricing Plan</h3>
+              <h3 className="text-xs font-black tracking-wider text-white">Edit Pricing Plan</h3>
               <button 
                 onClick={() => setEditModal(null)} 
                 className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
@@ -235,21 +235,21 @@ export default function PricingEditor() {
                 <X size={14}/>
               </button>
             </div>
-
+ 
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Nama Paket</label>
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Nama Paket</label>
                 <input 
                   type="text" 
                   value={editModal.nama_paket} 
                   onChange={e => setEditModal({...editModal, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
                 />
               </div>
-
+ 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Harga (Rp)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Harga (Rp)</label>
                   <input 
                     type="number" 
                     value={editModal.harga} 
@@ -258,7 +258,7 @@ export default function PricingEditor() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Durasi (Hari)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Durasi (Hari)</label>
                   <input 
                     type="number" 
                     value={editModal.durasi_hari} 
@@ -267,22 +267,22 @@ export default function PricingEditor() {
                   />
                 </div>
               </div>
-
+ 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 
                   rows={3}
                   value={editModal.fitur?.join(', ') || ''} 
                   onChange={e => setEditModal({...editModal, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
-                  placeholder="CONTOH: SINYAL VIP, MENTORSHIP"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-20"
+                  placeholder="Contoh: Sinyal VIP, Mentorship"
                 />
               </div>
-
+ 
               <button 
                 onClick={handleUpdate}
                 disabled={saving}
-                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
               >
                 {saving ? <RefreshCw className="animate-spin" size={14}/> : <Save size={14}/>} Simpan Perubahan
               </button>
@@ -299,7 +299,7 @@ export default function PricingEditor() {
           
           <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
-              <h3 className="text-xs font-black uppercase tracking-wider text-white">Tambah Paket Pricing Baru</h3>
+              <h3 className="text-xs font-black tracking-wider text-white">Tambah Paket Pricing Baru</h3>
               <button 
                 onClick={() => setShowAddModal(false)} 
                 className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
@@ -307,22 +307,22 @@ export default function PricingEditor() {
                 <X size={14}/>
               </button>
             </div>
-
+ 
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Nama Paket</label>
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Nama Paket</label>
                 <input 
                   type="text" 
                   value={newPlan.nama_paket} 
                   onChange={e => setNewPlan({...newPlan, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600"
-                  placeholder="CONTOH: PAKET 3 BULAN"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
+                  placeholder="Contoh: Paket 3 Bulan"
                 />
               </div>
-
+ 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Harga (Rp)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Harga (Rp)</label>
                   <input 
                     type="number" 
                     value={newPlan.harga} 
@@ -332,7 +332,7 @@ export default function PricingEditor() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Durasi (Hari)</label>
+                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Durasi (Hari)</label>
                   <input 
                     type="number" 
                     value={newPlan.durasi_hari} 
@@ -342,22 +342,22 @@ export default function PricingEditor() {
                   />
                 </div>
               </div>
-
+ 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
+                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 
                   rows={3}
                   value={newPlan.fitur?.join(', ') || ''} 
                   onChange={e => setNewPlan({...newPlan, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold uppercase outline-none text-white placeholder-neutral-600 min-h-20"
-                  placeholder="SINYAL VIP, MENTORSHIP, AKADEMI CRYPTO"
+                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-20"
+                  placeholder="Sinyal VIP, Mentorship, Akademi Crypto"
                 />
               </div>
-
+ 
               <button 
                 onClick={handleCreate}
                 disabled={creating}
-                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98] pt-1"
               >
                 {creating ? <RefreshCw className="animate-spin" size={14}/> : <Plus size={14}/>} Simpan Paket Baru
               </button>

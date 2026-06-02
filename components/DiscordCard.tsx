@@ -11,7 +11,7 @@ export default function DiscordCard({ member }: Props) {
   return (
     <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col justify-between">
       <div>
-        <h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-indigo-400">Akses Komunitas</h2>
+        <h2 className="text-sm font-medium tracking-wider mb-2 text-indigo-400">Akses Komunitas</h2>
         <p className="text-gray-300 text-sm mt-2 leading-relaxed">
           {isAktif 
             ? 'Akses penuh ke server Discord VIP sudah terbuka untukmu!' 
