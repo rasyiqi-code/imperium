@@ -333,12 +333,6 @@ export default function ManageMembers() {
                     <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
                     <div className="text-[9px] text-neutral-500 font-bold uppercase leading-none space-y-0.5 mt-2.5">
                       <p>Daftar: <span className="text-neutral-300">{m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                      {m.plan === 'vip' && (
-                        <>
-                          <p>Mulai: <span className="text-neutral-400">{m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                          <p>Expired: <span className="text-yellow-500/80">{m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                        </>
-                      )}
                     </div>
                   </div>
                 </div>
