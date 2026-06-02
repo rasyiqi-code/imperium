@@ -69,7 +69,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans overflow-hidden">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans">
       {/* Kolom Kiri: Formulir Login */}
       <div className="flex flex-col justify-center items-center px-6 md:px-12 py-12 relative overflow-hidden">
         {/* Dekorasi latar belakang bercahaya */}
@@ -172,8 +172,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Sisi Kanan: Panel Gambar Visual Kripto Premium */}
-      <div className="hidden lg:flex relative overflow-hidden items-center justify-center bg-neutral-900 border-l border-neutral-800">
+      {/* Sisi Kanan: Panel Gambar Visual Kripto Premium — sticky agar tidak ikut scroll */}
+      <div className="hidden lg:flex sticky top-0 h-screen relative overflow-hidden items-center justify-center bg-neutral-900 border-l border-neutral-800">
         {/* Gambar background premium */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 hover:scale-105"
