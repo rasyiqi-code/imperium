@@ -17,7 +17,12 @@ export default function ProfilePage() {
     email_member: '',
     nomor_wa: '',
     status_vip: 'Gratis',
-    masa_aktif: null as string | null
+    masa_aktif: null as string | null,
+    id_discord_user: null as string | null,
+    kode_invite_unik: null as string | null,
+    nama_paket: null as string | null,
+    harga_bayar: 0,
+    tanggal_bergabung: null as string | null
   })
 
   const [tempProfile, setTempProfile] = useState({ ...profile })
@@ -39,6 +44,7 @@ export default function ProfilePage() {
           const profData = data.profile
           const vipData = data.vipData
           const isVip = profData?.plan === 'vip' || vipData?.status_aktif === 'aktif' || vipData?.status_aktif === 'vip'
+          const joinedDate = vipData?.created_at || profData?.created_at || null
 
           const dataProfile = {
             id_user_auth: user.id,
@@ -46,7 +52,12 @@ export default function ProfilePage() {
             email_member: user.email || '',
             nomor_wa: profData?.whatsapp_number || user.user_metadata?.whatsapp_number || '',
             status_vip: isVip ? 'VIP Member' : 'Paket Gratis',
-            masa_aktif: vipData?.tanggal_berakhir || null
+            masa_aktif: vipData?.tanggal_berakhir || null,
+            id_discord_user: vipData?.id_discord_user || null,
+            kode_invite_unik: vipData?.kode_invite_unik || null,
+            nama_paket: vipData?.nama_paket || null,
+            harga_bayar: vipData?.harga_bayar || 0,
+            tanggal_bergabung: joinedDate
           }
 
           setProfile(dataProfile)
@@ -132,56 +143,56 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* ===== Kolom Kiri: Info User & VIP Card ===== */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           {/* Avatar Card */}
-          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-5 flex flex-col items-center gap-3.5 text-center">
             <div className="relative">
-              <div className="w-24 h-24 bg-neutral-900 border-2 border-yellow-500/20 rounded-full flex items-center justify-center text-yellow-500 shadow-xl shadow-yellow-500/5">
-                <User size={40} />
+              <div className="w-20 h-20 bg-neutral-900 border border-yellow-500/20 rounded-full flex items-center justify-center text-yellow-500 shadow-xl shadow-yellow-500/5">
+                <User size={32} />
               </div>
               <button 
                 onClick={() => {
                   if (isEditing) setTempProfile({ ...profile });
                   setIsEditing(!isEditing);
                 }}
-                className={`absolute bottom-0 right-0 p-2.5 rounded-full border border-neutral-800 transition-all shadow-lg ${
+                className={`absolute bottom-0 right-0 p-2 rounded-full border border-neutral-800 transition-all shadow-lg ${
                   isEditing ? 'bg-red-500 text-white' : 'bg-yellow-500 text-black hover:scale-110'
                 }`}
               >
-                {isEditing ? <X size={16} /> : <Edit3 size={16} />}
+                {isEditing ? <X size={14} /> : <Edit3 size={14} />}
               </button>
             </div>
             <div>
-              <p className="text-lg font-extrabold text-white">{profile.nama_member}</p>
-              <p className="text-neutral-500 text-[10px] font-bold tracking-widest mt-0.5">ID: {profile.id_user_auth.slice(0,8)}</p>
+              <p className="text-base font-extrabold text-white">{profile.nama_member}</p>
+              <p className="text-neutral-500 text-[9px] font-bold tracking-widest mt-0.5">ID: {profile.id_user_auth.slice(0,8)}</p>
             </div>
           </div>
 
           {/* VIP Card */}
-          <div className={`p-5 rounded-2xl border flex items-center justify-between transition-all duration-500 ${
+          <div className={`p-4 rounded-2xl border flex items-center justify-between transition-all duration-500 ${
             profile.status_vip === 'VIP Member' 
             ? 'bg-yellow-500/10 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.05)]' 
             : 'bg-neutral-900/50 border-neutral-800'
           }`}>
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                 profile.status_vip === 'VIP Member' ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'bg-neutral-800 text-neutral-500'
               }`}>
-                <Gem size={20} />
+                <Gem size={18} />
               </div>
               <div>
-                <div className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase">Membership</div>
-                <div className={`text-sm font-extrabold tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-400' : 'text-white'}`}>
+                <div className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase">Membership</div>
+                <div className={`text-xs font-extrabold tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-400' : 'text-white'}`}>
                   {profile.status_vip}
                 </div>
               </div>
             </div>
             {profile.status_vip === 'VIP Member' && profile.masa_aktif && (
               <div className="text-right">
-                <div className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase flex items-center justify-end gap-1">
-                  <Calendar size={10} /> Expired
+                <div className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase flex items-center justify-end gap-1">
+                  <Calendar size={9} /> Expired
                 </div>
-                <div className="text-[11px] font-bold text-white mt-0.5">
+                <div className="text-[10px] font-bold text-white mt-0.5">
                   {new Date(profile.masa_aktif).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               </div>
@@ -212,46 +223,46 @@ export default function ProfilePage() {
         </div>
 
         {/* ===== Kolom Kanan: Form Data (2/3 lebar) ===== */}
-        <div className="lg:col-span-2 bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 space-y-5">
+        <div className="lg:col-span-2 bg-neutral-900/50 border border-neutral-800 rounded-2xl p-5 space-y-4">
           {/* Email — read only */}
-          <div className="space-y-1.5 opacity-50">
+          <div className="space-y-1 opacity-50">
             <label className="text-[10px] font-bold text-neutral-500 tracking-widest uppercase">E-Mail</label>
-            <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
-              <Mail size={16} className="text-neutral-600 shrink-0" />
-              <span className="text-neutral-400 text-sm font-medium">{profile.email_member}</span>
+            <div className="flex items-center gap-3 p-3 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+              <Mail size={14} className="text-neutral-600 shrink-0" />
+              <span className="text-neutral-400 text-xs font-medium">{profile.email_member}</span>
             </div>
           </div>
 
           {/* Nama Member */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">Nama Member</label>
             {isEditing ? (
               <input 
                 type="text"
                 value={tempProfile.nama_member}
                 onChange={(e) => setTempProfile({ ...tempProfile, nama_member: e.target.value })}
-                className="w-full bg-neutral-950 border border-yellow-500/50 p-3.5 rounded-xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                className="w-full bg-neutral-950 border border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
               />
             ) : (
-              <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
-                <span className="text-white text-sm font-bold">{profile.nama_member}</span>
+              <div className="flex items-center gap-3 p-3 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+                <span className="text-white text-xs font-bold">{profile.nama_member}</span>
               </div>
             )}
           </div>
 
           {/* WhatsApp */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">WhatsApp</label>
             {isEditing ? (
               <input 
                 type="tel"
                 value={tempProfile.nomor_wa}
                 onChange={(e) => setTempProfile({ ...tempProfile, nomor_wa: e.target.value })}
-                className="w-full bg-neutral-950 border border-yellow-500/50 p-3.5 rounded-xl text-white text-sm outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                className="w-full bg-neutral-950 border border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
               />
             ) : (
-              <div className="flex items-center gap-3 p-3.5 bg-neutral-950/60 border border-neutral-800 rounded-xl">
-                <span className="text-white text-sm font-bold">{profile.nomor_wa || '—'}</span>
+              <div className="flex items-center gap-3 p-3 bg-neutral-950/60 border border-neutral-800 rounded-xl">
+                <span className="text-white text-xs font-bold">{profile.nomor_wa || '—'}</span>
               </div>
             )}
           </div>
@@ -261,11 +272,78 @@ export default function ProfilePage() {
             <button 
               onClick={handleUpdate}
               disabled={updating}
-              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3.5 rounded-xl font-bold shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-sm tracking-widest mt-2"
+              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-xl font-bold shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-xs tracking-widest mt-1"
             >
-              {updating ? <RefreshCw className="animate-spin" size={18} /> : <><Save size={18} /> Simpan Perubahan</>}
+              {updating ? <RefreshCw className="animate-spin" size={16} /> : <><Save size={16} /> Simpan Perubahan</>}
             </button>
           )}
+
+          {/* Pembatas / Divider */}
+          <div className="border-t border-neutral-800/60 my-3" />
+
+          {/* Section Informasi Akun & Membership (Read-Only) */}
+          <div className="space-y-3">
+            <h3 className="text-[10px] font-bold text-yellow-500/80 uppercase tracking-widest">Informasi Akun &amp; Membership</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {/* ID Pengguna */}
+              <div className="space-y-1 opacity-60">
+                <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">ID Pengguna</label>
+                <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs font-mono break-all select-all">
+                  {profile.id_user_auth}
+                </div>
+              </div>
+
+              {/* Discord ID */}
+              <div className="space-y-1 opacity-60">
+                <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Discord ID</label>
+                <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs">
+                  {profile.id_discord_user || 'Belum Terhubung'}
+                </div>
+              </div>
+
+              {/* Kode Invite */}
+              <div className="space-y-1 opacity-60">
+                <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Kode Invite Unik</label>
+                <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs font-mono select-all">
+                  {profile.kode_invite_unik || '—'}
+                </div>
+              </div>
+
+              {/* Tanggal Bergabung */}
+              <div className="space-y-1 opacity-60">
+                <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Tanggal Bergabung</label>
+                <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs">
+                  {profile.tanggal_bergabung 
+                    ? new Date(profile.tanggal_bergabung).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : '—'
+                  }
+                </div>
+              </div>
+
+              {/* Paket VIP & Harga Bayar */}
+              {profile.status_vip === 'VIP Member' && (
+                <>
+                  <div className="space-y-1 opacity-60">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Nama Paket VIP</label>
+                    <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs font-bold text-yellow-400">
+                      {profile.nama_paket || '—'}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1 opacity-60">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Biaya Berlangganan</label>
+                    <div className="p-2.5 bg-neutral-950/60 border border-neutral-800 rounded-xl text-neutral-300 text-xs font-bold text-white">
+                      {profile.harga_bayar 
+                        ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(profile.harga_bayar)
+                        : '—'
+                      }
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
       </div>

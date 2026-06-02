@@ -54,11 +54,19 @@ export async function POST(request: Request) {
         const [profile, vipData] = await Promise.all([
           prisma.profiles.findUnique({
             where: { id: user.id },
-            select: { full_name: true, whatsapp_number: true, plan: true }
+            select: { full_name: true, whatsapp_number: true, plan: true, created_at: true }
           }),
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id },
-            select: { status_aktif: true, tanggal_berakhir: true }
+            select: { 
+              status_aktif: true, 
+              tanggal_berakhir: true,
+              id_discord_user: true,
+              kode_invite_unik: true,
+              nama_paket: true,
+              harga_bayar: true,
+              created_at: true
+            }
           })
         ])
 
