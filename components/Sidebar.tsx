@@ -76,7 +76,7 @@ export default function Sidebar({ role }: SidebarProps) {
   }
 
   return (
-    <aside className="w-64 min-h-screen bg-black border-r border-neutral-900 p-4 hidden md:flex flex-col sticky top-0">
+    <aside className="w-64 h-screen bg-black border-r border-neutral-900 p-4 hidden md:flex flex-col sticky top-0 overflow-y-auto">
       <div className="mb-10 px-4 pt-4 text-left">
         <h2 className="text-xl font-bold tracking-tighter text-white uppercase italic leading-none">
           IMPERIUM<span className="text-yellow-500">Crypto</span>
