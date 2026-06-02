@@ -365,7 +365,9 @@ export default function ManageMembers() {
                 </th>
                 <th className="px-6 py-4">Info Member</th>
                 <th className="px-6 py-4">Tanggal Daftar</th>
-                <th className="px-6 py-4">Detail Membership VIP</th>
+                <th className="px-6 py-4">Paket VIP</th>
+                <th className="px-6 py-4">Mulai VIP</th>
+                <th className="px-6 py-4">Expired VIP</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
@@ -382,22 +384,25 @@ export default function ManageMembers() {
                   <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                     {m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                   </td>
+                  {/* Paket VIP */}
                   <td className="px-6 py-4 text-left">
                     {m.plan === 'vip' ? (
-                      <div className="flex flex-col gap-1 text-left max-w-xs">
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/15 uppercase tracking-widest self-start leading-none">
-                          {m.vip_plan_name || 'VIP'}
-                        </span>
-                        <div className="text-[9px] text-neutral-500 font-bold uppercase mt-0.5 leading-none space-y-0.5">
-                          <p>Mulai: <span className="text-neutral-300">{m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                          <p>Expired: <span className="text-yellow-500/80">{m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                        </div>
-                      </div>
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/15 uppercase tracking-widest self-start leading-none">
+                        {m.vip_plan_name || 'VIP'}
+                      </span>
                     ) : (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest self-start leading-none">
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest self-start leading-none font-bold">
                         FREE
                       </span>
                     )}
+                  </td>
+                  {/* Mulai VIP */}
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                    {m.plan === 'vip' && m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
+                  </td>
+                  {/* Expired VIP */}
+                  <td className="px-6 py-4 text-left text-[11px] font-bold text-yellow-500/80 uppercase tracking-wider">
+                    {m.plan === 'vip' && m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button onClick={() => setSelectedMember(m)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"><Eye size={18} /></button>
