@@ -80,12 +80,6 @@ export default function UserDashboard() {
       {/* ===== Welcome Header ===== */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-neutral-800 pb-4 mb-6">
         <div>
-          {/* Badge status di atas nama */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 mb-2.5 rounded-full border text-[9px] font-bold tracking-widest uppercase
-            bg-neutral-900 border-neutral-800 text-neutral-500">
-            <span className={`h-1.5 w-1.5 rounded-full ${isVip ? 'bg-green-400' : 'bg-neutral-600'}`} />
-            {isVip ? 'Member VIP' : 'Member Free'}
-          </div>
           <h1 className="text-xl font-black uppercase tracking-tight text-white">
             Selamat Datang, <span className="text-yellow-500">{firstName}</span>!
           </h1>
