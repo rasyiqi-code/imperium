@@ -162,29 +162,81 @@ export async function getMembers(body: MembershipBody): Promise<Response> {
   if (enrichedMembers.length > 0) {
     const userIds = enrichedMembers.map(m => m.id)
     
-    // Ambil data aktivasi dan kadaluarsa VIP dari tabel data_member_vip menggunakan Prisma
+    // Ambil data aktivasi, kadaluarsa VIP, status aktif, dan ID Discord dari tabel data_member_vip menggunakan Prisma
     const vipData = await prisma.data_member_vip.findMany({
       where: { id_user_auth: { in: userIds } },
-      select: { id_user_auth: true, created_at: true, tanggal_berakhir: true, nama_paket: true }
+      select: { 
+        id_user_auth: true, 
+        created_at: true, 
+        tanggal_berakhir: true, 
+        nama_paket: true,
+        id_discord_user: true,
+        status_aktif: true 
+      }
     })
-    
+
+    // Ambil setelan admin untuk bot token dan server ID Discord
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: { discord_bot_token: true, discord_vip_server_id: true }
+    })
+    const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
+    const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID
+
     if (vipData && vipData.length > 0) {
       const vipMap = new Map(vipData.map(v => [v.id_user_auth, v]))
-      enrichedMembers = enrichedMembers.map(m => {
+      
+      // Ambil status Discord secara paralel dengan Promise.all
+      enrichedMembers = await Promise.all(enrichedMembers.map(async (m) => {
         const vipInfo = vipMap.get(m.id)
+        const discordUserId = vipInfo?.id_discord_user
+        
+        let discordStatus = 'no_discord' // Default: belum menghubungkan Discord
+        
+        if (discordUserId && botToken && vipGuildId) {
+          try {
+            const discordRes = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}`, {
+              headers: {
+                Authorization: `Bot ${botToken}`
+              }
+            })
+            
+            if (discordRes.ok) {
+              discordStatus = 'joined' // Sudah bergabung ke server
+            } else if (discordRes.status === 404) {
+              // Jika status_aktif adalah 'hangus' atau 'nonaktif', berarti telah di-kick
+              if (vipInfo?.status_aktif === 'hangus' || vipInfo?.status_aktif === 'nonaktif') {
+                discordStatus = 'kicked' // Sudah di-kick / keluar (karena expired)
+              } else {
+                discordStatus = 'not_joined' // Belum join ke server (walau sudah menghubungkan)
+              }
+            } else {
+              discordStatus = 'error'
+            }
+          } catch {
+            discordStatus = 'error'
+          }
+        }
+        
         return {
           ...m,
           vip_activated_at: vipInfo?.created_at ? vipInfo.created_at.toISOString() : null,
           vip_expired_at: vipInfo?.tanggal_berakhir ? vipInfo.tanggal_berakhir.toISOString() : null,
-          vip_plan_name: vipInfo ? vipInfo.nama_paket : null
+          vip_plan_name: vipInfo ? vipInfo.nama_paket : null,
+          id_discord_user: discordUserId || null,
+          vip_status_aktif: vipInfo?.status_aktif || null,
+          discord_status: discordStatus
         }
-      })
+      }))
     } else {
       enrichedMembers = enrichedMembers.map(m => ({
         ...m,
         vip_activated_at: null,
         vip_expired_at: null,
-        vip_plan_name: null
+        vip_plan_name: null,
+        id_discord_user: null,
+        vip_status_aktif: null,
+        discord_status: 'no_discord'
       }))
     }
   }

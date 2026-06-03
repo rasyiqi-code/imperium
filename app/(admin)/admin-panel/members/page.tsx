@@ -19,6 +19,9 @@ interface Profile {
   vip_activated_at?: string | null;
   vip_expired_at?: string | null;
   vip_plan_name?: string | null;
+  id_discord_user?: string | null;
+  vip_status_aktif?: string | null;
+  discord_status?: string | null;
 }
 
 export default function ManageMembers() {
@@ -333,13 +336,30 @@ export default function ManageMembers() {
                     </div>
                   </div>
                 </div>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg tracking-widest border ${
-                  m.plan === 'vip' 
-                  ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15 uppercase' 
-                  : 'bg-neutral-900/80 text-neutral-500 border-neutral-800 uppercase'
-                }`}>
-                  {m.plan || 'FREE'}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg tracking-widest border ${
+                    m.plan === 'vip' 
+                    ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15 uppercase' 
+                    : 'bg-neutral-900/80 text-neutral-500 border-neutral-800 uppercase'
+                  }`}>
+                    {m.plan || 'FREE'}
+                  </span>
+                  {m.discord_status === 'joined' && (
+                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/15 uppercase tracking-wider leading-none">
+                      Discord: Join
+                    </span>
+                  )}
+                  {m.discord_status === 'kicked' && (
+                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/15 uppercase tracking-wider leading-none">
+                      Discord: Kick
+                    </span>
+                  )}
+                  {m.discord_status === 'not_joined' && (
+                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/15 uppercase tracking-wider leading-none">
+                      Discord: Hubung
+                    </span>
+                  )}
+                </div>
               </div>
               <button onClick={() => setSelectedMember(m)} className="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl text-xs font-bold transition-all duration-300 text-white cursor-pointer">Detail Member</button>
             </div>
@@ -359,6 +379,7 @@ export default function ManageMembers() {
                 <th className="px-6 py-2.5">Paket VIP</th>
                 <th className="px-6 py-2.5">Mulai VIP</th>
                 <th className="px-6 py-2.5">Expired VIP</th>
+                <th className="px-6 py-2.5">Status Discord</th>
                 <th className="px-6 py-2.5 text-right">Aksi</th>
               </tr>
             </thead>
@@ -394,6 +415,34 @@ export default function ManageMembers() {
                   {/* Expired VIP */}
                   <td className="px-6 py-2.5 text-left text-[11px] font-bold text-yellow-500/80 tracking-wider">
                     {m.plan === 'vip' && m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
+                  </td>
+                  {/* Status Discord */}
+                  <td className="px-6 py-2.5 text-left">
+                    {m.discord_status === 'joined' && (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/15 uppercase tracking-widest leading-none font-bold">
+                        Bergabung
+                      </span>
+                    )}
+                    {m.discord_status === 'kicked' && (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/15 uppercase tracking-widest leading-none font-bold">
+                        Di-kick / Keluar
+                      </span>
+                    )}
+                    {m.discord_status === 'not_joined' && (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/15 uppercase tracking-widest leading-none font-bold">
+                        Belum Join
+                      </span>
+                    )}
+                    {m.discord_status === 'no_discord' && (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest leading-none font-bold">
+                        Belum Hubung
+                      </span>
+                    )}
+                    {m.discord_status === 'error' && (
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/15 uppercase tracking-widest leading-none font-bold">
+                        Error API
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-2.5 text-right">
                     <button onClick={() => setSelectedMember(m)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"><Eye size={18} /></button>
@@ -443,6 +492,20 @@ export default function ManageMembers() {
                 <InfoItem label="Full Name" value={selectedMember.full_name || 'Anonymous'} icon={<User size={14}/>} />
                 <InfoItem label="WhatsApp" value={selectedMember.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
                 <InfoItem label="Tanggal Daftar" value={selectedMember.created_at ? new Date(selectedMember.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} icon={<User size={14}/>} />
+                <InfoItem 
+                  label="Status Discord" 
+                  value={
+                    selectedMember.discord_status === 'joined' ? 'Bergabung ke Server VIP' :
+                    selectedMember.discord_status === 'kicked' ? 'Di-kick / Keluar dari Server VIP (Masa Aktif Habis)' :
+                    selectedMember.discord_status === 'not_joined' ? 'Menghubungkan Discord, Belum Join Server' :
+                    selectedMember.discord_status === 'no_discord' ? 'Belum Menghubungkan Discord' :
+                    selectedMember.discord_status === 'error' ? 'Gagal memuat status (API error)' : 'Tidak Diketahui'
+                  } 
+                  icon={<MessageSquare size={14}/>} 
+                />
+                {selectedMember.id_discord_user && (
+                  <InfoItem label="ID User Discord" value={selectedMember.id_discord_user} icon={<MessageSquare size={14}/>} />
+                )}
                 
                 {selectedMember.plan === 'vip' && (
                   <>
