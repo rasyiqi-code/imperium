@@ -11,7 +11,8 @@ import {
   updateMidtransSettings,
   syncMidtransPaymentMethods,
   updateEnabledPayments,
-  getAdminSettings
+  getAdminSettings,
+  updateDiscordSettings
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
 import { deleteUser } from './handlers/users'
@@ -71,6 +72,8 @@ export async function POST(request: Request) {
         return await updateResendSettings(body)
       case 'updateMidtransSettings':
         return await updateMidtransSettings(body)
+      case 'updateDiscordSettings':
+        return await updateDiscordSettings(body)
       case 'syncMidtransPaymentMethods':
         return await syncMidtransPaymentMethods()
       case 'updateEnabledPayments':

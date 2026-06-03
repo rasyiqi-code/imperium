@@ -14,6 +14,13 @@ interface SettingsBody {
   isProduction?: boolean
   upgradeMode?: string
   enabledPayments?: string[]
+  applicationId?: string
+  clientSecret?: string
+  botToken?: string
+  vipServerId?: string
+  vipRoleId?: string
+  freeInviteLink?: string
+  redirectUri?: string
 }
 
 /**
@@ -141,4 +148,27 @@ export async function getAdminSettings(): Promise<Response> {
     where: { id: 1 }
   })
   return NextResponse.json({ success: true, settings })
+}
+
+/**
+ * Memperbarui pengaturan kredensial Discord.
+ */
+export async function updateDiscordSettings(body: SettingsBody): Promise<Response> {
+  const { applicationId, clientSecret, botToken, vipServerId, vipRoleId, freeInviteLink, redirectUri } = body
+  
+  // Simpan setelan Discord lewat Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: {
+      discord_application_id: applicationId || null,
+      discord_client_secret: clientSecret || null,
+      discord_bot_token: botToken || null,
+      discord_vip_server_id: vipServerId || null,
+      discord_vip_role_id: vipRoleId || null,
+      discord_free_invite_link: freeInviteLink || null,
+      discord_redirect_uri: redirectUri || null
+    }
+  })
+
+  return NextResponse.json({ success: true })
 }

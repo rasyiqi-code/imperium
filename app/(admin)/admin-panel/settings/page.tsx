@@ -25,6 +25,15 @@ export default function AdminSettings() {
   const [enabledPayments, setEnabledPayments] = useState<string[]>([])
   const [syncing, setSyncing] = useState(false)
 
+  const [discordApplicationId, setDiscordApplicationId] = useState('')
+  const [discordClientSecret, setDiscordClientSecret] = useState('')
+  const [discordBotToken, setDiscordBotToken] = useState('')
+  const [discordVipServerId, setDiscordVipServerId] = useState('')
+  const [discordVipRoleId, setDiscordVipRoleId] = useState('')
+  const [discordFreeInviteLink, setDiscordFreeInviteLink] = useState('')
+  const [discordRedirectUri, setDiscordRedirectUri] = useState('')
+  const [savingDiscord, setSavingDiscord] = useState(false)
+
   useEffect(() => {
     let active = true
     async function initSettings() {
@@ -52,6 +61,14 @@ export default function AdminSettings() {
           setMidtransIsProduction(!!settings.midtrans_is_production)
           setMidtransUpgradeMode(settings.midtrans_upgrade_mode || 'stacking')
           setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
+
+          setDiscordApplicationId(settings.discord_application_id || '')
+          setDiscordClientSecret(settings.discord_client_secret || '')
+          setDiscordBotToken(settings.discord_bot_token || '')
+          setDiscordVipServerId(settings.discord_vip_server_id || '')
+          setDiscordVipRoleId(settings.discord_vip_role_id || '')
+          setDiscordFreeInviteLink(settings.discord_free_invite_link || '')
+          setDiscordRedirectUri(settings.discord_redirect_uri || '')
         }
       } catch (err) {
         console.error('Gagal mengambil settings:', err)
@@ -176,6 +193,43 @@ export default function AdminSettings() {
       })
     } finally {
       setSavingMidtrans(false)
+    }
+  }
+
+  const handleSaveDiscordSettings = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSavingDiscord(true)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateDiscordSettings',
+          applicationId: discordApplicationId,
+          clientSecret: discordClientSecret,
+          botToken: discordBotToken,
+          vipServerId: discordVipServerId,
+          vipRoleId: discordVipRoleId,
+          freeInviteLink: discordFreeInviteLink,
+          redirectUri: discordRedirectUri
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan pengaturan Discord')
+      showAlert({
+        title: 'Berhasil',
+        message: 'Pengaturan Discord berhasil disimpan!',
+        type: 'success'
+      })
+    } catch (err: unknown) {
+      const error = err as Error
+      showAlert({
+        title: 'Simpan Gagal',
+        message: error.message || 'Gagal menyimpan pengaturan Discord!',
+        type: 'danger'
+      })
+    } finally {
+      setSavingDiscord(false)
     }
   }
 
@@ -484,6 +538,103 @@ export default function AdminSettings() {
                   </>
                 ) : (
                   'Simpan Pengaturan Midtrans'
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Integrasi Kredensial Discord */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Kredensial Discord</h3>
+            <form onSubmit={handleSaveDiscordSettings} className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl p-5 space-y-4 shadow-lg">
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord Application ID</label>
+                <input 
+                  type="text"
+                  placeholder="1511566783566446683"
+                  value={discordApplicationId}
+                  onChange={(e) => setDiscordApplicationId(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord Client Secret</label>
+                <input 
+                  type="password"
+                  placeholder="C2c_..."
+                  value={discordClientSecret}
+                  onChange={(e) => setDiscordClientSecret(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord Bot Token</label>
+                <input 
+                  type="password"
+                  placeholder="MTUx..."
+                  value={discordBotToken}
+                  onChange={(e) => setDiscordBotToken(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord VIP Server ID (Guild ID)</label>
+                <input 
+                  type="text"
+                  placeholder="1511571839036690482"
+                  value={discordVipServerId}
+                  onChange={(e) => setDiscordVipServerId(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord VIP Role ID</label>
+                <input 
+                  type="text"
+                  placeholder="1511592554963931196"
+                  value={discordVipRoleId}
+                  onChange={(e) => setDiscordVipRoleId(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord Free Server Invite Link</label>
+                <input 
+                  type="text"
+                  placeholder="https://discord.gg/xz5XYq3CFt"
+                  value={discordFreeInviteLink}
+                  onChange={(e) => setDiscordFreeInviteLink(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <div className="space-y-1.5 text-left">
+                <label className="text-[10px] font-bold text-neutral-400 block">Discord Redirect URI (Callback)</label>
+                <input 
+                  type="text"
+                  placeholder="https://leslie-broadcasting-instruments-unit.trycloudflare.com/api/discord/callback"
+                  value={discordRedirectUri}
+                  onChange={(e) => setDiscordRedirectUri(e.target.value)}
+                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={savingDiscord}
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98]"
+              >
+                {savingDiscord ? (
+                  <>
+                    <RefreshCw size={12} className="animate-spin" /> Menyimpan...
+                  </>
+                ) : (
+                  'Simpan Pengaturan Discord'
                 )}
               </button>
             </form>

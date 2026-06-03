@@ -20,9 +20,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP
-    const botToken = process.env.DISCORD_BOT_TOKEN
-    const vipGuildId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+    // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP secara dinamis dari database
+    const settings = await prisma.admin_settings.findUnique({
+      where: { id: 1 },
+      select: {
+        discord_bot_token: true,
+        discord_vip_server_id: true
+      }
+    })
+
+    const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
+    const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
 
     if (!botToken || !vipGuildId) {
       console.error('Cron Check Subscriptions: Discord Bot Token or VIP Guild ID is not configured.')

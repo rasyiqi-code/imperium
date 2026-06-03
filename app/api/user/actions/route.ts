@@ -19,32 +19,39 @@ export async function POST(request: Request) {
 
     switch (action) {
       case 'getDashboardData': {
-        const [profile, membership] = await Promise.all([
+        const [profile, membership, settings] = await Promise.all([
           prisma.profiles.findUnique({
             where: { id: user.id },
             select: { full_name: true }
           }),
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id }
+          }),
+          prisma.admin_settings.findUnique({
+            where: { id: 1 },
+            select: {
+              discord_vip_server_id: true,
+              discord_free_invite_link: true
+            }
           })
-        ])
+        ]);
 
         // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
-        const vipServerId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+        const vipServerId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID;
         const vipInviteLink = vipServerId
           ? `https://discord.com/channels/${vipServerId}`
-          : '#'
+          : '#';
 
         return NextResponse.json({ 
           profile, 
           membership,
-          freeInviteLink: process.env.DISCORD_FREE_INVITE_LINK || '#',
+          freeInviteLink: settings?.discord_free_invite_link || process.env.DISCORD_FREE_INVITE_LINK || '#',
           vipInviteLink
-        })
+        });
       }
 
       case 'getGroupData': {
-        const [profile, vipData, supportRes] = await Promise.all([
+        const [profile, vipData, supportRes, settings] = await Promise.all([
           prisma.profiles.findUnique({
             where: { id: user.id },
             select: { plan: true }
@@ -56,22 +63,29 @@ export async function POST(request: Request) {
           prisma.support_config.findUnique({
             where: { id: 1 },
             select: { telegram_link: true }
+          }),
+          prisma.admin_settings.findUnique({
+            where: { id: 1 },
+            select: {
+              discord_vip_server_id: true,
+              discord_free_invite_link: true
+            }
           })
-        ])
+        ]);
 
         // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
-        const vipServerId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+        const vipServerId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID;
         const vipInviteLink = vipServerId
           ? `https://discord.com/channels/${vipServerId}`
-          : '#'
+          : '#';
 
         return NextResponse.json({ 
           profile, 
           vipData, 
           telegramLink: supportRes?.telegram_link || '#',
-          freeInviteLink: process.env.DISCORD_FREE_INVITE_LINK || '#',
+          freeInviteLink: settings?.discord_free_invite_link || process.env.DISCORD_FREE_INVITE_LINK || '#',
           vipInviteLink
-        })
+        });
       }
 
       case 'getProfileData': {

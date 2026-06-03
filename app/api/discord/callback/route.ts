@@ -13,12 +13,16 @@ export async function GET(request: Request) {
   const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
   let baseUrl = `${proto}://${host}`
 
+  // Ambil data konfigurasi dari database
+  const settings = await prisma.admin_settings.findUnique({
+    where: { id: 1 }
+  })
+
   // Gunakan origin dari DISCORD_REDIRECT_URI jika tersedia sebagai prioritas utama
-  // karena ini merupakan domain publik yang dikonfigurasi resmi untuk aplikasi.
-  const redirectUriEnv = process.env.DISCORD_REDIRECT_URI
-  if (redirectUriEnv) {
+  const redirectUriVal = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
+  if (redirectUriVal) {
     try {
-      baseUrl = new URL(redirectUriEnv).origin
+      baseUrl = new URL(redirectUriVal).origin
     } catch {
       // Abaikan jika format URI salah
     }
@@ -51,17 +55,17 @@ export async function GET(request: Request) {
 
     const isVip = memberVip?.status_aktif === 'aktif' || memberVip?.status_aktif === 'vip'
 
-    // 3. Ambil konfigurasi Discord dari environment variables
-    const clientId = process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
-    const clientSecret = process.env.DISCORD_CLIENT_SECRET
-    const botToken = process.env.DISCORD_BOT_TOKEN
-    const vipGuildId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
-    const vipRoleId = process.env.DISCORD_VIP_ROLE_ID
-    const redirectUri = process.env.DISCORD_REDIRECT_URI
+    // 3. Ambil konfigurasi Discord
+    const clientId = settings?.discord_application_id || process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
+    const clientSecret = settings?.discord_client_secret || process.env.DISCORD_CLIENT_SECRET
+    const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
+    const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+    const vipRoleId = settings?.discord_vip_role_id || process.env.DISCORD_VIP_ROLE_ID
+    const redirectUri = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
 
     // Wajib ada: clientId, clientSecret, botToken, vipGuildId, dan redirectUri
     if (!clientId || !clientSecret || !botToken || !vipGuildId || !redirectUri || vipGuildId.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE')) {
-      console.error('Discord Auth Callback: Konfigurasi wajib Discord API tidak lengkap di .env.')
+      console.error('Discord Auth Callback: Konfigurasi wajib Discord API tidak lengkap di database atau .env.')
       return NextResponse.redirect(new URL('/dashboard?discord=error&message=config_missing', baseUrl))
     }
 

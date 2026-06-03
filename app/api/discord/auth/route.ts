@@ -1,15 +1,25 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 /**
  * Route API untuk menginisialisasi alur otorisasi OAuth2 Discord.
  * Mengalihkan pengguna ke Discord Developer Portal dengan scope yang diperlukan.
  */
 export async function GET() {
-  const clientId = process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
-  const redirectUri = process.env.DISCORD_REDIRECT_URI
+  // Ambil data konfigurasi dari database
+  const settings = await prisma.admin_settings.findUnique({
+    where: { id: 1 },
+    select: {
+      discord_application_id: true,
+      discord_redirect_uri: true
+    }
+  })
+
+  const clientId = settings?.discord_application_id || process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
+  const redirectUri = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
 
   if (!clientId || !redirectUri) {
-    console.error('Discord Auth Error: DISCORD_CLIENT_ID or DISCORD_REDIRECT_URI is missing.')
+    console.error('Discord Auth Error: Application ID or Redirect URI is missing.')
     return NextResponse.json(
       { error: 'Konfigurasi Discord API tidak lengkap di server.' },
       { status: 500 }
