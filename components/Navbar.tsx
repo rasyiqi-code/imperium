@@ -18,37 +18,37 @@ const Navbar: React.FC = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-3">
       <div className="max-w-5xl mx-auto rounded-full border border-white/[0.06] bg-black/60 backdrop-blur-md px-5 py-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-white/[0.1]">
-        <div className="flex justify-between items-center h-12 relative w-full">
+        <div className="flex justify-between items-center h-12">
           
-          {/* KIRI: Menu Navigasi (Desktop) */}
-          <div className="hidden md:flex items-center space-x-6 mr-auto relative z-20">
+          {/* KIRI: Logo */}
+          <div className="shrink-0 flex items-center">
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/logo.png" 
+                alt="Imperium Crypto Logo" 
+                width={34} 
+                height={34} 
+                priority
+                className="cursor-pointer object-contain transition-transform duration-300 hover:scale-105 rounded-full"
+              />
+            </Link>
+          </div>
+
+          {/* TENGAH: Menu (Desktop) */}
+          <div className="hidden md:flex space-x-8 items-center">
             {navLinks.map((link) => (
               <Link 
                 key={link.name}
                 href={link.href} 
-                className="text-neutral-400 hover:text-yellow-400 transition-colors font-semibold text-[10px] tracking-wider uppercase"
+                className="text-neutral-400 hover:text-yellow-400 transition-colors font-semibold text-xs tracking-wider uppercase"
               >
                 {link.name}
               </Link>
             ))}
           </div>
 
-          {/* LOGO: Center Absolute */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center">
-            <Link href="/" className="flex items-center">
-              <Image 
-                src="/logo.png" 
-                alt="Imperium Crypto Logo" 
-                width={48} 
-                height={30} 
-                priority
-                className="cursor-pointer object-contain transition-transform duration-300 hover:scale-105"
-              />
-            </Link>
-          </div>
-
-          {/* KANAN: Tombol Aksi (Desktop) */}
-          <div className="hidden md:flex items-center space-x-5 ml-auto relative z-20">
+          {/* KANAN: Tombol Gabung/Login (Desktop) */}
+          <div className="hidden md:flex items-center space-x-6">
             <Link 
               href="/login" 
               className="text-[#d4af37]/80 font-bold hover:text-white transition-colors text-[10px] tracking-wider uppercase"
@@ -57,14 +57,14 @@ const Navbar: React.FC = () => {
             </Link>
             <Link 
               href="#pricing" 
-              className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95"
+              className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-4.5 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95"
             >
               Gabung Sekarang
             </Link>
           </div>
 
-          {/* Mobile Menu Button - Diposisikan di paling kanan */}
-          <div className="md:hidden flex items-center ml-auto relative z-20">
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-[#d4af37] focus:outline-none p-1.5 hover:bg-white/5 rounded-full transition-colors"
@@ -101,7 +101,7 @@ const Navbar: React.FC = () => {
             <Link 
               href="#pricing" 
               onClick={() => setIsOpen(false)}
-              className="bg-[#d4af37] text-black text-center py-3 rounded-2xl font-bold text-xs tracking-wider uppercase shadow-[0_4px_15px_rgba(212,175,55,0.15)]"
+              className="bg-[#d4af37] text-black text-center py-3 rounded-full font-bold text-xs tracking-wider uppercase shadow-[0_4px_15px_rgba(212,175,55,0.15)]"
             >
               Gabung Sekarang
             </Link>
