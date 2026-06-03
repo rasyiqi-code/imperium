@@ -155,7 +155,7 @@ Agar alur otorisasi (OAuth2) dapat mengarahkan pengguna kembali ke website setel
      ```
    * **Untuk Produksi (VPS/Vercel):**
      ```text
-     https://domain-anda.com/api/discord/callback
+     https://imperiumcrypto.id/api/discord/callback
      ```
 4. Klik **Save Changes**.
 
