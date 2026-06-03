@@ -7,15 +7,16 @@ export default function CoreValues() {
         <div className="mx-auto max-w-4xl text-center">
 
           {/* Heading */}
-          <h2 className="mb-6 text-balance text-3xl font-bold md:text-4xl text-left lg:text-center md:text-center">
+          {/* Heading - Rata tengah untuk konsistensi visual */}
+          <h2 className="mb-6 text-balance text-3xl font-bold md:text-4xl text-center">
             Nilai yang Menjadi  
-            <span className="block text-yellow-400 text-left lg:text-center md:text-center">
+            <span className="block text-yellow-400 text-center">
               Fondasi Imperium Crypto
             </span>
           </h2>
 
-          {/* Intro */}
-          <p className="mx-auto mb-16 max-w-2xl text-lg leading-relaxed text-neutral-400 text-left lg:text-center md:text-center">
+          {/* Pengantar - Rata tengah dengan spasi baris yang lebih longgar */}
+          <p className="mx-auto mb-16 max-w-2xl text-base md:text-lg leading-relaxed md:leading-loose text-neutral-400 text-center">
             Imperium Crypto dibangun di atas prinsip rasionalitas, transparansi,
             dan visi jangka panjang dalam memahami dinamika ekonomi digital.
             Nilai-nilai ini menjadi landasan dalam setiap konten, diskusi, dan
@@ -65,7 +66,8 @@ function ValueItem({
   desc: string;
 }) {
   return (
-    <div className="flex flex-col rounded-xl border border-neutral-800 px-6 py-6 transition hover:border-yellow-500/40">
+    // Box dengan efek glassmorphism premium, transisi scale, dan shadow emas pudar
+    <div className="flex flex-col rounded-2xl border border-neutral-800 bg-[#0d0d0d]/40 backdrop-blur-md px-6 py-6 transition-all duration-300 hover:border-yellow-500/30 hover:shadow-[0_4px_30px_rgba(234,179,8,0.05)] hover:scale-[1.01]">
       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/10 text-yellow-400">
         {icon}
       </div>

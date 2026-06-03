@@ -59,8 +59,8 @@ export default function Pricing() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 max-w-6xl mx-auto items-stretch">
           
-          {/* 1. PAKET GRATIS (Static) */}
-          <div className="relative flex flex-col rounded-2xl p-8 border border-neutral-900 bg-[#0d0d0d] transition-all hover:border-neutral-800">
+          {/* 1. PAKET GRATIS (Static) - Ditambahkan h-full agar tinggi kartu sama rata di desktop */}
+          <div className="relative flex flex-col rounded-2xl p-8 border border-neutral-900 bg-[#0d0d0d] transition-all hover:border-neutral-800 h-full">
             <div className="flex items-center justify-between mb-8">
               <div className="p-4 rounded-2xl bg-neutral-800 text-neutral-500">
                 <Zap size={24} />
@@ -109,10 +109,11 @@ function LandingPricingCard({ paket, onAction }: { paket: PaketVIP, onAction: ()
   const isYearly = paket.durasi_hari > 200;
 
   return (
+    // Menggunakan h-full agar sejajar, dan mengganti scale statis menjadi hover scale agar baseline kartu lurus saat render pertama
     <div className={`relative flex flex-col rounded-2xl p-8 transition-all duration-500 h-full ${
       isYearly 
-      ? 'border-2 border-yellow-500 bg-[#111111] shadow-[0_0_50px_rgba(234,179,8,0.1)] scale-105 z-10' 
-      : 'border border-neutral-800 bg-[#0d0d0d]'
+      ? 'border-2 border-yellow-500 bg-[#111111] shadow-[0_0_50px_rgba(234,179,8,0.1)] hover:scale-[1.03] z-10' 
+      : 'border border-neutral-800 bg-[#0d0d0d] hover:border-neutral-700 hover:scale-[1.01]'
     }`}>
       
       {isYearly && (

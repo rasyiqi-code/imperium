@@ -7,15 +7,16 @@ export default function Problem() {
         <div className="mx-auto max-w-4xl text-center">
 
           {/* Heading */}
-          <h2 className="mb-6 text-balance text-3xl font-bold md:text-4xl text-left lg:text-center md:text-center">
+          {/* Heading - Rata tengah untuk keseimbangan tata letak visual */}
+          <h2 className="mb-6 text-balance text-3xl font-bold md:text-4xl text-center">
             Dunia Crypto Terlalu Ramai.  
-            <span className="block text-yellow-400 text-left lg:text-center md:text-center">
+            <span className="block text-yellow-400 text-center">
               Terlalu Banyak Noise.
             </span>
           </h2>
 
-          {/* Intro */}
-          <p className="mx-auto mb-16 max-w-4xl text-lg leading-relaxed text-neutral-400 text-left lg:text-center md:text-center">
+          {/* Pengantar - Rata tengah dengan spasi baris yang longgar */}
+          <p className="mx-auto mb-16 max-w-4xl text-base md:text-lg leading-relaxed md:leading-loose text-neutral-400 text-center">
             Pasar crypto dipenuhi narasi sensasional, opini tanpa dasar data,
             dan euforia jangka pendek. Banyak orang masuk tanpa pemahaman,
             tanpa konteks, dan tanpa mindset finansial yang tepat — berujung

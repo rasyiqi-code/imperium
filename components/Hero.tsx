@@ -25,25 +25,25 @@ export default function Hero() {
             Media Digital & Edukasi Crypto
           </div>
 
-          {/* Headline */}
-          <h1 className="mb-6 text-balance text-left text-4xl font-bold leading-tight md:text-5xl lg:text-6xl lg:text-center md:text-center">
+          {/* Headline - Diselaraskan rata tengah untuk konsistensi visual di mobile */}
+          <h1 className="mb-6 text-balance text-center text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
             Fondasi Pengetahuan  
-            <span className="block text-left bg-linear-to-r from-yellow-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent lg:text-center md:text-center">
+            <span className="block text-center bg-linear-to-r from-yellow-400 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
               di Era Uang Digital
             </span>
           </h1>
 
-          {/* Description */}
-          <p className="mx-auto text-left lg:text-center md:text-center mb-12 max-w-3xl text-lg leading-relaxed text-neutral-300 md:text-xl ">
+          {/* Deskripsi - Rata tengah agar simetris dengan judul */}
+          <p className="mx-auto text-center mb-12 max-w-3xl text-lg leading-relaxed text-neutral-300 md:text-xl">
             Imperium Crypto adalah platform media dan edukasi crypto yang berfokus pada literasi aset digital, analisis pasar berbasis data, serta
             pembentukan mindset finansial modern. Tanpa sensasi. Tanpa euforia.
           </p>
 
-          {/* CTA */}
-          <div className="flex flex-col items-start lg:item-center justify-center gap-4 sm:flex-row">
+          {/* CTA - Menjadi lebar penuh (w-full) dan rata tengah di mobile */}
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row w-full max-w-md mx-auto sm:max-w-none">
             <a
               href="#pricing"
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-linear-to-r from-yellow-400 to-amber-500 px-8 py-4 font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
+              className="group relative inline-flex w-full sm:w-auto items-center justify-center overflow-hidden rounded-xl bg-linear-to-r from-yellow-400 to-amber-500 px-8 py-4 font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
             >
               Lihat Paket Akses
               <span className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-white/10" />
@@ -51,7 +51,7 @@ export default function Hero() {
 
             <a
               href="#tentang"
-              className="inline-flex items-center justify-center rounded-xl border border-neutral-700 px-8 py-4 font-semibold text-white transition hover:border-neutral-500 hover:bg-yellow-500 hover:text-black"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-neutral-700 px-8 py-4 font-semibold text-white transition hover:border-neutral-500 hover:bg-yellow-500 hover:text-black"
             >
               Tentang Imperium Crypto
             </a>

@@ -6,16 +6,16 @@ export default function AboutImperium() {
       <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
         <div className="grid items-center gap-14 md:grid-cols-2">
 
-          {/* Left: Image */}
-<div className="relative -ml-10 w-[110%]">
-  <Image
-    src="/chart.png"
-    alt="Imperium Crypto"
-    width={1000}
-    height={650}
-    className="w-full rounded-2xl object-cover"
-  />
-</div>
+          {/* Kiri: Gambar dengan penanganan responsif agar tidak menyebabkan overflow di mobile */}
+          <div className="relative md:-ml-10 md:w-[110%] w-full ml-0 mb-8 md:mb-0">
+            <Image
+              src="/chart.png"
+              alt="Imperium Crypto"
+              width={1000}
+              height={650}
+              className="w-full rounded-2xl object-cover shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-neutral-900"
+            />
+          </div>
 
 
           {/* Right: Content */}
@@ -28,7 +28,8 @@ export default function AboutImperium() {
               </span>
             </h2>
 
-            <div className="space-y-6 text-lg leading-relaxed text-neutral-400">
+            {/* Paragraf deskripsi dengan tinggi baris (line-height) yang lebih longgar untuk keterbacaan */}
+            <div className="space-y-6 text-base md:text-lg leading-relaxed md:leading-loose text-neutral-400">
               <p>
                 Imperium Crypto adalah platform media digital dan edukasi crypto
                 yang berfokus pada pengembangan literasi aset digital, analisis

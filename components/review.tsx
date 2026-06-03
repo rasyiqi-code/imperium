@@ -137,8 +137,8 @@ export default function Reviews() {
           </Swiper>
         </div>
 
-        {/* Info Bergabung */}
-        <div className="mt-16 text-center">
+        {/* Info Bergabung - Ditambahkan margin atas yang lebih longgar untuk memisahkan dari dot pagination */}
+        <div className="mt-24 md:mt-28 text-center">
           <div className="inline-flex items-center gap-3 p-3 rounded-2xl bg-neutral-900/50 border border-neutral-800">
             <div className="flex -space-x-3">
               {reviews.slice(0, 5).map((rev, i) => (
