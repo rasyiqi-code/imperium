@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { ShieldCheck } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -12,22 +11,50 @@ export default function Hero() {
         {/* KONTEN UTAMA: Heading, Deskripsi & CTA */}
         <div className="flex-grow flex flex-col justify-center items-center my-auto py-8 text-center">
           
-          {/* Badge Kapsul Bersinar */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-yellow-500/25 bg-yellow-500/5 px-4 py-1.5 text-[9px] font-black uppercase tracking-widest text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.08)] animate-pulse">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Media Digital & Edukasi Crypto Elit
-          </div>
+          {/* Logo Watermark & Sirkuit Radial di belakang Headline */}
+          <div className="relative mb-6 w-full flex items-center justify-center min-h-[180px] md:min-h-[220px]">
+            {/* Sirkuit Radial SVG melambangkan jaringan dan sinyal data */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 opacity-[0.12]">
+              <svg 
+                className="absolute w-[280px] h-[280px] md:w-[360px] md:h-[360px] text-yellow-500/20 animate-rotate-slow" 
+                viewBox="0 0 200 200" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="100" cy="100" r="82" stroke="currentColor" strokeWidth="0.8" strokeDasharray="6 8" />
+                <circle cx="100" cy="100" r="62" stroke="currentColor" strokeWidth="0.6" strokeDasharray="30 15" />
+                <circle cx="100" cy="100" r="46" stroke="currentColor" strokeWidth="0.4" />
+                <path d="M 100 15 L 100 35 M 100 165 L 100 185 M 15 100 L 35 100 M 165 100 L 185 100" stroke="currentColor" strokeWidth="0.8" />
+                <circle cx="100" cy="15" r="2.5" fill="currentColor" />
+                <circle cx="100" cy="185" r="2.5" fill="currentColor" />
+                <circle cx="15" cy="100" r="2.5" fill="currentColor" />
+                <circle cx="165" cy="100" r="2.5" fill="currentColor" />
+              </svg>
 
-          {/* Headline - Tipografi Asimetris & Serif Kontras Premium */}
-          <h1 className="mb-6 max-w-4xl text-center leading-tight tracking-tight text-white text-3xl md:text-5xl lg:text-6xl font-black">
-            <span className="block mb-2">
-              Membangun <span className="font-serif-italic font-normal text-yellow-400/90 text-4xl md:text-6xl lg:text-7xl lowercase tracking-normal px-1">fondasi</span> Pengetahuan
-            </span>
-            <span className="flex items-center justify-center gap-4 text-balance">
-              <span className="hidden md:inline-block h-[1px] w-14 bg-gradient-to-r from-transparent to-white/20"></span>
-              di Era <span className="bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(234,179,8,0.15)] ml-1">Uang Digital</span>
-            </span>
-          </h1>
+              {/* Logo utama aplikasi sebagai watermark */}
+              <div className="relative p-4 rounded-full bg-black/40 border border-yellow-500/10 shadow-[0_0_50px_rgba(234,179,8,0.08)]">
+                <Image
+                  src="/logo.png"
+                  alt="Watermark Logo"
+                  width={90}
+                  height={90}
+                  className="rounded-full object-contain filter grayscale opacity-50"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Headline - Tipografi Asimetris & Serif Kontras Premium */}
+            <h1 className="relative z-10 max-w-4xl text-center leading-tight tracking-tight text-white text-3xl md:text-5xl lg:text-6xl font-black">
+              <span className="block mb-2">
+                Membangun <span className="font-serif-italic font-normal text-yellow-400/90 text-4xl md:text-6xl lg:text-7xl lowercase tracking-normal px-1">fondasi</span> Pengetahuan
+              </span>
+              <span className="flex items-center justify-center gap-4 text-balance">
+                <span className="hidden md:inline-block h-[1px] w-14 bg-gradient-to-r from-transparent to-white/20"></span>
+                di Era <span className="bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(234,179,8,0.15)] ml-1">Uang Digital</span>
+              </span>
+            </h1>
+          </div>
 
           {/* Deskripsi - Rata tengah agar simetris */}
           <p className="mx-auto text-center mb-8 max-w-2xl text-xs md:text-sm leading-relaxed text-neutral-400">
