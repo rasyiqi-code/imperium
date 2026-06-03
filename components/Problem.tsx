@@ -108,6 +108,15 @@ export default function Problem() {
           </div>
 
         </div>
+
+        {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
+        <div className="flex items-center justify-center gap-4 mt-24">
+          <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
+          {/* Node Sirkuit yang berdenyut */}
+          <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
+          <div className="h-[1px] w-24 md:w-36 bg-gradient-to-l from-transparent to-yellow-500/20" />
+        </div>
+
       </div>
     </section>
   );
