@@ -40,7 +40,7 @@ export async function POST(request: Request) {
           }),
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id },
-            select: { kode_invite_unik: true }
+            select: { kode_invite_unik: true, id_discord_user: true }
           }),
           prisma.support_config.findUnique({
             where: { id: 1 },

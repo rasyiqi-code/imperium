@@ -112,7 +112,13 @@ export async function POST(request: Request) {
           data: { status_pembayaran: 'success' }
         });
 
-        // 6. Bersihkan keanggotaan ganda lama dan buat data keanggotaan baru
+        // 6. Simpan ID Discord lama jika ada agar tidak terhapus, lalu bersihkan keanggotaan ganda dan buat data baru
+        const existingMember = await prisma.data_member_vip.findUnique({
+          where: { id_user_auth: userId },
+          select: { id_discord_user: true }
+        });
+        const savedDiscordId = existingMember?.id_discord_user || null;
+
         await prisma.data_member_vip.deleteMany({
           where: { id_user_auth: userId }
         });
@@ -124,7 +130,8 @@ export async function POST(request: Request) {
             nama_paket: payment.nama_paket,
             harga_bayar: Number(payment.harga_bayar),
             status_aktif: 'aktif',
-            tanggal_berakhir: expiryDate
+            tanggal_berakhir: expiryDate,
+            id_discord_user: savedDiscordId
           }
         });
 

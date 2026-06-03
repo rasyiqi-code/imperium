@@ -53,22 +53,42 @@ export default function DiscordCard({ member }: Props) {
       {/* Deskripsi */}
       <p className="text-xs text-neutral-400 leading-relaxed font-medium">
         {isAktif
-          ? 'Selamat! Akses penuh ke server Discord VIP sudah terbuka. Klik tombol di bawah untuk bergabung.'
+          ? member?.id_discord_user
+            ? 'Selamat! Akun Discord VIP Anda telah terhubung. Anda dapat bergabung atau masuk ke server menggunakan tombol di bawah.'
+            : 'Selamat! Akses server Discord VIP sudah terbuka. Silakan hubungkan akun Discord Anda untuk otomatis masuk dan mendapatkan Role VIP.'
           : 'Upgrade ke paket VIP untuk mendapatkan akses eksklusif ke server Discord komunitas trader Imperium.'}
       </p>
 
       {/* Tombol */}
-      <div className="mt-auto pt-2">
+      <div className="mt-auto pt-2 flex flex-col gap-2">
         {isAktif ? (
-          <a
-            href={`https://discord.gg/${member?.kode_invite_unik}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
-          >
-            Masuk Server Discord
-            <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
-          </a>
+          member?.id_discord_user ? (
+            <>
+              <div className="flex items-center justify-between text-[10px] text-neutral-400 font-bold px-1 uppercase tracking-wider">
+                <span>Status Koneksi:</span>
+                <span className="text-green-400 font-bold flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-400" /> Terhubung ({member.id_discord_user})
+                </span>
+              </div>
+              <a
+                href={`https://discord.gg/${member?.kode_invite_unik}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
+              >
+                Masuk Server Discord
+                <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </>
+          ) : (
+            <a
+              href="/api/discord/auth"
+              className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
+            >
+              Hubungkan Akun Discord VIP
+              <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
+            </a>
+          )
         ) : (
           <button
             disabled

@@ -7,6 +7,7 @@ import Loader from '@/components/Loader'
 
 export default function GroupPage() {
   const [isVip, setIsVip] = useState(false)
+  const [hasDiscord, setHasDiscord] = useState(false)
   const [freeLink, setFreeLink] = useState('#')
   const [vipLink, setVipLink] = useState('#')
   const [loading, setLoading] = useState(true)
@@ -32,8 +33,14 @@ export default function GroupPage() {
               setIsVip(true)
             }
 
-            if (profile?.plan === 'vip' && vipData?.kode_invite_unik) {
-              setVipLink(`https://discord.gg/${vipData.kode_invite_unik}`)
+            if (profile?.plan === 'vip' && vipData) {
+              if (vipData.id_discord_user) {
+                setVipLink(`https://discord.gg/${vipData.kode_invite_unik}`)
+                setHasDiscord(true)
+              } else {
+                setVipLink('/api/discord/auth')
+                setHasDiscord(false)
+              }
             }
 
             if (data.telegramLink) {
@@ -78,12 +85,17 @@ export default function GroupPage() {
         {isVip ? (
           <a 
             href={vipLink} 
-            target="_blank" 
+            target={hasDiscord ? "_blank" : undefined}
+            rel="noopener noreferrer"
             className="p-5 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl flex justify-between items-center group hover:border-yellow-500/50 transition-all text-left"
           >
             <div>
-              <div className="text-yellow-500 font-bold">VIP Inner Circle</div>
-              <div className="text-[10px] uppercase font-black tracking-widest text-neutral-600">Sinyal & Edukasi</div>
+              <div className="text-yellow-500 font-bold">
+                {hasDiscord ? 'Masuk Server Discord VIP' : 'Hubungkan Discord VIP'}
+              </div>
+              <div className="text-[10px] uppercase font-black tracking-widest text-neutral-400">
+                {hasDiscord ? 'Sinyal & Edukasi (Terhubung)' : 'Otorisasi Akun Terlebih Dahulu'}
+              </div>
             </div>
             <ExternalLink size={18} className="text-yellow-500 group-hover:scale-110 transition-all" />
           </a>

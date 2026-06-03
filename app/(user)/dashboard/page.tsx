@@ -16,11 +16,37 @@ import { StatusAktif } from '@/lib/types'
 export default function UserDashboard() {
   const [member, setMember] = useState<MemberVIP | null>(null)
   const [loading, setLoading] = useState(true)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const router = useRouter()
 
   useEffect(() => {
     async function loadData() {
       const { data: { user } } = await supabase.auth.getUser()
+      
+      // Pengecekan hasil otorisasi Discord dari URL query param
+      const searchParams = new URLSearchParams(window.location.search)
+      const discordStatus = searchParams.get('discord')
+      const discordMessage = searchParams.get('message')
+      if (discordStatus === 'success') {
+        setToast({
+          message: 'Koneksi Discord VIP Berhasil! Akun Anda telah terhubung dan otomatis masuk ke server.',
+          type: 'success'
+        })
+        router.replace('/dashboard')
+      } else if (discordStatus === 'error') {
+        let msg = 'Gagal menghubungkan akun Discord.'
+        if (discordMessage === 'auth_denied') msg = 'Otorisasi ditolak oleh pengguna.'
+        else if (discordMessage === 'not_vip') msg = 'Keanggotaan VIP Anda tidak aktif.'
+        else if (discordMessage === 'config_missing') msg = 'Konfigurasi Discord API di server belum lengkap.'
+        else if (discordMessage === 'token_exchange_failed') msg = 'Gagal bertukar token otorisasi dengan Discord.'
+        else if (discordMessage === 'guild_join_failed') msg = 'Gagal memasukkan akun Anda ke server Discord.'
+        
+        setToast({
+          message: `Error: ${msg}`,
+          type: 'error'
+        })
+        router.replace('/dashboard')
+      }
       
       if (user) {
         // Sinkronkan status pembayaran dengan Midtrans
@@ -51,7 +77,8 @@ export default function UserDashboard() {
               nama_paket: m?.nama_paket || null,
               harga_bayar: m?.harga_bayar || 0,
               dibuat_pada: m?.created_at || new Date().toISOString(),
-              tanggal_berakhir: m?.tanggal_berakhir || null
+              tanggal_berakhir: m?.tanggal_berakhir || null,
+              id_discord_user: m?.id_discord_user || null
             }
             setMember(mergedData)
           }
@@ -62,7 +89,7 @@ export default function UserDashboard() {
       setLoading(false)
     }
     loadData()
-  }, [])
+  }, [router])
 
   if (loading) return <Loader label="Sinkronisasi Data..." />
 
@@ -173,6 +200,19 @@ export default function UserDashboard() {
           </ul>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-5 py-4 rounded-xl border backdrop-blur-md shadow-2xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 ${
+          toast.type === 'success'
+            ? 'bg-green-500/10 border-green-500/20 text-green-400'
+            : 'bg-red-500/10 border-red-500/20 text-red-400'
+        }`}>
+          <AlertCircle size={18} />
+          <p className="text-xs font-bold tracking-wide">{toast.message}</p>
+          <button onClick={() => setToast(null)} className="ml-2 hover:opacity-80 font-black text-xs text-neutral-400">×</button>
+        </div>
+      )}
 
     </div>
   )
