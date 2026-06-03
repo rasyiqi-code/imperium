@@ -4,7 +4,8 @@ import { useState, useEffect, ReactNode } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap 
+  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap,
+  Unlock, Eye, EyeOff
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
@@ -33,6 +34,18 @@ export default function AdminSettings() {
   const [discordFreeInviteLink, setDiscordFreeInviteLink] = useState('')
   const [discordRedirectUri, setDiscordRedirectUri] = useState('')
   const [savingDiscord, setSavingDiscord] = useState(false)
+
+  // State untuk visibilitas field password (true = tampilkan teks, false = sembunyikan password)
+  const [showResendApiKey, setShowResendApiKey] = useState(false)
+  const [showMidtransServerKey, setShowMidtransServerKey] = useState(false)
+  const [showDiscordClientSecret, setShowDiscordClientSecret] = useState(false)
+  const [showDiscordBotToken, setShowDiscordBotToken] = useState(false)
+
+  // State untuk mengunci input kredensial (true = terkunci, false = terbuka)
+  const [lockResendApiKey, setLockResendApiKey] = useState(true)
+  const [lockMidtransServerKey, setLockMidtransServerKey] = useState(true)
+  const [lockDiscordClientSecret, setLockDiscordClientSecret] = useState(true)
+  const [lockDiscordBotToken, setLockDiscordBotToken] = useState(true)
 
   useEffect(() => {
     let active = true
@@ -408,13 +421,42 @@ export default function AdminSettings() {
             <form onSubmit={handleSaveResendSettings} className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl p-5 space-y-4 shadow-lg">
               <div className="space-y-1.5 text-left">
                 <label className="text-[10px] font-bold text-neutral-400 block">Resend API Key</label>
-                <input 
-                  type="password"
-                  placeholder="re_..."
-                  value={resendApiKey}
-                  onChange={(e) => setResendApiKey(e.target.value)}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
-                />
+                <div className="relative">
+                  <input 
+                    type={showResendApiKey ? "text" : "password"}
+                    placeholder="re_..."
+                    value={resendApiKey}
+                    onChange={(e) => setResendApiKey(e.target.value)}
+                    disabled={lockResendApiKey}
+                    className={`w-full bg-neutral-900/20 border rounded-xl p-3.5 pr-20 text-xs font-mono outline-none transition-all duration-300 text-white ${
+                      lockResendApiKey 
+                        ? 'border-neutral-900/50 opacity-50 cursor-not-allowed bg-neutral-950/40' 
+                        : 'border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5'
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowResendApiKey(!showResendApiKey)}
+                      className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                      title={showResendApiKey ? "Sembunyikan" : "Tampilkan"}
+                    >
+                      {showResendApiKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLockResendApiKey(!lockResendApiKey)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                        lockResendApiKey 
+                          ? 'text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10' 
+                          : 'text-red-500 hover:text-red-400 hover:bg-red-500/10'
+                      }`}
+                      title={lockResendApiKey ? "Buka Kunci" : "Kunci"}
+                    >
+                      {lockResendApiKey ? <Lock size={14} /> : <Unlock size={14} />}
+                    </button>
+                  </div>
+                </div>
                 <p className="text-[9px] text-neutral-600 font-bold mt-1">Masukkan API key dari akun Resend Anda</p>
               </div>
  
@@ -463,13 +505,42 @@ export default function AdminSettings() {
 
               <div className="space-y-1.5 text-left">
                 <label className="text-[10px] font-bold text-neutral-400 block">Midtrans Server Key</label>
-                <input 
-                  type="password"
-                  placeholder="Mid-server-..."
-                  value={midtransServerKey}
-                  onChange={(e) => setMidtransServerKey(e.target.value)}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
-                />
+                <div className="relative">
+                  <input 
+                    type={showMidtransServerKey ? "text" : "password"}
+                    placeholder="Mid-server-..."
+                    value={midtransServerKey}
+                    onChange={(e) => setMidtransServerKey(e.target.value)}
+                    disabled={lockMidtransServerKey}
+                    className={`w-full bg-neutral-900/20 border rounded-xl p-3.5 pr-20 text-xs font-mono outline-none transition-all duration-300 text-white ${
+                      lockMidtransServerKey 
+                        ? 'border-neutral-900/50 opacity-50 cursor-not-allowed bg-neutral-950/40' 
+                        : 'border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5'
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowMidtransServerKey(!showMidtransServerKey)}
+                      className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                      title={showMidtransServerKey ? "Sembunyikan" : "Tampilkan"}
+                    >
+                      {showMidtransServerKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLockMidtransServerKey(!lockMidtransServerKey)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                        lockMidtransServerKey 
+                          ? 'text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10' 
+                          : 'text-red-500 hover:text-red-400 hover:bg-red-500/10'
+                      }`}
+                      title={lockMidtransServerKey ? "Buka Kunci" : "Kunci"}
+                    >
+                      {lockMidtransServerKey ? <Lock size={14} /> : <Unlock size={14} />}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-1.5 text-left">
@@ -560,24 +631,82 @@ export default function AdminSettings() {
 
               <div className="space-y-1.5 text-left">
                 <label className="text-[10px] font-bold text-neutral-400 block">Discord Client Secret</label>
-                <input 
-                  type="password"
-                  placeholder="C2c_..."
-                  value={discordClientSecret}
-                  onChange={(e) => setDiscordClientSecret(e.target.value)}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
-                />
+                <div className="relative">
+                  <input 
+                    type={showDiscordClientSecret ? "text" : "password"}
+                    placeholder="C2c_..."
+                    value={discordClientSecret}
+                    onChange={(e) => setDiscordClientSecret(e.target.value)}
+                    disabled={lockDiscordClientSecret}
+                    className={`w-full bg-neutral-900/20 border rounded-xl p-3.5 pr-20 text-xs font-mono outline-none transition-all duration-300 text-white ${
+                      lockDiscordClientSecret 
+                        ? 'border-neutral-900/50 opacity-50 cursor-not-allowed bg-neutral-950/40' 
+                        : 'border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5'
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowDiscordClientSecret(!showDiscordClientSecret)}
+                      className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                      title={showDiscordClientSecret ? "Sembunyikan" : "Tampilkan"}
+                    >
+                      {showDiscordClientSecret ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLockDiscordClientSecret(!lockDiscordClientSecret)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                        lockDiscordClientSecret 
+                          ? 'text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10' 
+                          : 'text-red-500 hover:text-red-400 hover:bg-red-500/10'
+                      }`}
+                      title={lockDiscordClientSecret ? "Buka Kunci" : "Kunci"}
+                    >
+                      {lockDiscordClientSecret ? <Lock size={14} /> : <Unlock size={14} />}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-1.5 text-left">
                 <label className="text-[10px] font-bold text-neutral-400 block">Discord Bot Token</label>
-                <input 
-                  type="password"
-                  placeholder="MTUx..."
-                  value={discordBotToken}
-                  onChange={(e) => setDiscordBotToken(e.target.value)}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
-                />
+                <div className="relative">
+                  <input 
+                    type={showDiscordBotToken ? "text" : "password"}
+                    placeholder="MTUx..."
+                    value={discordBotToken}
+                    onChange={(e) => setDiscordBotToken(e.target.value)}
+                    disabled={lockDiscordBotToken}
+                    className={`w-full bg-neutral-900/20 border rounded-xl p-3.5 pr-20 text-xs font-mono outline-none transition-all duration-300 text-white ${
+                      lockDiscordBotToken 
+                        ? 'border-neutral-900/50 opacity-50 cursor-not-allowed bg-neutral-950/40' 
+                        : 'border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5'
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowDiscordBotToken(!showDiscordBotToken)}
+                      className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                      title={showDiscordBotToken ? "Sembunyikan" : "Tampilkan"}
+                    >
+                      {showDiscordBotToken ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLockDiscordBotToken(!lockDiscordBotToken)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                        lockDiscordBotToken 
+                          ? 'text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10' 
+                          : 'text-red-500 hover:text-red-400 hover:bg-red-500/10'
+                      }`}
+                      title={lockDiscordBotToken ? "Buka Kunci" : "Kunci"}
+                    >
+                      {lockDiscordBotToken ? <Lock size={14} /> : <Unlock size={14} />}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-1.5 text-left">
