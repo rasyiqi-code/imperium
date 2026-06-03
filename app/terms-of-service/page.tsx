@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -45,7 +46,7 @@ export default async function TermsOfServicePage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/60 to-transparent" />
           
           <div className="prose prose-invert max-w-none text-neutral-300 text-sm md:text-base leading-relaxed space-y-6 font-medium tracking-wide">
-            {content.split('\n').map((paragraph, index) => (
+            {content.split('\n').map((paragraph: string, index: number) => (
               <p key={index} className="whitespace-pre-line">
                 {paragraph}
               </p>
@@ -55,12 +56,12 @@ export default async function TermsOfServicePage() {
 
         {/* Tombol Kembali / CTA */}
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.06] text-white px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all active:scale-95"
           >
             Kembali ke Beranda
-          </a>
+          </Link>
         </div>
       </section>
 

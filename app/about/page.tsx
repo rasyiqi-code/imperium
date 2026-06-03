@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -45,7 +46,7 @@ export default async function AboutPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/60 to-transparent" />
           
           <div className="prose prose-invert max-w-none text-neutral-300 text-sm md:text-base leading-relaxed space-y-6 font-medium tracking-wide">
-            {content.split('\n').map((paragraph, index) => (
+            {content.split('\n').map((paragraph: string, index: number) => (
               <p key={index} className="whitespace-pre-line">
                 {paragraph}
               </p>
@@ -55,12 +56,12 @@ export default async function AboutPage() {
 
         {/* Tombol Kembali / CTA */}
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/#pricing"
             className="inline-flex items-center gap-2 bg-[#d4af37] hover:bg-[#b8962e] text-black px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95"
           >
             Gabung VIP Komunitas
-          </a>
+          </Link>
         </div>
       </section>
 

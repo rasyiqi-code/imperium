@@ -46,3 +46,29 @@ export function calculateProratedPrice(
 
   return newPlanPrice
 }
+
+/**
+ * Memformat angka nominal ke dalam format mata uang Rupiah.
+ * 
+ * @param n Angka nominal yang akan diformat
+ * @returns String terformat Rupiah (misal: Rp 10.000)
+ */
+export function formatRupiah(n: number): string {
+  return `Rp ${n.toLocaleString('id-ID')}`
+}
+
+/**
+ * Menghitung sisa waktu pembayaran hingga batas waktu kedaluwarsa.
+ * 
+ * @param expiryTime Waktu kedaluwarsa transaksi dalam format string ISO/date
+ * @returns String format countdown "HH:MM:SS"
+ */
+export function getExpiryCountdown(expiryTime: string): string {
+  const diff = new Date(expiryTime).getTime() - Date.now()
+  if (diff <= 0) return '00:00:00'
+  const h = Math.floor(diff / 3600000)
+  const m = Math.floor((diff % 3600000) / 60000)
+  const s = Math.floor((diff % 60000) / 1000)
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+

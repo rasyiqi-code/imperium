@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -56,21 +57,21 @@ export default function Footer() {
 
         {/* Menu Navigasi Horizontal */}
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-10 pb-6 border-b border-white/[0.05] w-full max-w-2xl">
-          <a href="/about" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+          <Link href="/about" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Tentang
-          </a>
-          <a href="/#pricing" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+          </Link>
+          <Link href="/#pricing" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Gabung VIP
-          </a>
-          <a href="/bantuan" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+          </Link>
+          <Link href="/bantuan" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Bantuan
-          </a>
-          <a href="/privacy-policy" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+          </Link>
+          <Link href="/privacy-policy" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Privacy Policy
-          </a>
-          <a href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+          </Link>
+          <Link href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Terms of Service
-          </a>
+          </Link>
         </div>
 
         {/* Disclaimer */}
