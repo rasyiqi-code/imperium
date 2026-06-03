@@ -8,16 +8,41 @@ export default function AboutImperium() {
       
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
         
-        {/* HEADLINE RAKSASA: ABOUT IMPERIUM (O diganti sunburst SVG berputar) */}
-        <h2 className="font-black tracking-tighter text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-2 md:gap-x-4">
+        {/* HEADLINE RAKSASA: ABOUT IMPERIUM (O diganti logo dengan efek sunburst emas) */}
+        <h2 className="font-serif-editorial tracking-tight text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-3 md:gap-x-6 select-none">
           <span>AB</span>
-          <span className="inline-flex items-center justify-center relative w-[0.85em] h-[0.85em] text-yellow-500 animate-rotate-slow mx-1">
-            <svg className="w-full h-full fill-current" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="10" />
-              <path d="M 50 5 L 50 25 M 50 95 L 50 75 M 5 50 L 25 50 M 95 50 L 85 50" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-              <path d="M 18 18 L 32 32 M 82 82 L 68 68 M 18 82 L 32 68 M 82 18 L 68 32" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-              <path d="M 50 0 L 50 12 M 50 100 L 50 88 M 0 50 L 12 50 M 100 50 L 88 50" stroke="currentColor" strokeWidth="2" opacity="0.6" />
+          <span className="inline-flex items-center justify-center relative w-[0.9em] h-[0.9em] text-[#d4af37] mx-1">
+            {/* Sinar Sunburst Emas yang berputar lambat */}
+            <svg className="w-full h-full fill-current animate-rotate-slow absolute inset-0" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              {Array.from({ length: 12 }).map((_, i) => {
+                const angle = (i * 360) / 12;
+                return (
+                  <line
+                    key={i}
+                    x1="50"
+                    y1="14"
+                    x2="50"
+                    y2="27"
+                    transform={`rotate(${angle} 50 50)`}
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    className="opacity-95"
+                  />
+                );
+              })}
             </svg>
+            
+            {/* Logo Transparan Asli di Tengah */}
+            <div className="absolute w-[42%] h-[42%] rounded-full overflow-hidden flex items-center justify-center bg-black border border-[#d4af37]/35 shadow-[0_0_12px_rgba(212,175,55,0.25)]">
+              <Image
+                src="/logo.png"
+                alt="Imperium Center Node"
+                width={80}
+                height={80}
+                className="w-[85%] h-[85%] object-contain"
+              />
+            </div>
           </span>
           <span>UT IMPERIUM</span>
         </h2>
@@ -35,12 +60,12 @@ export default function AboutImperium() {
                 alt="Imperium Crypto Chart"
                 width={500}
                 height={330}
-                className="w-full rounded-2xl object-cover border border-white/[0.06] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.01] shadow-2xl"
+                className="w-full rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
               />
             </div>
             {/* Teks Kanan */}
             <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-yellow-500 font-bold mb-4">Visi & Platform Data-Driven</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold mb-4">Visi & Platform Data-Driven</p>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Imperium Crypto adalah platform media digital dan edukasi crypto yang berfokus pada pengembangan literasi aset digital, analisis pasar berbasis data terkurasi, serta pembentukan mindset finansial modern di era ekonomi digital. Kami berkomitmen untuk menyajikan pemahaman yang logis, bebas dari spekulasi impulsif.
               </p>
@@ -51,7 +76,7 @@ export default function AboutImperium() {
           <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
             {/* Teks Kiri */}
             <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left order-2 md:order-1">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-yellow-500 font-bold mb-4">Rasionalitas & Tanggung Jawab</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold mb-4">Rasionalitas & Tanggung Jawab</p>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Kami percaya bahwa pemahaman yang rasional, objektif, dan bertanggung jawab adalah kunci utama dalam mengambil keputusan finansial. Imperium Crypto beroperasi secara independen sebagai platform edukasi bebas kebisingan (noise), bukan penyedia nasihat investasi personal, guna mendorong riset mandiri (DYOR) yang mendalam.
               </p>
@@ -64,7 +89,7 @@ export default function AboutImperium() {
                 alt="Imperium Crypto Community"
                 width={500}
                 height={330}
-                className="w-full rounded-2xl object-cover border border-white/[0.06] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.01] shadow-2xl"
+                className="w-full rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
               />
             </div>
           </div>
@@ -75,7 +100,7 @@ export default function AboutImperium() {
         <div className="flex items-center justify-center gap-4 mt-24">
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
           {/* Node Sirkuit yang berdenyut */}
-          <div className="w-2 h-2 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
+          <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-l from-transparent to-yellow-500/20" />
         </div>
 
