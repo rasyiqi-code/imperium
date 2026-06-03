@@ -55,7 +55,6 @@ export async function GET(request: Request) {
     const clientId = process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
     const clientSecret = process.env.DISCORD_CLIENT_SECRET
     const botToken = process.env.DISCORD_BOT_TOKEN
-    const freeGuildId = process.env.DISCORD_FREE_SERVER_ID || process.env.DISCORD_FREE_GUILD_ID
     const vipGuildId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
     const vipRoleId = process.env.DISCORD_VIP_ROLE_ID
     const redirectUri = process.env.DISCORD_REDIRECT_URI
@@ -107,30 +106,8 @@ export async function GET(request: Request) {
     const discordUserId = userProfile.id
     const discordUsername = userProfile.username
 
-    // 6. Masukkan pengguna ke server-server yang sesuai
-    // A. Masukkan ke Server Free (Hanya jika freeGuildId dikonfigurasi dan bukan placeholder)
-    const hasFreeGuild = freeGuildId && !freeGuildId.includes('PASTE_DISCORD_FREE_SERVER_ID_HERE')
-    if (hasFreeGuild) {
-      console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server Free (${freeGuildId})...`)
-      const freeJoinResponse = await fetch(`https://discord.com/api/guilds/${freeGuildId}/members/${discordUserId}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bot ${botToken}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          access_token: userAccessToken
-        })
-      })
-
-      if (!freeJoinResponse.ok) {
-        const freeJoinError = await freeJoinResponse.text()
-        console.warn('Discord Auth Callback: Gagal memasukkan pengguna ke Server Free.', freeJoinError)
-        // Tetap lanjutkan proses agar user VIP tidak terhambat jika server free bermasalah
-      }
-    }
-
-    // B. Masukkan ke Server VIP (Hanya jika pengguna berstatus VIP aktif)
+    // 6. Masukkan pengguna ke server yang sesuai
+    // Masukkan ke Server VIP (Hanya jika pengguna berstatus VIP aktif)
     if (isVip) {
       console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server VIP (${vipGuildId})...`)
       
@@ -197,8 +174,8 @@ export async function GET(request: Request) {
           user_id: user.id,
           title: isVip ? 'Discord VIP Aktif!' : 'Discord Terhubung!',
           message: isVip
-            ? `Akun Discord kamu (${discordUsername}) telah terhubung, otomatis bergabung ke Server Free dan Server VIP.`
-            : `Akun Discord kamu (${discordUsername}) telah terhubung dan otomatis bergabung ke Server Free.`,
+            ? `Akun Discord kamu (${discordUsername}) telah terhubung dan otomatis bergabung ke Server VIP.`
+            : `Akun Discord kamu (${discordUsername}) telah terhubung. Silakan bergabung ke Server Publik menggunakan link invite yang tersedia.`,
           type: 'success'
         }
       })
