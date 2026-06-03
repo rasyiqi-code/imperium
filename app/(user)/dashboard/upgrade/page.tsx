@@ -31,7 +31,9 @@ export default function UpgradePage() {
           const data = await res.json()
 
           if (res.ok) {
-            const packages = (data.paketList as PaketVIP[]) || []
+            const allPackages = (data.paketList as PaketVIP[]) || []
+            // Hanya tampilkan paket VIP berbayar di halaman upgrade
+            const packages = allPackages.filter(p => Number(p.harga) > 0)
             const memberData = data.memberData
             const upMode = data.upgradeMode
 

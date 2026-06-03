@@ -57,14 +57,14 @@ const reviews = [
 
 export default function Reviews() {
   return (
-    <section className="bg-[#0b0b0b] pt-16 pb-20 md:pt-20 md:pb-24 overflow-hidden relative">
+    <section className="bg-[#0b0b0b] pt-12 pb-0 md:pt-16 md:pb-0 overflow-hidden relative">
       {/* Ambient glow tipis */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-500/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
       
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         
         {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
-        <div className="text-center mb-20 space-y-4">
+        <div className="text-center mb-16 space-y-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 tracking-tight leading-tight uppercase">
             Review <span className="font-serif-editorial italic text-[#d4af37] font-normal">Anggota</span>
           </h2>
@@ -101,8 +101,8 @@ export default function Reviews() {
           >
             {reviews.map((review, index) => (
               <SwiperSlide key={index}>
-                {/* Kartu Testimoni: Sudut Tajam, Border Solid Tipis */}
-                <div className="p-8 h-full rounded-none bg-black/25 border border-white/[0.08] flex flex-col justify-between transition-all hover:border-[#d4af37]/30 hover:bg-[#d4af37]/[0.005] text-left relative overflow-hidden group/card">
+                {/* Kartu Testimoni: Sudut Tajam, Border Solid Tipis, Padding Padat */}
+                <div className="p-6 md:p-8 h-full rounded-none bg-black/25 border border-white/[0.08] flex flex-col justify-between transition-all hover:border-[#d4af37]/30 hover:bg-[#d4af37]/[0.005] text-left relative overflow-hidden group/card">
                   
                   {/* Efek Node Sirkuit Kecil Pojok Kanan Atas */}
                   <div className="absolute top-4 right-4 h-1.5 w-1.5 opacity-30 group-hover/card:opacity-90 transition-opacity">
@@ -151,7 +151,7 @@ export default function Reviews() {
         </div>
 
         {/* Info Bergabung: Kotak Tajam (Editorial Style) */}
-        <div className="mt-20 md:mt-24 text-center">
+        <div className="mt-16 md:mt-20 text-center">
           <div className="inline-flex items-center gap-3.5 p-3 rounded-none bg-black/40 border border-white/[0.08] shadow-[0_5px_15px_rgba(0,0,0,0.2)]">
             <div className="flex -space-x-3">
               {reviews.slice(0, 5).map((rev, i) => (
@@ -167,7 +167,7 @@ export default function Reviews() {
         </div>
 
         {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
-        <div className="flex items-center justify-center gap-4 mt-16 md:mt-20">
+        <div className="flex items-center justify-center gap-4 mt-20 md:mt-24">
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
           {/* Node Sirkuit yang berdenyut */}
           <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />

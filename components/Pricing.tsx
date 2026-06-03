@@ -70,47 +70,7 @@ export default function Pricing() {
 
         {/* KARTU PRICING TERPISAH (Gaya Luxury Card, rounded-2xl, gap-6/8) */}
         <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-3 max-w-6xl mx-auto items-stretch">
-          
-          {/* 1. PAKET GRATIS (Static) */}
-          <div className="group relative flex flex-col p-6 md:p-8 rounded-2xl border border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md transition-all duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/[0.005] h-full overflow-hidden">
-            
-            <div className="flex items-center justify-between mb-8">
-              <div className="p-3 rounded-xl bg-neutral-800/20 text-neutral-400 border border-neutral-800/40 group-hover:border-neutral-700 transition-colors">
-                <Zap size={20} />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Entry Level</span>
-            </div>
-
-            <div className="text-left mb-8">
-              <h4 className="text-lg font-bold text-white uppercase tracking-tight mb-2">Free Plan</h4>
-              <div className="flex items-baseline">
-                <span className="text-3xl font-black text-white">Rp 0</span>
-                <span className="text-neutral-500 ml-2 text-[10px] font-bold uppercase tracking-widest">/ Selamanya</span>
-              </div>
-            </div>
-
-            <ul className="mb-10 space-y-4 grow text-left border-t border-white/[0.06] pt-8">
-              <li className="flex items-center text-neutral-300">
-                <Check className="mr-3 shrink-0 text-[#d4af37]/60" size={15} strokeWidth={4} />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Gabung Grup Diskusi Publik</span>
-              </li>
-              {[1, 2, 3, 4].map((i) => (
-                <li key={i} className="flex items-center text-neutral-600 opacity-20">
-                  <X className="mr-3 shrink-0 text-red-500/40" size={15} strokeWidth={4} />
-                  <span className="text-[11px] font-bold uppercase tracking-tight text-neutral-500 line-through">Fitur VIP Terkunci</span>
-                </li>
-              ))}
-            </ul>
-
-            <button 
-              onClick={handleAction}
-              className="relative w-full py-4 rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10 hover:text-[#d4af37] transition-all duration-300 active:scale-[0.98]"
-            >
-              Mulai Gratis
-            </button>
-          </div>
-
-          {/* 2 & 3. PAKET VIP (Dinamis dari Database) */}
+          {/* Seluruh kartu dirender dinamis dari database */}
           {sortedPaketList.map((paket) => (
             <LandingPricingCard 
               key={paket.id} 
@@ -118,7 +78,6 @@ export default function Pricing() {
               onAction={handleAction} 
             />
           ))}
-
         </div>
 
         {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
@@ -141,23 +100,28 @@ function LandingPricingCard({
   paket: PaketVIP;
   onAction: () => void;
 }) {
-  const isYearly = paket.durasi_hari > 200;
+  const isFree = Number(paket.harga) === 0;
+  const isYearly = Number(paket.harga) > 0 && paket.durasi_hari > 200;
 
   // Fallback cerdas jika data fitur dari database kosong agar tampilan tetap premium
-  const defaultFeatures = isYearly 
+  const defaultFeatures = isFree 
     ? [
-        "Akses Grup VIP Discord",
-        "Sinyal VIP Harian Akurat",
-        "E-Book & Panduan Premium",
-        "Analisis Riset Data-Driven",
-        "Mentorship Prioritas & Konsultasi 1-on-1"
+        "Gabung Grup Diskusi Publik"
       ]
-    : [
-        "Akses Grup VIP Discord",
-        "Sinyal VIP Harian Harian",
-        "E-Book & Panduan Premium",
-        "Analisis Riset Data-Driven"
-      ];
+    : isYearly 
+      ? [
+          "Akses Grup VIP Discord",
+          "Sinyal VIP Harian Akurat",
+          "E-Book & Panduan Premium",
+          "Analisis Riset Data-Driven",
+          "Mentorship Prioritas & Konsultasi 1-on-1"
+        ]
+      : [
+          "Akses Grup VIP Discord",
+          "Sinyal VIP Harian Harian",
+          "E-Book & Panduan Premium",
+          "Analisis Riset Data-Driven"
+        ];
 
   const featuresToRender = paket.fitur && paket.fitur.length > 0 ? paket.fitur : defaultFeatures;
 
@@ -165,7 +129,9 @@ function LandingPricingCard({
     <div className={`group relative flex flex-col p-6 md:p-8 rounded-2xl transition-all duration-500 h-full overflow-hidden border ${
       isYearly 
       ? 'border-[#d4af37]/40 bg-[#111111]/70 shadow-[0_0_35px_rgba(212,175,55,0.06)] hover:shadow-[0_0_45px_rgba(212,175,55,0.15)] animate-breathe hover:scale-[1.02] z-10' 
-      : 'border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-yellow-500/20 hover:bg-[#d4af37]/[0.005]'
+      : isFree
+        ? 'border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-[#d4af37]/20 hover:bg-yellow-500/[0.005]'
+        : 'border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-yellow-500/20 hover:bg-[#d4af37]/[0.005]'
     }`}>
       
       {isYearly && (
@@ -185,20 +151,30 @@ function LandingPricingCard({
         <div className={`p-3 rounded-xl border transition-colors ${
           isYearly 
           ? 'bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/20 group-hover:bg-[#d4af37]/20' 
-          : 'bg-neutral-800/10 text-[#d4af37] border-white/[0.06] group-hover:border-[#d4af37]/20'
+          : isFree
+            ? 'bg-neutral-800/20 text-neutral-400 border border-neutral-800/40 group-hover:border-neutral-700'
+            : 'bg-neutral-800/10 text-[#d4af37] border-white/[0.06] group-hover:border-[#d4af37]/20'
         }`}>
-          <Crown size={20} />
+          {isFree ? <Zap size={20} /> : <Crown size={20} />}
         </div>
-        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isYearly ? 'text-[#d4af37]' : 'text-neutral-450'}`}>
-          VIP {isYearly ? 'Elite' : 'Basic'}
+        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+          isYearly 
+          ? 'text-[#d4af37]' 
+          : isFree
+            ? 'text-neutral-500'
+            : 'text-neutral-400'
+        }`}>
+          {isFree ? 'Entry Level' : isYearly ? 'VIP Elite' : 'VIP Basic'}
         </span>
       </div>
 
       <div className="text-left mb-8">
         <h4 className="text-lg font-bold text-white uppercase tracking-tight mb-2">{paket.nama_paket}</h4>
         <div className="flex items-baseline">
-          <span className="text-3xl font-black text-white">Rp {paket.harga.toLocaleString('id-ID')}</span>
-          <span className="text-neutral-500 ml-2 text-[10px] font-bold uppercase tracking-widest">/ {paket.durasi_hari} Hari</span>
+          <span className="text-3xl font-black text-white">Rp {Number(paket.harga).toLocaleString('id-ID')}</span>
+          <span className="text-neutral-500 ml-2 text-[10px] font-bold uppercase tracking-widest">
+            / {isFree ? 'Selamanya' : `${paket.durasi_hari} Hari`}
+          </span>
         </div>
       </div>
 
@@ -209,6 +185,12 @@ function LandingPricingCard({
             <span className="text-[11px] font-bold uppercase tracking-tight">{feature}</span>
           </li>
         ))}
+        {isFree && [1, 2, 3, 4].map((i) => (
+          <li key={`locked-${i}`} className="flex items-center text-neutral-600 opacity-20">
+            <X className="mr-3 shrink-0 text-red-500/40" size={15} strokeWidth={4} />
+            <span className="text-[11px] font-bold uppercase tracking-tight text-neutral-500 line-through">Fitur VIP Terkunci</span>
+          </li>
+        ))}
       </ul>
 
       <button 
@@ -216,13 +198,15 @@ function LandingPricingCard({
         className={`relative group overflow-hidden w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 active:scale-[0.98] ${
           isYearly 
           ? 'bg-[#d4af37] text-black hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]' 
-          : 'border border-[#d4af37]/25 bg-[#d4af37]/5 text-[#d4af37] hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10'
+          : isFree
+            ? 'border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10 hover:text-[#d4af37]'
+            : 'border border-[#d4af37]/25 bg-[#d4af37]/5 text-[#d4af37] hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10'
         }`}
       >
         {isYearly && (
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
         )}
-        Dapatkan Akses VIP
+        {isFree ? 'Mulai Gratis' : 'Dapatkan Akses VIP'}
       </button>
     </div>
   );

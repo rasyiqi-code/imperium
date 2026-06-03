@@ -28,6 +28,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
     }
 
+    if (Number(paket.harga) <= 0) {
+      return NextResponse.json({ error: "Paket gratis tidak dapat dibeli" }, { status: 400 });
+    }
+
     // Ambil pengaturan Midtrans dari database menggunakan Prisma
     const settings = await prisma.admin_settings.findUnique({
       where: { id: 1 },

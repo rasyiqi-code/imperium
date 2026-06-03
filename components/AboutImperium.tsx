@@ -6,7 +6,7 @@ export default function AboutImperium() {
       {/* Ambient glow redup di latar belakang */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
       
-      <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 md:py-20">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-12 pb-0 md:pt-16 md:pb-0">
         
         {/* HEADLINE RAKSASA: ABOUT IMPERIUM (O diganti logo dengan efek sunburst emas) */}
         <h2 className="font-serif-editorial tracking-tight text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-4 md:gap-x-8 select-none">
@@ -56,7 +56,7 @@ export default function AboutImperium() {
           {/* BARIS 1: Gambar Kiri (40%) | Teks Kanan (60%) */}
           <div className="grid grid-cols-1 md:grid-cols-12 border-b border-white/[0.08] items-stretch">
             {/* Gambar Kiri */}
-            <div className="md:col-span-5 p-8 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/[0.08] relative group overflow-hidden bg-black/20">
+            <div className="md:col-span-5 p-6 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/[0.08] relative group overflow-hidden bg-black/20">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
               <Image
                 src="/chart.png"
@@ -67,7 +67,7 @@ export default function AboutImperium() {
               />
             </div>
             {/* Teks Kanan */}
-            <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left">
+            <div className="md:col-span-7 p-6 md:p-8 flex flex-col justify-center text-left">
               <h3 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] font-extrabold mb-4">Visi & Platform Data-Driven</h3>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Imperium Crypto adalah platform media digital dan edukasi crypto yang berfokus pada pengembangan literasi aset digital, analisis pasar berbasis data terkurasi, serta pembentukan mindset finansial modern di era ekonomi digital. Kami berkomitmen untuk menyajikan pemahaman yang logis, bebas dari spekulasi impulsif.
@@ -78,14 +78,14 @@ export default function AboutImperium() {
           {/* BARIS 2: Teks Kiri (60%) | Gambar Kanan (40%) */}
           <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
             {/* Teks Kiri */}
-            <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left order-2 md:order-1">
+            <div className="md:col-span-7 p-6 md:p-8 flex flex-col justify-center text-left order-2 md:order-1">
               <h3 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] font-extrabold mb-4">Rasionalitas & Tanggung Jawab</h3>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Kami percaya bahwa pemahaman yang rasional, objektif, dan bertanggung jawab adalah kunci utama dalam mengambil keputusan finansial. Imperium Crypto beroperasi secara independen sebagai platform edukasi bebas kebisingan (noise), bukan penyedia nasihat investasi personal, guna mendorong riset mandiri (DYOR) yang mendalam.
               </p>
             </div>
             {/* Gambar Kanan */}
-            <div className="md:col-span-5 p-8 flex items-center justify-center border-t md:border-t-0 md:border-l border-white/[0.08] relative group overflow-hidden bg-black/20 order-1 md:order-2">
+            <div className="md:col-span-5 p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-white/[0.08] relative group overflow-hidden bg-black/20 order-1 md:order-2">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
               <Image
                 src="/crypto_login.png"
@@ -100,7 +100,7 @@ export default function AboutImperium() {
         </div>
 
         {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
-        <div className="flex items-center justify-center gap-4 mt-16 md:mt-20">
+        <div className="flex items-center justify-center gap-4 mt-12 md:mt-16">
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
           {/* Node Sirkuit yang berdenyut */}
           <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
