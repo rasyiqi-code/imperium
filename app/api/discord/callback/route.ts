@@ -44,8 +44,9 @@ export async function GET(request: Request) {
     const vipRoleId = process.env.DISCORD_VIP_ROLE_ID
     const redirectUri = process.env.DISCORD_REDIRECT_URI
 
-    if (!clientId || !clientSecret || !botToken || !freeGuildId || !vipGuildId || !vipRoleId || !redirectUri) {
-      console.error('Discord Auth Callback: Konfigurasi Discord API tidak lengkap di .env.')
+    // Wajib ada: clientId, clientSecret, botToken, vipGuildId, dan redirectUri
+    if (!clientId || !clientSecret || !botToken || !vipGuildId || !redirectUri || vipGuildId.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE')) {
+      console.error('Discord Auth Callback: Konfigurasi wajib Discord API tidak lengkap di .env.')
       return NextResponse.redirect(new URL('/dashboard?discord=error&message=config_missing', request.url))
     }
 
@@ -91,38 +92,48 @@ export async function GET(request: Request) {
     const discordUsername = userProfile.username
 
     // 6. Masukkan pengguna ke server-server yang sesuai
-    // A. Masukkan ke Server Free (Untuk semua anggota, baik Free maupun VIP)
-    console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server Free (${freeGuildId})...`)
-    const freeJoinResponse = await fetch(`https://discord.com/api/guilds/${freeGuildId}/members/${discordUserId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bot ${botToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        access_token: userAccessToken
-      })
-    })
-
-    if (!freeJoinResponse.ok) {
-      const freeJoinError = await freeJoinResponse.text()
-      console.warn('Discord Auth Callback: Gagal memasukkan pengguna ke Server Free.', freeJoinError)
-      // Tetap lanjutkan proses agar user VIP tidak terhambat jika server free bermasalah
-    }
-
-    // B. Masukkan ke Server VIP (Hanya jika pengguna berstatus VIP aktif)
-    if (isVip) {
-      console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server VIP (${vipGuildId})...`)
-      const vipJoinResponse = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}`, {
+    // A. Masukkan ke Server Free (Hanya jika freeGuildId dikonfigurasi dan bukan placeholder)
+    const hasFreeGuild = freeGuildId && !freeGuildId.includes('PASTE_DISCORD_FREE_SERVER_ID_HERE')
+    if (hasFreeGuild) {
+      console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server Free (${freeGuildId})...`)
+      const freeJoinResponse = await fetch(`https://discord.com/api/guilds/${freeGuildId}/members/${discordUserId}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bot ${botToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          access_token: userAccessToken,
-          roles: [vipRoleId]
+          access_token: userAccessToken
         })
+      })
+
+      if (!freeJoinResponse.ok) {
+        const freeJoinError = await freeJoinResponse.text()
+        console.warn('Discord Auth Callback: Gagal memasukkan pengguna ke Server Free.', freeJoinError)
+        // Tetap lanjutkan proses agar user VIP tidak terhambat jika server free bermasalah
+      }
+    }
+
+    // B. Masukkan ke Server VIP (Hanya jika pengguna berstatus VIP aktif)
+    if (isVip) {
+      console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server VIP (${vipGuildId})...`)
+      
+      const hasVipRole = vipRoleId && !vipRoleId.includes('PASTE_DISCORD_VIP_ROLE_ID_HERE')
+      const bodyData: { access_token: string; roles?: string[] } = {
+        access_token: userAccessToken
+      }
+      
+      if (hasVipRole) {
+        bodyData.roles = [vipRoleId]
+      }
+
+      const vipJoinResponse = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bot ${botToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
       })
 
       if (!vipJoinResponse.ok) {
@@ -131,8 +142,8 @@ export async function GET(request: Request) {
         return NextResponse.redirect(new URL('/dashboard?discord=error&message=guild_join_failed', request.url))
       }
 
-      // Jika user sudah berada di server VIP (HTTP 204), tambahkan role VIP secara manual
-      if (vipJoinResponse.status === 204) {
+      // Jika user sudah berada di server VIP (HTTP 204), tambahkan role VIP secara manual jika dikonfigurasi
+      if (vipJoinResponse.status === 204 && hasVipRole) {
         console.log(`Discord Auth Callback: Pengguna ${discordUsername} sudah di server VIP. Menambahkan role VIP...`)
         const roleResponse = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}/roles/${vipRoleId}`, {
           method: 'PUT',
