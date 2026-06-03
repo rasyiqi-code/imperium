@@ -14,7 +14,7 @@ export default function Hero() {
           {/* Logo Watermark & Sirkuit Radial di belakang Headline */}
           <div className="relative mb-6 w-full flex items-center justify-center min-h-[180px] md:min-h-[220px]">
             {/* Sirkuit Radial SVG melambangkan jaringan dan sinyal data */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
+            <div className="absolute inset-y-0 left-[20%] md:left-[30%] -translate-x-1/2 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
               <svg 
                 className="absolute w-[280px] h-[280px] md:w-[380px] md:h-[380px] text-yellow-500/25 animate-rotate-slow" 
                 viewBox="0 0 200 200" 
