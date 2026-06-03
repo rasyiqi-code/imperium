@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Mengizinkan pemuatan QR Code dari API Midtrans
+      {
+        protocol: 'https',
+        hostname: 'api.sandbox.midtrans.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.midtrans.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

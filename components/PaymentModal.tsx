@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import Image from 'next/image'
 import {
   X,
   QrCode,
@@ -388,11 +389,13 @@ export default function PaymentModal({
               {chargeData.type === 'qris' && chargeData.qrUrl && (
                 <div className="flex flex-col items-center gap-4">
                   <div className="bg-white p-4 rounded-2xl shadow-lg shadow-white/5">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={chargeData.qrUrl}
                       alt="QR Code"
-                      className="w-52 h-52 object-contain"
+                      width={208}
+                      height={208}
+                      className="object-contain"
+                      unoptimized // Menghindari kompresi gambar dinamis QR code di sisi server untuk menghemat CPU resource
                     />
                   </div>
                   <p className="text-[10px] text-neutral-500 font-medium text-center">
