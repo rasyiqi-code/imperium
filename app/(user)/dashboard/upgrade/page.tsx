@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase'
 import { PaketVIP, MemberVIP } from '@/lib/types'
 import PricingCard from '@/components/PricingCard'
 import PaymentModal from '@/components/PaymentModal'
-import { RefreshCw, CreditCard, ShieldCheck } from 'lucide-react'
+import { CreditCard, ShieldCheck } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 export default function UpgradePage() {
   const [paketList, setPaketList] = useState<PaketVIP[]>([])
@@ -86,12 +87,7 @@ export default function UpgradePage() {
 
   const selectedPaket = paketList.find((p) => p.id === selectedId)
 
-  if (loading) return (
-    <div className="p-10 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <RefreshCw className="animate-spin text-yellow-500" size={40} />
-      <p className="text-neutral-500 font-bold tracking-widest text-[10px]">Menyiapkan Paket VIP...</p>
-    </div>
-  )
+  if (loading) return <Loader label="Menyiapkan Paket VIP..." />
 
   return (
     <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-10 pb-40 animate-in fade-in duration-700">

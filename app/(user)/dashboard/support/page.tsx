@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { MessageSquare, Send, Mail, RefreshCw, Clock, ChevronDown, ChevronUp } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 interface SupportConfig {
   whatsapp_number: string
@@ -47,12 +48,7 @@ export default function SupportPage() {
     loadSupport()
   }, [])
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[60vh] gap-3">
-      <RefreshCw className="animate-spin text-yellow-500" size={22} />
-      <span className="text-neutral-500 text-xs font-bold tracking-widest uppercase">Memuat data...</span>
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Bantuan & FAQ..." />
 
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-7xl mx-auto animate-in fade-in duration-500 text-left">

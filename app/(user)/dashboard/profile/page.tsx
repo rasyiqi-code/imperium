@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
+import Loader from '@/components/Loader'
 
 export default function ProfilePage() {
   const { showAlert, showConfirm } = useModal()
@@ -126,11 +127,7 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) return (
-    <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Profil..." />
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">

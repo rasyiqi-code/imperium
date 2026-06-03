@@ -6,6 +6,7 @@ import {
   RefreshCw, HelpCircle, X
 } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
+import Loader from '@/components/Loader'
 
 interface SupportConfig {
   whatsapp_number: string
@@ -173,11 +174,7 @@ export default function AdminSupportManager() {
     })
   }
 
-  if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-transparent">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Layanan Bantuan..." />
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">

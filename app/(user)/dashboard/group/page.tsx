@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { MessageSquare, ExternalLink, Lock, RefreshCw } from 'lucide-react'
+import { MessageSquare, ExternalLink, Lock } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 export default function GroupPage() {
   const [isVip, setIsVip] = useState(false)
@@ -49,13 +50,7 @@ export default function GroupPage() {
     loadData()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <RefreshCw className="animate-spin text-yellow-500" size={32} />
-      </div>
-    )
-  }
+  if (loading) return <Loader label="Memuat Tautan Grup..." />
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">

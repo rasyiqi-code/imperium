@@ -5,8 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { MemberVIP } from '@/lib/types' 
 import StatusCard from '@/components/StatusCard'
 import DiscordCard from '@/components/DiscordCard'
-import { Crown, Lock, TrendingUp, AlertCircle, RefreshCw, Zap, ShieldCheck } from 'lucide-react'
+import { Crown, Lock, TrendingUp, AlertCircle, Zap, ShieldCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Loader from '@/components/Loader'
 
 // Samakan dengan interface di lib/types.ts agar tidak bentrok
 import { StatusAktif } from '@/lib/types'
@@ -63,12 +64,7 @@ export default function UserDashboard() {
     loadData()
   }, [])
 
-  if (loading) return (
-    <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <RefreshCw className="animate-spin text-yellow-500" size={28} />
-      <div className="text-neutral-500 text-xs font-bold tracking-widest text-center uppercase">Sinkronisasi Data...</div>
-    </div>
-  )
+  if (loading) return <Loader label="Sinkronisasi Data..." />
 
   const isVip = member?.status_aktif === 'aktif' || member?.status_aktif === 'vip'
   const firstName = member?.nama_member?.split(' ')[0] || 'Member'

@@ -6,6 +6,7 @@ import { useModal } from '@/components/ModalProvider'
 import { 
   Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, CreditCard, Zap 
 } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 export default function AdminSettings() {
   const { showAlert, showConfirm } = useModal()
@@ -178,11 +179,7 @@ export default function AdminSettings() {
     }
   }
 
-  if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
     <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">

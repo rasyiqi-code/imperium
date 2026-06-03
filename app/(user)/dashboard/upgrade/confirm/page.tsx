@@ -11,6 +11,7 @@ import {
 import { User } from '@supabase/supabase-js'
 import { PaketVIP, MemberVIP } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
+import Loader from '@/components/Loader'
 
 function ConfirmContent() {
   const router = useRouter()
@@ -194,12 +195,7 @@ function ConfirmContent() {
     }
   }
 
-  if (fetching || !selectedPaket) return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
-
+  if (fetching || !selectedPaket) return <Loader label="Memuat Riwayat Pembayaran..." />
   return (
     <div className="p-4 md:p-8 space-y-6 w-full mx-auto pb-32 bg-black min-h-screen text-white font-sans text-left">
       <button onClick={() => router.back()} className="flex items-center gap-2 text-neutral-500 hover:text-white transition-all">
@@ -310,7 +306,7 @@ function ConfirmContent() {
 
 export default function ConfirmPayment() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+    <Suspense fallback={<Loader label="Menyiapkan Konfirmasi..." fullScreen={true} />}>
       <ConfirmContent />
     </Suspense>
   )

@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { 
   TrendingUp, 
   Users, 
-  Wallet, 
-  RefreshCw
+  Wallet
 } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 interface PaymentItem {
   harga_bayar: number;
@@ -101,12 +101,7 @@ export default function AdminDashboard() {
     ? `M ${coords[0].x} ${chartHeight - paddingBottom} ` + coords.map(c => `L ${c.x} ${c.y}`).join(' ') + ` L ${coords[coords.length - 1].x} ${chartHeight - paddingBottom} Z`
     : ''
 
-  if (loading) return (
-    <div className="p-8 flex flex-col items-center justify-center min-h-screen gap-4 bg-black text-white">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-      <span className="text-xs font-bold tracking-widest">Sinkronisasi Database...</span>
-    </div>
-  )
+  if (loading) return <Loader label="Sinkronisasi Database..." />
 
   return (
     <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white animate-in fade-in duration-300">

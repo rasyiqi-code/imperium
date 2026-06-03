@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { PaketVIP } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
+import Loader from '@/components/Loader'
 
 export default function PricingEditor() {
   const { showAlert } = useModal()
@@ -117,9 +118,7 @@ export default function PricingEditor() {
       setPlans(data)
       setLoading(false)
     }
-    const timer = setTimeout(() => {
-      load()
-    }, 0)
+    const timer = setTimeout(load, 0)
     return () => {
       active = false
       clearTimeout(timer)
@@ -161,11 +160,7 @@ export default function PricingEditor() {
     }
   }
 
-  if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-transparent">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Konfigurasi Harga..." />
 
   return (
     <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">

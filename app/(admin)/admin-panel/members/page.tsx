@@ -6,6 +6,7 @@ import {
   MessageSquare, Mail, User, Smartphone, UserMinus, Download
 } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
+import Loader from '@/components/Loader'
 
 interface Profile {
   id: string;
@@ -245,11 +246,7 @@ export default function ManageMembers() {
     (m.full_name?.toLowerCase() || '').includes(search.toLowerCase())
   )
 
-  if (loading) return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <RefreshCw className="animate-spin text-yellow-500" size={32} />
-    </div>
-  )
+  if (loading) return <Loader label="Memuat Daftar Anggota..." />
 
   return (
     <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left animate-in fade-in duration-300">
