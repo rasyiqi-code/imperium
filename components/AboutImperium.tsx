@@ -9,42 +9,45 @@ export default function AboutImperium() {
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
         
         {/* HEADLINE RAKSASA: ABOUT IMPERIUM (O diganti logo dengan efek sunburst emas) */}
-        <h2 className="font-serif-editorial tracking-tight text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-3 md:gap-x-6 select-none">
-          <span>AB</span>
-          <span className="inline-flex items-center justify-center relative w-[0.9em] h-[0.9em] text-[#d4af37] mx-1">
-            {/* Sinar Sunburst Emas yang berputar lambat */}
-            <svg className="w-full h-full fill-current animate-rotate-slow absolute inset-0" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              {Array.from({ length: 12 }).map((_, i) => {
-                const angle = (i * 360) / 12;
-                return (
-                  <line
-                    key={i}
-                    x1="50"
-                    y1="14"
-                    x2="50"
-                    y2="27"
-                    transform={`rotate(${angle} 50 50)`}
-                    stroke="currentColor"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    className="opacity-95"
-                  />
-                );
-              })}
-            </svg>
-            
-            {/* Logo Transparan Asli di Tengah */}
-            <div className="absolute w-[42%] h-[42%] rounded-full overflow-hidden flex items-center justify-center bg-black border border-[#d4af37]/35 shadow-[0_0_12px_rgba(212,175,55,0.25)]">
-              <Image
-                src="/logo.png"
-                alt="Imperium Center Node"
-                width={80}
-                height={80}
-                className="w-[85%] h-[85%] object-contain"
-              />
-            </div>
+        <h2 className="font-serif-editorial tracking-tight text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-4 md:gap-x-8 select-none">
+          <span className="flex items-center gap-x-1 sm:gap-x-1.5 whitespace-nowrap">
+            <span>AB</span>
+            <span className="inline-flex items-center justify-center relative w-[0.85em] h-[0.85em] text-[#d4af37]">
+              {/* Sinar Sunburst Emas yang berputar lambat */}
+              <svg className="w-full h-full fill-current animate-rotate-slow absolute inset-0" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                {Array.from({ length: 12 }).map((_, i) => {
+                  const angle = (i * 360) / 12;
+                  return (
+                    <line
+                      key={i}
+                      x1="50"
+                      y1="14"
+                      x2="50"
+                      y2="27"
+                      transform={`rotate(${angle} 50 50)`}
+                      stroke="currentColor"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      className="opacity-95"
+                    />
+                  );
+                })}
+              </svg>
+              
+              {/* Logo Transparan Asli di Tengah */}
+              <div className="absolute w-[42%] h-[42%] rounded-full overflow-hidden flex items-center justify-center bg-black border border-[#d4af37]/35 shadow-[0_0_12px_rgba(212,175,55,0.25)]">
+                <Image
+                  src="/logo.png"
+                  alt="Imperium Center Node"
+                  width={80}
+                  height={80}
+                  className="w-[85%] h-[85%] object-contain"
+                />
+              </div>
+            </span>
+            <span>UT</span>
           </span>
-          <span>UT IMPERIUM</span>
+          <span>IMPERIUM</span>
         </h2>
 
         {/* EDITORIAL MAGAZINE GRID */}
