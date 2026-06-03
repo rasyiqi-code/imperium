@@ -260,4 +260,22 @@ p {
   animation-delay: 3s;
 }
 
+/* Animasi news ticker (marquee) untuk tagline footer */
+@keyframes ticker {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.animate-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: ticker 45s linear infinite;
+  flex-shrink: 0;
+}
+
+
 

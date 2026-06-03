@@ -17,14 +17,29 @@ export default function Footer() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center text-center">
         
-        {/* Brand Logo & Tagline (Centered) */}
-        <div className="space-y-3.5 mb-8">
+        {/* Logo Brand & Tagline Bergerak (News Ticker) */}
+        <div className="space-y-4 mb-8 w-full">
           <h3 className="text-2xl font-black tracking-tighter uppercase">
             IMPERIUM<span className="text-[#d4af37]">CRYPTO</span>
           </h3>
-          <p className="text-neutral-450 text-sm font-medium tracking-wide leading-relaxed max-w-xl mx-auto">
-            Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit.
-          </p>
+          
+          {/* Kontainer News Ticker dengan Efek Fade-Out Premium di Sisi Kiri & Kanan */}
+          <div className="relative flex overflow-hidden border-y border-white/[0.05] py-3.5 bg-white/[0.01] w-full [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
+            {/* Grup Teks 1 */}
+            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em]">
+              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span className="text-[#d4af37]">&bull;</span>
+            </div>
+            {/* Grup Teks 2 (Duplikasi untuk looping mulus tanpa celah kosong) */}
+            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em]" aria-hidden="true">
+              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span className="text-[#d4af37]">&bull;</span>
+            </div>
+          </div>
         </div>
 
         {/* Menu Navigasi Horizontal */}
