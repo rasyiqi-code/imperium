@@ -10,9 +10,9 @@ export default function AboutImperium() {
         
         {/* HEADLINE RAKSASA: ABOUT IMPERIUM (O diganti logo dengan efek sunburst emas) */}
         <h2 className="font-serif-editorial tracking-tight text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase mb-16 flex items-center justify-center flex-wrap gap-x-4 md:gap-x-8 select-none">
-          <span className="flex items-center gap-x-1 sm:gap-x-1.5 whitespace-nowrap">
-            <span>AB</span>
-            <span className="inline-flex items-center justify-center relative w-[0.85em] h-[0.85em] text-[#d4af37]">
+          <span className="flex items-center gap-x-0 whitespace-nowrap">
+            <span className="relative z-10">AB</span>
+            <span className="inline-flex items-center justify-center relative w-[0.85em] h-[0.85em] text-[#d4af37] z-0 -mx-[0.12em]">
               {/* Sinar Sunburst Emas yang berputar lambat */}
               <svg className="w-full h-full fill-current animate-rotate-slow absolute inset-0" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 {Array.from({ length: 12 }).map((_, i) => {
@@ -45,7 +45,7 @@ export default function AboutImperium() {
                 />
               </div>
             </span>
-            <span>UT</span>
+            <span className="relative z-10">UT</span>
           </span>
           <span>IMPERIUM</span>
         </h2>
