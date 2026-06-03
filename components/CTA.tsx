@@ -12,7 +12,7 @@ export default function CTA() {
       <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-8">
         
         {/* Title */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 tracking-tight leading-tight uppercase">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-light text-neutral-300 tracking-tight leading-tight uppercase">
           Siap Menguasai Pasar Crypto? <br />
           <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
             Mulai Perjalanan VIP Anda Sekarang
