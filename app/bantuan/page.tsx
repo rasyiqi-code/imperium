@@ -8,8 +8,11 @@ import { Mail, MessageSquare, Send, Clock } from 'lucide-react';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'Pusat Bantuan - Imperium Crypto',
+  title: 'Pusat Bantuan',
   description: 'Butuh bantuan? Temukan jawaban atas pertanyaan umum di FAQ atau hubungi kontak support kami via WhatsApp, Telegram, dan Email.',
+  alternates: {
+    canonical: '/bantuan',
+  },
 };
 
 export default async function HelpPage() {

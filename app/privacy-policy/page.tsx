@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'Privacy Policy - Imperium Crypto',
+  title: 'Privacy Policy',
   description: 'Kebijakan privasi Imperium Crypto yang menjelaskan komitmen kami dalam mengamankan dan mengelola data informasi para member.',
+  alternates: {
+    canonical: '/privacy-policy',
+  },
 };
 
 export default async function PrivacyPolicyPage() {

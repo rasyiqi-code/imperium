@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'Terms of Service - Imperium Crypto',
+  title: 'Terms of Service',
   description: 'Syarat dan ketentuan layanan serta aturan keanggotaan komunitas Imperium Crypto yang wajib ditaati oleh seluruh member.',
+  alternates: {
+    canonical: '/terms-of-service',
+  },
 };
 
 export default async function TermsOfServicePage() {

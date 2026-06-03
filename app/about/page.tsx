@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'Tentang Kami - Imperium Crypto',
+  title: 'Tentang Kami',
   description: 'Mengenal lebih dekat Imperium Crypto, visi, misi, dan latar belakang berdirinya komunitas edukasi crypto premium terbaik di Indonesia.',
+  alternates: {
+    canonical: '/about',
+  },
 };
 
 export default async function AboutPage() {

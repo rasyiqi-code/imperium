@@ -10,8 +10,8 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Imperium - Komunitas Crypto Profesional",
-    template: "%s | Imperium",
+    default: "Imperium Crypto - Komunitas Crypto Profesional",
+    template: "%s - Imperium Crypto",
   },
   description:
     "Bergabunglah dengan komunitas Crypto premium. Diskusi berkualitas, networking autentik, dan insight eksklusif untuk pemula hingga profesional.",
