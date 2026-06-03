@@ -13,7 +13,7 @@ export default async function Footer() {
   const operational = support?.operational_hours || '09:00 - 21:00 WIB';
 
   return (
-    <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-20 pb-12 border-t border-white/[0.08]">
+    <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-16 pb-12 border-t border-white/[0.08]">
       {/* Sirkuit Radial Redup di Pojok Kanan Bawah */}
       <svg 
         className="absolute -right-20 -bottom-20 w-[300px] h-[300px] text-yellow-500/[0.012] animate-rotate-slow pointer-events-none z-0" 
@@ -26,82 +26,72 @@ export default async function Footer() {
         <circle cx="100" cy="100" r="46" stroke="currentColor" strokeWidth="0.4" />
       </svg>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center text-center">
         
-        {/* Bagian Atas: Brand & Links */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-12 pb-16">
-          <div className="max-w-sm space-y-4">
-            <h3 className="text-2xl font-black tracking-tighter">
-              IMPERIUM<span className="text-[#d4af37]">CRYPTO</span>
-            </h3>
-            <p className="text-neutral-500 text-sm font-medium tracking-wide leading-relaxed">
-              Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-20">
-            {/* Navigasi */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Navigasi</h4>
-              <ul className="space-y-2.5">
-                <li><a href="/about" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Tentang</a></li>
-                <li><a href="/#pricing" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Gabung VIP</a></li>
-                <li><a href="/bantuan" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Bantuan</a></li>
-              </ul>
-            </div>
-
-            {/* Legalitas */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Legalitas</h4>
-              <ul className="space-y-2.5">
-                <li><a href="/privacy-policy" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Terms of Service</a></li>
-              </ul>
-            </div>
-
-            {/* Kontak */}
-            <div className="space-y-4 col-span-2 md:col-span-1">
-              <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Kontak</h4>
-              <ul className="space-y-2.5">
-                <li>
-                  <a href={`mailto:${email}`} className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block break-all">
-                    {email}
-                  </a>
-                </li>
-                <li>
-                  <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block">
-                    WhatsApp: +{whatsapp}
-                  </a>
-                </li>
-                <li>
-                  <a href={telegram} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block truncate">
-                    Telegram Channel
-                  </a>
-                </li>
-                <li className="text-neutral-500 text-xs font-medium tracking-wide">
-                  Operasional: {operational}
-                </li>
-              </ul>
-            </div>
-          </div>
+        {/* Brand Logo & Tagline (Centered) */}
+        <div className="space-y-3.5 mb-8">
+          <h3 className="text-2xl font-black tracking-tighter uppercase">
+            IMPERIUM<span className="text-[#d4af37]">CRYPTO</span>
+          </h3>
+          <p className="text-neutral-450 text-sm font-medium tracking-wide leading-relaxed max-w-xl mx-auto">
+            Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit.
+          </p>
         </div>
 
-        {/* Bagian Tengah: Disclaimer */}
-        <div className="py-8 border-t border-white/[0.08]">
-          <p className="text-xs text-neutral-600 font-medium leading-relaxed max-w-4xl tracking-wide">
-            <span className="text-neutral-450 font-bold mr-2">Disclaimer:</span> 
+        {/* Menu Navigasi Horizontal */}
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-6">
+          <a href="/about" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+            Tentang
+          </a>
+          <a href="/#pricing" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+            Gabung VIP
+          </a>
+          <a href="/bantuan" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+            Bantuan
+          </a>
+          <a href="/privacy-policy" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+            Privacy Policy
+          </a>
+          <a href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
+            Terms of Service
+          </a>
+        </div>
+
+        {/* Kontak Support Horizontal */}
+        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-neutral-500 font-medium mb-10 pb-6 border-b border-white/[0.05] w-full max-w-2xl">
+          <a href={`mailto:${email}`} className="hover:text-[#d4af37] transition-colors break-all">
+            {email}
+          </a>
+          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
+          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37] transition-colors">
+            WhatsApp: +{whatsapp}
+          </a>
+          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
+          <a href={telegram} target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37] transition-colors">
+            Telegram
+          </a>
+          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
+          <span className="text-neutral-500">
+            Operasional: {operational}
+          </span>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="mb-8 max-w-4xl">
+          <p className="text-[10px] sm:text-xs text-neutral-600 font-medium leading-relaxed tracking-wide">
+            <span className="text-neutral-500 font-bold mr-2 uppercase tracking-widest text-[9px]">Disclaimer:</span> 
             Perdagangan aset crypto memiliki risiko tinggi. Seluruh informasi dalam komunitas ini bersifat edukasi dan referensi, bukan saran finansial mutlak. Akses digital tidak dapat di-refund setelah akses diberikan. Dengan bergabung, Anda menyatakan paham atas risiko investasi Anda sendiri.
           </p>
         </div>
 
-        {/* Bagian Bawah: Copyright */}
-        <div className="pt-8 border-t border-white/[0.08] flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs font-bold text-neutral-500 tracking-wider">
+        {/* Copyright & Developed By */}
+        <div className="w-full pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-neutral-500 tracking-widest">
+          <p>
             &copy; 2026 IMPERIUM CRYPTO. ALL RIGHTS RESERVED.
           </p>
           <div className="flex items-center gap-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-yellow-500/80 animate-pulse" />
-            <p className="text-xs font-bold text-neutral-500 tracking-wider">
+            <div className="h-1 w-1 rounded-full bg-yellow-500/80 animate-pulse" />
+            <p>
               Developed by <a href="https://dicoment.com" className="hover:text-[#d4af37] transition-colors">Dicoment Agency</a>
             </p>
           </div>
