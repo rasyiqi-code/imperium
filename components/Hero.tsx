@@ -164,11 +164,11 @@ export default function Hero() {
           </div>
 
           {/* Partner Logos Grayscale */}
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 opacity-30 select-none">
-            <span className="text-white font-bold text-xs tracking-wider uppercase">Binance</span>
-            <span className="text-white font-extrabold text-xs tracking-wider">coinbase</span>
-            <span className="text-white font-medium text-xs tracking-tight">TradingView</span>
-            <span className="text-white font-bold text-xs tracking-wide">CoinMarketCap</span>
+          <div className="flex overflow-x-auto md:flex-wrap items-center justify-center gap-x-8 opacity-30 select-none w-full md:w-auto py-1 px-4 md:px-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <span className="text-white font-bold text-xs tracking-wider uppercase shrink-0">Binance</span>
+            <span className="text-white font-extrabold text-xs tracking-wider shrink-0">coinbase</span>
+            <span className="text-white font-medium text-xs tracking-tight shrink-0">TradingView</span>
+            <span className="text-white font-bold text-xs tracking-wide shrink-0">CoinMarketCap</span>
           </div>
 
           {/* CTA Cepat Kanan */}
