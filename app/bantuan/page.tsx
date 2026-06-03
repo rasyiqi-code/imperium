@@ -47,7 +47,7 @@ export default async function HelpPage() {
 
         {/* Pengantar Bantuan */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-neutral-400 text-sm md:text-base leading-relaxed font-medium tracking-wide">
+          <p className="text-white text-sm md:text-base leading-relaxed font-medium tracking-wide">
             {helpContent}
           </p>
         </div>

@@ -41,17 +41,12 @@ export default async function TermsOfServicePage() {
         </div>
 
         {/* Konten Utama */}
-        <div className="relative bg-neutral-950/40 backdrop-blur-xl border border-white/[0.06] rounded-3xl p-8 md:p-12 shadow-2xl space-y-6">
-          {/* Efek Garis Emas Halus di Bagian Atas Card */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/60 to-transparent" />
-          
-          <div className="prose prose-invert max-w-none text-neutral-300 text-sm md:text-base leading-relaxed space-y-6 font-medium tracking-wide">
-            {content.split('\n').map((paragraph: string, index: number) => (
-              <p key={index} className="whitespace-pre-line">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+        <div className="prose prose-invert max-w-none text-white text-sm md:text-base leading-relaxed space-y-6 font-medium tracking-wide">
+          {content.split('\n').map((paragraph: string, index: number) => (
+            <p key={index} className="whitespace-pre-line text-white">
+              {paragraph}
+            </p>
+          ))}
         </div>
 
         {/* Tombol Kembali / CTA */}
