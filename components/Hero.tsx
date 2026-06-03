@@ -109,10 +109,12 @@ export default function Hero() {
             </div>
 
             {/* Koin Tengah Melayang: Bitcoin Emas */}
-            <div className="absolute top-[70px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 animate-float flex flex-col items-center">
-              <div className="p-3 rounded-full bg-black/80 border border-yellow-500/20 shadow-[0_0_35px_rgba(234,179,8,0.2)] hover:border-yellow-500/40 transition-colors">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500/5 text-yellow-400 font-extrabold text-2xl shadow-[inset_0_0_15px_rgba(234,179,8,0.1)]">
-                  ₿
+            <div className="absolute top-[70px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+              <div className="animate-float">
+                <div className="p-3 rounded-full bg-black/80 border border-yellow-500/20 shadow-[0_0_35px_rgba(234,179,8,0.2)] hover:border-yellow-500/40 transition-colors">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500/5 text-yellow-400 font-extrabold text-2xl shadow-[inset_0_0_15px_rgba(234,179,8,0.1)]">
+                    ₿
+                  </div>
                 </div>
               </div>
             </div>
@@ -154,31 +156,14 @@ export default function Hero() {
 
         </div>
 
-        {/* PARTNER STRIP DI DASAR HERO: Grayscale Logos & Get Started CTA */}
-        <div className="mt-8 pt-8 border-t border-white/[0.04] flex flex-col md:flex-row justify-between items-center gap-6 w-full relative z-20">
-          {/* Deskripsi Singkat */}
-          <div className="text-center md:text-left max-w-md md:max-w-none md:whitespace-nowrap">
-            <p className="text-[9px] text-neutral-500 uppercase tracking-widest leading-relaxed font-bold">
-              Media Terpercaya & Platform Edukasi Crypto Independen
-            </p>
-          </div>
-
+        {/* PARTNER STRIP DI DASAR HERO: Grayscale Logos */}
+        <div className="mt-8 pt-6 border-t border-white/[0.04] flex justify-center items-center w-full relative z-20">
           {/* Partner Logos Grayscale */}
           <div className="flex overflow-x-auto md:flex-wrap items-center justify-center gap-x-8 opacity-30 select-none w-full md:w-auto py-1 px-4 md:px-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <span className="text-white font-bold text-xs tracking-wider uppercase shrink-0">Binance</span>
             <span className="text-white font-extrabold text-xs tracking-wider shrink-0">coinbase</span>
             <span className="text-white font-medium text-xs tracking-tight shrink-0">TradingView</span>
             <span className="text-white font-bold text-xs tracking-wide shrink-0">CoinMarketCap</span>
-          </div>
-
-          {/* CTA Cepat Kanan */}
-          <div>
-            <a
-              href="#pricing"
-              className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-yellow-500/10 hover:border-yellow-500/35 hover:text-yellow-400 px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-neutral-300 transition-all duration-300 active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
-            >
-              Mulai -&gt;
-            </a>
           </div>
         </div>
 
