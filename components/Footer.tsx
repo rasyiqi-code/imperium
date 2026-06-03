@@ -1,6 +1,17 @@
 import React from 'react';
+import { prisma } from '@/lib/prisma';
 
-export default function Footer() {
+export default async function Footer() {
+  // Ambil data konfigurasi support secara dinamis dari database
+  const support = await prisma.support_config.findUnique({
+    where: { id: 1 },
+  });
+
+  const whatsapp = support?.whatsapp_number || '62812345678';
+  const telegram = support?.telegram_link || 'https://t.me/imperiumcrypto';
+  const email = support?.support_email || 'support@imperiumcrypto.com';
+  const operational = support?.operational_hours || '09:00 - 21:00 WIB';
+
   return (
     <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-20 pb-12 border-t border-white/[0.08]">
       {/* Sirkuit Radial Redup di Pojok Kanan Bawah */}
@@ -33,9 +44,9 @@ export default function Footer() {
             <div className="space-y-4">
               <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Navigasi</h4>
               <ul className="space-y-2.5">
-                <li><a href="#about" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Tentang</a></li>
-                <li><a href="#pricing" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Gabung VIP</a></li>
-                <li><a href="#faq" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Bantuan</a></li>
+                <li><a href="/about" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Tentang</a></li>
+                <li><a href="/#pricing" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Gabung VIP</a></li>
+                <li><a href="/bantuan" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Bantuan</a></li>
               </ul>
             </div>
 
@@ -43,17 +54,34 @@ export default function Footer() {
             <div className="space-y-4">
               <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Legalitas</h4>
               <ul className="space-y-2.5">
-                <li><a href="#" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy-policy" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors">Terms of Service</a></li>
               </ul>
             </div>
 
             {/* Kontak */}
             <div className="space-y-4 col-span-2 md:col-span-1">
               <h4 className="text-xs font-black text-[#d4af37] uppercase tracking-widest">Kontak</h4>
-              <a href="mailto:support@imperiumcrypto.com" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block">
-                support@imperiumcrypto.com
-              </a>
+              <ul className="space-y-2.5">
+                <li>
+                  <a href={`mailto:${email}`} className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block break-all">
+                    {email}
+                  </a>
+                </li>
+                <li>
+                  <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block">
+                    WhatsApp: +{whatsapp}
+                  </a>
+                </li>
+                <li>
+                  <a href={telegram} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-[#d4af37] text-sm font-medium transition-colors block truncate">
+                    Telegram Channel
+                  </a>
+                </li>
+                <li className="text-neutral-500 text-xs font-medium tracking-wide">
+                  Operasional: {operational}
+                </li>
+              </ul>
             </div>
           </div>
         </div>

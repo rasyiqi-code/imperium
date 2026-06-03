@@ -19,7 +19,16 @@ export async function updateSupportConfig(body: SupportBody): Promise<Response> 
   if (!config) return NextResponse.json({ error: 'Missing config' }, { status: 400 })
 
   // Whitelist field konfigurasi yang diizinkan untuk update
-  const allowedKeys = ['whatsapp_number', 'telegram_link', 'support_email', 'operational_hours']
+  const allowedKeys = [
+    'whatsapp_number', 
+    'telegram_link', 
+    'support_email', 
+    'operational_hours',
+    'about_content',
+    'privacy_content',
+    'terms_content',
+    'help_content'
+  ]
   const filteredConfig: Record<string, string | null> = {}
   for (const key of allowedKeys) {
     if (config[key] !== undefined) {

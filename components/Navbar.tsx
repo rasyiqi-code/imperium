@@ -10,9 +10,9 @@ const Navbar: React.FC = () => {
 
   // Link menu untuk mempermudah maintenance
   const navLinks = [
-    { name: 'Core Values', href: '#values' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About Us', href: '#about' },
+    { name: 'Core Values', href: '/#values' },
+    { name: 'Pricing', href: '/#pricing' },
+    { name: 'About Us', href: '/#about' },
   ];
 
   return (
@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
               Login
             </Link>
             <Link 
-              href="#pricing" 
+              href="/#pricing" 
               className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-4.5 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95"
             >
               Gabung Sekarang
@@ -99,7 +99,7 @@ const Navbar: React.FC = () => {
               Login
             </Link>
             <Link 
-              href="#pricing" 
+              href="/#pricing" 
               onClick={() => setIsOpen(false)}
               className="bg-[#d4af37] text-black text-center py-3 rounded-full font-bold text-xs tracking-wider uppercase shadow-[0_4px_15px_rgba(212,175,55,0.15)]"
             >

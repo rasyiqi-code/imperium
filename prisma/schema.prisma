@@ -135,6 +135,10 @@ model support_config {
   telegram_link     String?   @default("https://t.me/imperiumcrypto")
   support_email     String?   @default("support@imperiumcrypto.com")
   operational_hours String?   @default("09:00 - 21:00 WIB")
+  about_content     String?   @default("Imperium Crypto adalah platform edukasi dan sinyal crypto premium terpercaya di Indonesia.")
+  privacy_content   String?   @default("Kebijakan Privasi kami menjelaskan bagaimana kami mengumpulkan dan melindungi data Anda.")
+  terms_content     String?   @default("Syarat dan Ketentuan keanggotaan Imperium Crypto yang harus dipatuhi oleh seluruh member.")
+  help_content      String?   @default("Butuh bantuan? Silakan hubungi kontak support kami di bawah ini atau baca FAQ.")
   updated_at        DateTime? @default(now()) @db.Timestamptz(6)
 
   @@schema("public")

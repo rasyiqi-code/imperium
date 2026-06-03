@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import Pricing from '@/components/Pricing';
 import Reviews from '@/components/review';
 import FAQ from '@/components/FAQ';
+import CTA from '@/components/CTA';
 
 // URL dasar situs web
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
@@ -109,6 +110,7 @@ export default function Home() {
       <Pricing />
       <Reviews />
       <FAQ />
+      <CTA />
       <Footer />
     </main>
   );
