@@ -8,6 +8,22 @@ import { prisma } from '@/lib/prisma'
  * mendaftarkan user ke Server Discord, memberikan role VIP, dan memperbarui DB.
  */
 export async function GET(request: Request) {
+  // Deteksi domain asal secara aman (mendukung proxy, localtunnel, dan Cloudflare Tunnel)
+  const host = request.headers.get('x-forwarded-host') || new URL(request.url).host
+  const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
+  let baseUrl = `${proto}://${host}`
+
+  // Gunakan origin dari DISCORD_REDIRECT_URI jika tersedia sebagai prioritas utama
+  // karena ini merupakan domain publik yang dikonfigurasi resmi untuk aplikasi.
+  const redirectUriEnv = process.env.DISCORD_REDIRECT_URI
+  if (redirectUriEnv) {
+    try {
+      baseUrl = new URL(redirectUriEnv).origin
+    } catch {
+      // Abaikan jika format URI salah
+    }
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
@@ -16,7 +32,7 @@ export async function GET(request: Request) {
     // Jika pengguna menolak otorisasi atau terjadi error dari Discord
     if (errorParam || !code) {
       console.warn('Discord Auth Callback: Otorisasi ditolak oleh user atau code tidak ada.', errorParam)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=auth_denied', request.url))
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=auth_denied', baseUrl))
     }
 
     // 1. Validasi sesi pengguna Supabase secara server-side
@@ -25,7 +41,7 @@ export async function GET(request: Request) {
 
     if (authError || !user) {
       console.error('Discord Auth Callback: Sesi pengguna tidak valid.', authError)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=unauthorized', request.url))
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=unauthorized', baseUrl))
     }
 
     // 2. Periksa status keanggotaan VIP pengguna di database
@@ -47,7 +63,7 @@ export async function GET(request: Request) {
     // Wajib ada: clientId, clientSecret, botToken, vipGuildId, dan redirectUri
     if (!clientId || !clientSecret || !botToken || !vipGuildId || !redirectUri || vipGuildId.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE')) {
       console.error('Discord Auth Callback: Konfigurasi wajib Discord API tidak lengkap di .env.')
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=config_missing', request.url))
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=config_missing', baseUrl))
     }
 
     // 4. Tukarkan 'code' dengan Access Token Discord
@@ -68,7 +84,7 @@ export async function GET(request: Request) {
     if (!tokenResponse.ok) {
       const tokenError = await tokenResponse.text()
       console.error('Discord Auth Callback: Gagal menukar kode otorisasi.', tokenError)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=token_exchange_failed', request.url))
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=token_exchange_failed', baseUrl))
     }
 
     const tokenData = await tokenResponse.json()
@@ -84,7 +100,7 @@ export async function GET(request: Request) {
     if (!userProfileResponse.ok) {
       const profileError = await userProfileResponse.text()
       console.error('Discord Auth Callback: Gagal mengambil profil user Discord.', profileError)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=profile_fetch_failed', request.url))
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=profile_fetch_failed', baseUrl))
     }
 
     const userProfile = await userProfileResponse.json()
@@ -139,7 +155,7 @@ export async function GET(request: Request) {
       if (!vipJoinResponse.ok) {
         const vipJoinError = await vipJoinResponse.text()
         console.error('Discord Auth Callback: Gagal menambahkan pengguna ke Server VIP.', vipJoinError)
-        return NextResponse.redirect(new URL('/dashboard?discord=error&message=guild_join_failed', request.url))
+        return NextResponse.redirect(new URL('/dashboard?discord=error&message=guild_join_failed', baseUrl))
       }
 
       // Jika user sudah berada di server VIP (HTTP 204), tambahkan role VIP secara manual jika dikonfigurasi
@@ -155,7 +171,7 @@ export async function GET(request: Request) {
         if (!roleResponse.ok) {
           const roleError = await roleResponse.text()
           console.error('Discord Auth Callback: Gagal menambahkan role VIP.', roleError)
-          return NextResponse.redirect(new URL('/dashboard?discord=error&message=role_assignment_failed', request.url))
+          return NextResponse.redirect(new URL('/dashboard?discord=error&message=role_assignment_failed', baseUrl))
         }
       }
     }
@@ -189,11 +205,11 @@ export async function GET(request: Request) {
     ])
 
     console.log(`Discord Auth Callback Success: User ${user.email} sukses terhubung ke Discord ID: ${discordUserId}`)
-    return NextResponse.redirect(new URL('/dashboard?discord=success', request.url))
+    return NextResponse.redirect(new URL('/dashboard?discord=success', baseUrl))
 
   } catch (err: unknown) {
     const error = err as Error
     console.error('Discord Auth Callback Internal Error:', error)
-    return NextResponse.redirect(new URL('/dashboard?discord=error&message=internal_error', request.url))
+    return NextResponse.redirect(new URL('/dashboard?discord=error&message=internal_error', baseUrl))
   }
 }
