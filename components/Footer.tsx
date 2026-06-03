@@ -1,17 +1,6 @@
 import React from 'react';
-import { prisma } from '@/lib/prisma';
 
-export default async function Footer() {
-  // Ambil data konfigurasi support secara dinamis dari database
-  const support = await prisma.support_config.findUnique({
-    where: { id: 1 },
-  });
-
-  const whatsapp = support?.whatsapp_number || '62812345678';
-  const telegram = support?.telegram_link || 'https://t.me/imperiumcrypto';
-  const email = support?.support_email || 'support@imperiumcrypto.com';
-  const operational = support?.operational_hours || '09:00 - 21:00 WIB';
-
+export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-16 pb-12 border-t border-white/[0.08]">
       {/* Sirkuit Radial Redup di Pojok Kanan Bawah */}
@@ -39,7 +28,7 @@ export default async function Footer() {
         </div>
 
         {/* Menu Navigasi Horizontal */}
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-6">
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-10 pb-6 border-b border-white/[0.05] w-full max-w-2xl">
           <a href="/about" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Tentang
           </a>
@@ -55,25 +44,6 @@ export default async function Footer() {
           <a href="/terms-of-service" className="text-neutral-400 hover:text-[#d4af37] text-xs font-bold uppercase tracking-wider transition-colors">
             Terms of Service
           </a>
-        </div>
-
-        {/* Kontak Support Horizontal */}
-        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-neutral-500 font-medium mb-10 pb-6 border-b border-white/[0.05] w-full max-w-2xl">
-          <a href={`mailto:${email}`} className="hover:text-[#d4af37] transition-colors break-all">
-            {email}
-          </a>
-          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
-          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37] transition-colors">
-            WhatsApp: +{whatsapp}
-          </a>
-          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
-          <a href={telegram} target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37] transition-colors">
-            Telegram
-          </a>
-          <span className="hidden sm:inline w-1 h-1 rounded-full bg-[#d4af37]/45" />
-          <span className="text-neutral-500">
-            Operasional: {operational}
-          </span>
         </div>
 
         {/* Disclaimer */}
