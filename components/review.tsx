@@ -100,9 +100,9 @@ export default function Reviews() {
             className="pb-12!" 
           >
             {reviews.map((review, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide key={index} className="h-auto flex">
                 {/* Kartu Testimoni: Rounded-2xl, Luxury Glassmorphism, Elevate Hover & Shadow */}
-                <div className="p-6 h-full rounded-2xl bg-gradient-to-b from-[#121212]/90 to-[#0c0c0c]/90 border border-white/[0.06] flex flex-col justify-between transition-all duration-500 hover:border-[#d4af37]/35 hover:bg-gradient-to-b hover:from-[#151515]/95 hover:to-[#0e0e0e]/95 hover:shadow-[0_15px_35px_rgba(212,175,55,0.04)] hover:-translate-y-1.5 text-left relative overflow-hidden group/card">
+                <div className="p-6 md:p-7 w-full rounded-2xl bg-gradient-to-b from-[#121212]/90 to-[#0c0c0c]/90 border border-white/[0.06] flex flex-col justify-between transition-all duration-500 hover:border-[#d4af37]/35 hover:bg-gradient-to-b hover:from-[#151515]/95 hover:to-[#0e0e0e]/95 hover:shadow-[0_15px_35px_rgba(212,175,55,0.04)] hover:-translate-y-1.5 text-left relative overflow-hidden group/card">
                   
                   {/* Pendaran Latar Belakang Tipis */}
                   <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/[0.02] rounded-full blur-[40px] pointer-events-none group-hover/card:bg-yellow-500/[0.04] transition-colors duration-500" />
@@ -112,7 +112,8 @@ export default function Reviews() {
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500/80"></span>
                   </div>
  
-                  <div className="space-y-4">
+                  {/* Konten Atas: Bintang, Kutipan & Teks Ulasan (Diberikan flex-grow agar rata bawah) */}
+                  <div className="space-y-4 flex-grow flex flex-col justify-start">
                     <div className="flex items-center justify-between">
                       <div className="flex gap-1">
                         {[...Array(review.rating)].map((_, i) => (
@@ -127,7 +128,7 @@ export default function Reviews() {
                     </p>
                   </div>
  
-                  {/* Bagian Bawah Kartu: Info Member */}
+                  {/* Bagian Bawah Kartu: Info Member (Selalu rata bawah karena flex-grow di atas) */}
                   <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {/* Avatar: Bundar Premium */}
@@ -184,6 +185,10 @@ export default function Reviews() {
       </div>
  
       <style jsx global>{`
+        .swiper-slide {
+          height: auto !important;
+          display: flex !important;
+        }
         .swiper-pagination-bullet {
           width: 32px !important;
           height: 3px !important;
@@ -198,7 +203,7 @@ export default function Reviews() {
         }
         .swiper-pagination {
           bottom: 0px !important;
-          margin-top: 20px;
+          margin-top: 10px;
         }
       `}</style>
     </section>
