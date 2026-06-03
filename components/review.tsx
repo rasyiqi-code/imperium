@@ -185,6 +185,10 @@ export default function Reviews() {
       </div>
  
       <style jsx global>{`
+        .swiper {
+          padding-top: 16px !important;
+          margin-top: -16px !important;
+        }
         .swiper-slide {
           height: auto !important;
           display: flex !important;
