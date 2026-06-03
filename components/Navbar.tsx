@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-3">
-      <div className="max-w-5xl mx-auto rounded-full border border-white/[0.06] bg-black/60 backdrop-blur-md px-5 py-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-white/[0.1]">
+      <div className="max-w-5xl mx-auto rounded-full border border-white/[0.06] bg-black px-5 py-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-white/[0.1]">
         <div className="flex justify-between items-center h-12">
           
           {/* KIRI: Logo */}
@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
               <Link 
                 key={link.name}
                 href={link.href} 
-                className="text-neutral-400 hover:text-yellow-400 transition-colors font-semibold text-xs tracking-wider uppercase"
+                className="text-white hover:text-yellow-400 transition-colors font-semibold text-xs tracking-wider uppercase"
               >
                 {link.name}
               </Link>
@@ -78,14 +78,14 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu (Dropdown) - Dibuat melayang terpisah dengan gaya serasi */}
       {isOpen && (
-        <div className="absolute top-20 left-4 right-4 bg-[#0f0f0f]/95 border border-white/[0.08] rounded-3xl pb-6 px-6 pt-4 backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.5)] flex flex-col space-y-4 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
+        <div className="absolute top-20 left-4 right-4 bg-black border border-white/[0.08] rounded-3xl pb-6 px-6 pt-4 shadow-[0_15px_30px_rgba(0,0,0,0.5)] flex flex-col space-y-4 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
           <div className="flex flex-col space-y-4">
             {navLinks.map((link) => (
               <Link 
                 key={link.name}
                 href={link.href} 
                 onClick={() => setIsOpen(false)}
-                className="text-neutral-300 py-2 hover:text-[#d4af37] font-semibold text-xs tracking-wider uppercase transition-colors"
+                className="text-white py-2 hover:text-[#d4af37] font-semibold text-xs tracking-wider uppercase transition-colors"
               >
                 {link.name}
               </Link>
