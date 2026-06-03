@@ -159,23 +159,44 @@ Agar alur otorisasi (OAuth2) dapat mengarahkan pengguna kembali ke website setel
      ```
 4. Klik **Save Changes**.
 
-### 🤖 Langkah 5: Mengundang Bot ke Server VIP Anda
-Agar Bot masuk ke server VIP Anda dan dapat mengelola role/anggota:
-1. Masuk ke menu **OAuth2 -> URL Generator** di panel sebelah kiri.
-2. Pada daftar **Scopes**, centang kotak **`bot`**.
-3. Setelah dicentang, bagian **Bot Permissions** akan muncul di bawahnya. Centang izin-izin wajib berikut:
-   * [x] **Manage Roles**
-   * [x] **Kick Members**
-   * [x] **Create Instant Invite**
-   * [x] **View Channels**
-4. Salin tautan yang muncul pada kolom **Generated URL** di bagian paling bawah halaman.
-5. Buka tab baru di browser Anda, tempel tautan tersebut, lalu pilih **Server VIP** Anda untuk mengundang Bot masuk.
+### 🤖 Langkah 5: Mengonfigurasi Menu Installation (Default Invite Link)
+Menu **Installation** mengatur bagaimana bot diundang ke server secara default tanpa perlu membuat link generator manual berulang kali.
+
+1. Pilih menu **Installation** di panel sebelah kiri.
+2. Di bagian **Installation Contexts**, centang keduanya:
+   * [x] **User Install**
+   * [x] **Guild Install**
+3. Di bagian **Install Link**, pilih **Discord Provided Link** pada dropdown.
+4. Di bagian **Default Install Settings**:
+   * **User Install Scopes:** Pilih `applications.commands`.
+   * **Guild Install Scopes:** Tambahkan `bot` dan `applications.commands` pada dropdown.
+   * **Permissions:** Setelah scope `bot` ditambahkan, panel izin akan muncul di bawahnya. Centang izin berikut:
+     * [x] **Manage Roles** (Mengelola Peran)
+     * [x] **Kick Members** (Mengeluarkan Anggota)
+     * [x] **Create Instant Invite** (Membuat Undangan)
+     * [x] **View Channels** (Melihat Saluran)
+5. Klik **Save Changes** di bagian bawah.
+6. Sekarang, Anda dapat menyalin tautan di kolom **Install Link** untuk mengundang bot kapan saja dengan izin yang otomatis terkonfigurasi dengan benar.
 
 ---
 
-### 💡 Pengaturan yang Dapat Diabaikan (Biarkan Kosong)
-Berdasarkan halaman Discord Developer Portal, bagian berikut **tidak perlu diatur** dan aman dibiarkan kosong:
-* **Interactions Endpoint URL**, **Linked Roles Verification URL**, **Terms of Service URL**, dan **Privacy Policy URL** (di menu *General Information* / *OAuth2*).
-* **Install Link** (di menu *Installation*).
+### 📝 Langkah 6: Mengonfigurasi Menu General Information
+Menu **General Information** berisi informasi dasar aplikasi Anda.
+
+1. Buka menu **General Information** di panel sebelah kiri.
+2. Atur data aplikasi:
+   * **App Icon:** Unggah logo aplikasi Imperium Crypto Anda (dimensi disarankan 1024x1024).
+   * **Name:** `Imperium Crypto` (Nama bot Anda).
+   * **Description:** Deskripsi singkat fungsi bot (opsional).
+3. **Penting (Biarkan Kosong/Default):**
+   * **Interactions Endpoint URL:** Biarkan kosong. Kita tidak menggunakan endpoint interaksi HTTP langsung.
+   * **Linked Roles Verification URL:** Biarkan kosong.
+   * **Terms of Service URL** & **Privacy Policy URL:** Biarkan kosong (atau isi jika sudah masuk tahap produksi komersial).
+4. Klik **Save Changes**.
+
+---
+
+### 💡 Pengaturan Lain yang Diabaikan (Biarkan Kosong)
+Bagian berikut tidak perlu diatur untuk kebutuhan aplikasi kita saat ini:
 * **Webhooks** (di menu *Webhooks*).
-* **Presence Intent** dan **Message Content Intent** (di menu *Bot*).
+* **Presence Intent** dan **Message Content Intent** (di menu *Bot -> Privileged Gateway Intents*). Hanya **Server Members Intent** yang wajib aktif.
