@@ -133,11 +133,11 @@ Agar materi edukasi, sinyal, dan ruang obrolan VIP aman dari anggota non-VIP, ik
 
 Berikut adalah panduan langkah demi langkah untuk mengonfigurasi aplikasi Bot Anda di **Discord Developer Portal** agar terhubung dengan website Imperium:
 
-### 🛠️ Langkah 1: Mendapatkan Client ID & Client Secret
+### 🛠️ Langkah 1: Mendapatkan Application ID (Client ID) & Client Secret
 1. Masuk ke [Discord Developer Portal](https://discord.com/developers/applications).
 2. Pilih aplikasi Anda (contoh: **Imperium Crypto**).
-3. Masuk ke menu **OAuth2 -> General** di panel sebelah kiri.
-4. Anda akan melihat **Client ID** (salin dan masukkan ke `DISCORD_CLIENT_ID="..."` di `.env`).
+3. Masuk ke menu **OAuth2 -> General** (atau **General Information**) di panel sebelah kiri.
+4. Anda akan melihat **Application ID** atau **Client ID** (salin dan masukkan ke `DISCORD_APPLICATION_ID="..."` di `.env`).
 5. Klik **Reset Secret** untuk memunculkan **Client Secret** baru. Salin nilainya dan masukkan ke `DISCORD_CLIENT_SECRET="..."` di `.env`.
 
 ### 🔑 Langkah 2: Mendapatkan Bot Token
@@ -219,10 +219,10 @@ Bagian berikut tidak perlu diatur untuk kebutuhan aplikasi kita saat ini:
 Untuk menghubungkan seluruh integrasi ini ke website, pastikan variabel berikut diatur dengan benar di file `.env` root proyek Anda:
 
 ```env
-DISCORD_CLIENT_ID="1511566783566446683"
+DISCORD_APPLICATION_ID="1511566783566446683"
 DISCORD_CLIENT_SECRET="C2c_dh8SQqJNBb1ciBPyEc9e6a85wInW"
 DISCORD_BOT_TOKEN="MTUxMTU2Njc4MzU2NjQ0NjY4Mw.G31_qW.KGkeiBVPTWx2txH0TKg9b8dHA5Wc4-0QcuEd1Q"
-DISCORD_VIP_GUILD_ID="ID_SERVER_VIP_ANDA"
+DISCORD_VIP_SERVER_ID="ID_SERVER_VIP_ANDA"
 DISCORD_VIP_ROLE_ID="ID_ROLE_VIP_ANDA"
 DISCORD_REDIRECT_URI="https://<domain-tunnel-anda>.trycloudflare.com/api/discord/callback"
 ```

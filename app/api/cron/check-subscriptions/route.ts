@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP
     const botToken = process.env.DISCORD_BOT_TOKEN
-    const vipGuildId = process.env.DISCORD_VIP_GUILD_ID
+    const vipGuildId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
 
     if (!botToken || !vipGuildId) {
       console.error('Cron Check Subscriptions: Discord Bot Token or VIP Guild ID is not configured.')

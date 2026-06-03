@@ -52,11 +52,11 @@ export async function GET(request: Request) {
     const isVip = memberVip?.status_aktif === 'aktif' || memberVip?.status_aktif === 'vip'
 
     // 3. Ambil konfigurasi Discord dari environment variables
-    const clientId = process.env.DISCORD_CLIENT_ID
+    const clientId = process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
     const clientSecret = process.env.DISCORD_CLIENT_SECRET
     const botToken = process.env.DISCORD_BOT_TOKEN
-    const freeGuildId = process.env.DISCORD_FREE_GUILD_ID
-    const vipGuildId = process.env.DISCORD_VIP_GUILD_ID
+    const freeGuildId = process.env.DISCORD_FREE_SERVER_ID || process.env.DISCORD_FREE_GUILD_ID
+    const vipGuildId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
     const vipRoleId = process.env.DISCORD_VIP_ROLE_ID
     const redirectUri = process.env.DISCORD_REDIRECT_URI
 

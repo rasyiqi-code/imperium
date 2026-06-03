@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
  * Mengalihkan pengguna ke Discord Developer Portal dengan scope yang diperlukan.
  */
 export async function GET() {
-  const clientId = process.env.DISCORD_CLIENT_ID
+  const clientId = process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
   const redirectUri = process.env.DISCORD_REDIRECT_URI
 
   if (!clientId || !redirectUri) {

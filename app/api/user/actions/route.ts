@@ -29,9 +29,10 @@ export async function POST(request: Request) {
           })
         ])
 
-        // Tautan langsung ke server VIP dibuat dinamis dari guild ID agar aman dari kebocoran link invite
-        const vipInviteLink = process.env.DISCORD_VIP_GUILD_ID
-          ? `https://discord.com/channels/${process.env.DISCORD_VIP_GUILD_ID}`
+        // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
+        const vipServerId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+        const vipInviteLink = vipServerId
+          ? `https://discord.com/channels/${vipServerId}`
           : '#'
 
         return NextResponse.json({ 
@@ -58,9 +59,10 @@ export async function POST(request: Request) {
           })
         ])
 
-        // Tautan langsung ke server VIP dibuat dinamis dari guild ID agar aman dari kebocoran link invite
-        const vipInviteLink = process.env.DISCORD_VIP_GUILD_ID
-          ? `https://discord.com/channels/${process.env.DISCORD_VIP_GUILD_ID}`
+        // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
+        const vipServerId = process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
+        const vipInviteLink = vipServerId
+          ? `https://discord.com/channels/${vipServerId}`
           : '#'
 
         return NextResponse.json({ 
