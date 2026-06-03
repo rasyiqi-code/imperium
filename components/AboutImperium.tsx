@@ -68,7 +68,7 @@ export default function AboutImperium() {
             </div>
             {/* Teks Kanan */}
             <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold mb-4">Visi & Platform Data-Driven</p>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] font-extrabold mb-4">Visi & Platform Data-Driven</h3>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Imperium Crypto adalah platform media digital dan edukasi crypto yang berfokus pada pengembangan literasi aset digital, analisis pasar berbasis data terkurasi, serta pembentukan mindset finansial modern di era ekonomi digital. Kami berkomitmen untuk menyajikan pemahaman yang logis, bebas dari spekulasi impulsif.
               </p>
@@ -79,7 +79,7 @@ export default function AboutImperium() {
           <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
             {/* Teks Kiri */}
             <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center text-left order-2 md:order-1">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#d4af37] font-bold mb-4">Rasionalitas & Tanggung Jawab</p>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] font-extrabold mb-4">Rasionalitas & Tanggung Jawab</h3>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
                 Kami percaya bahwa pemahaman yang rasional, objektif, dan bertanggung jawab adalah kunci utama dalam mengambil keputusan finansial. Imperium Crypto beroperasi secara independen sebagai platform edukasi bebas kebisingan (noise), bukan penyedia nasihat investasi personal, guna mendorong riset mandiri (DYOR) yang mendalam.
               </p>
