@@ -24,19 +24,31 @@ export default function Footer() {
           </h3>
           
           {/* Kontainer News Ticker dengan Efek Fade-Out Premium di Sisi Kiri & Kanan */}
-          <div className="relative flex overflow-hidden border-y border-white/[0.05] py-3.5 bg-white/[0.01] w-full [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
+          <div className="relative flex overflow-hidden border-y border-white/[0.05] py-2.5 bg-white/[0.01] w-full [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
             {/* Grup Teks 1 */}
-            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em]">
+            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-500 text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.2em]">
               <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
               <span className="text-[#d4af37]">&bull;</span>
-              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span>Akses analisis on-chain real-time, sinyal trading premium, & riset pasar crypto mendalam</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Gabung komunitas elit trader crypto dan tingkatkan portofolio investasi Anda secara rasional</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Update pasar harian & diskusi eksklusif bersama analis expert</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Investasi cerdas dengan manajemen risiko ketat dan edukasi finansial tanpa henti</span>
               <span className="text-[#d4af37]">&bull;</span>
             </div>
             {/* Grup Teks 2 (Duplikasi untuk looping mulus tanpa celah kosong) */}
-            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em]" aria-hidden="true">
+            <div className="animate-ticker flex items-center gap-x-8 pr-8 shrink-0 text-neutral-500 text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.2em]" aria-hidden="true">
               <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
               <span className="text-[#d4af37]">&bull;</span>
-              <span>Ruang eksklusif untuk Anda yang ingin menguasai pasar digital melalui analisis presisi dan komunitas elit</span>
+              <span>Akses analisis on-chain real-time, sinyal trading premium, & riset pasar crypto mendalam</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Gabung komunitas elit trader crypto dan tingkatkan portofolio investasi Anda secara rasional</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Update pasar harian & diskusi eksklusif bersama analis expert</span>
+              <span className="text-[#d4af37]">&bull;</span>
+              <span>Investasi cerdas dengan manajemen risiko ketat dan edukasi finansial tanpa henti</span>
               <span className="text-[#d4af37]">&bull;</span>
             </div>
           </div>
