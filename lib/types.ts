@@ -52,6 +52,7 @@ export interface PaketVIP {
   harga: number;
   durasi_hari: number;
   fitur: string[];
+  recommended?: boolean;
 }
 
 export interface Payment {

@@ -7,13 +7,14 @@ interface PricingBody {
   harga?: number
   durasi_hari?: number
   fitur?: string[]
+  recommended?: boolean
 }
 
 /**
  * Memperbarui pricing plan paket VIP yang sudah ada.
  */
 export async function updatePricingPlan(body: PricingBody): Promise<Response> {
-  const { planId, nama_paket, harga, durasi_hari, fitur } = body
+  const { planId, nama_paket, harga, durasi_hari, fitur, recommended } = body
   if (!planId) return NextResponse.json({ error: 'Missing planId' }, { status: 400 })
 
   const parsedHarga = Number(harga)
@@ -37,7 +38,8 @@ export async function updatePricingPlan(body: PricingBody): Promise<Response> {
       nama_paket,
       harga: parsedHarga,
       durasi_hari: parsedDurasi,
-      fitur: cleanedFitur
+      fitur: cleanedFitur,
+      recommended: recommended === true
     }
   })
 
@@ -48,7 +50,7 @@ export async function updatePricingPlan(body: PricingBody): Promise<Response> {
  * Membuat pricing plan paket VIP baru.
  */
 export async function createPricingPlan(body: PricingBody): Promise<Response> {
-  const { nama_paket, harga, durasi_hari, fitur } = body
+  const { nama_paket, harga, durasi_hari, fitur, recommended } = body
 
   const parsedHarga = Number(harga)
   const parsedDurasi = Number(durasi_hari)
@@ -73,7 +75,8 @@ export async function createPricingPlan(body: PricingBody): Promise<Response> {
       nama_paket: String(nama_paket).trim(),
       harga: parsedHarga,
       durasi_hari: parsedDurasi,
-      fitur: cleanedFitur
+      fitur: cleanedFitur,
+      recommended: recommended === true
     }
   })
 
@@ -92,7 +95,8 @@ export async function getPricingPlans(): Promise<Response> {
   // Map data paket agar Decimal dikonversi ke Number
   const formattedPlans = plans.map(p => ({
     ...p,
-    harga: Number(p.harga)
+    harga: Number(p.harga),
+    recommended: p.recommended === true
   }))
 
   return NextResponse.json({ success: true, plans: formattedPlans })

@@ -26,7 +26,8 @@ export default function PricingEditor() {
     nama_paket: '',
     harga: 0,
     durasi_hari: 30,
-    fitur: []
+    fitur: [],
+    recommended: false
   })
   const [creating, setCreating] = useState(false)
 
@@ -66,7 +67,8 @@ export default function PricingEditor() {
           nama_paket: newPlan.nama_paket,
           harga: newPlan.harga,
           durasi_hari: newPlan.durasi_hari,
-          fitur: newPlan.fitur
+          fitur: newPlan.fitur,
+          recommended: newPlan.recommended
         })
       })
       const data = await res.json()
@@ -77,7 +79,8 @@ export default function PricingEditor() {
         nama_paket: '',
         harga: 0,
         durasi_hari: 30,
-        fitur: []
+        fitur: [],
+        recommended: false
       })
       const updatedPlans = await fetchPlans()
       setPlans(updatedPlans)
@@ -139,7 +142,8 @@ export default function PricingEditor() {
           nama_paket: editModal.nama_paket,
           harga: editModal.harga,
           durasi_hari: editModal.durasi_hari,
-          fitur: editModal.fitur
+          fitur: editModal.fitur,
+          recommended: editModal.recommended
         })
       })
       const data = await res.json()
@@ -195,7 +199,12 @@ export default function PricingEditor() {
                 </button>
               </div>
 
-              <h3 className="text-base font-black uppercase tracking-tight text-white">{plan.nama_paket}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-black uppercase tracking-tight text-white">{plan.nama_paket}</h3>
+                {plan.recommended && (
+                  <span className="px-2 py-0.5 bg-yellow-500 text-black text-[8px] font-black uppercase rounded tracking-widest">Recom</span>
+                )}
+              </div>
               <p className="text-lg font-black text-yellow-500 mt-1 uppercase tracking-tight">
                 Rp {plan.harga.toLocaleString('id-ID')} <span className="text-[10px] text-neutral-500 font-bold tracking-widest">/ {plan.durasi_hari} HARI</span>
               </p>
@@ -263,6 +272,17 @@ export default function PricingEditor() {
                 </div>
               </div>
  
+              <div className="flex items-center gap-2 p-1">
+                <input 
+                  type="checkbox" 
+                  id="edit-recommended"
+                  checked={editModal.recommended || false} 
+                  onChange={e => setEditModal({...editModal, recommended: e.target.checked})}
+                  className="w-4 h-4 rounded border-neutral-800 text-yellow-500 focus:ring-yellow-500/50 bg-neutral-900 accent-yellow-500 cursor-pointer"
+                />
+                <label htmlFor="edit-recommended" className="text-[10px] font-bold text-neutral-300 tracking-widest cursor-pointer select-none">Rekomendasikan Paket Ini</label>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 
@@ -338,6 +358,17 @@ export default function PricingEditor() {
                 </div>
               </div>
  
+              <div className="flex items-center gap-2 p-1">
+                <input 
+                  type="checkbox" 
+                  id="add-recommended"
+                  checked={newPlan.recommended || false} 
+                  onChange={e => setNewPlan({...newPlan, recommended: e.target.checked})}
+                  className="w-4 h-4 rounded border-neutral-800 text-yellow-500 focus:ring-yellow-500/50 bg-neutral-900 accent-yellow-500 cursor-pointer"
+                />
+                <label htmlFor="add-recommended" className="text-[10px] font-bold text-neutral-300 tracking-widest cursor-pointer select-none">Rekomendasikan Paket Ini</label>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
                 <textarea 

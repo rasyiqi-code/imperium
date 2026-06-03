@@ -101,14 +101,14 @@ function LandingPricingCard({
   onAction: () => void;
 }) {
   const isFree = Number(paket.harga) === 0;
-  const isYearly = Number(paket.harga) > 0 && paket.durasi_hari > 200;
+  const isRecommended = paket.recommended === true;
 
   // Fallback cerdas jika data fitur dari database kosong agar tampilan tetap premium
   const defaultFeatures = isFree 
     ? [
         "Gabung Grup Diskusi Publik"
       ]
-    : isYearly 
+    : isRecommended 
       ? [
           "Akses Grup VIP Discord",
           "Sinyal VIP Harian Akurat",
@@ -127,14 +127,14 @@ function LandingPricingCard({
 
   return (
     <div className={`group relative flex flex-col p-6 md:p-8 rounded-2xl transition-all duration-500 h-full overflow-hidden border ${
-      isYearly 
+      isRecommended 
       ? 'border-[#d4af37]/40 bg-[#111111]/70 shadow-[0_0_35px_rgba(212,175,55,0.06)] hover:shadow-[0_0_45px_rgba(212,175,55,0.15)] animate-breathe hover:scale-[1.02] z-10' 
       : isFree
         ? 'border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-[#d4af37]/20 hover:bg-yellow-500/[0.005]'
         : 'border-white/[0.08] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-yellow-500/20 hover:bg-[#d4af37]/[0.005]'
     }`}>
       
-      {isYearly && (
+      {isRecommended && (
         <>
           <div className="absolute top-0 right-0 bg-[#d4af37] px-4 py-1.5 text-[9px] font-black uppercase text-black tracking-widest rounded-bl-xl shadow-[0_2px_10px_rgba(212,175,55,0.2)] z-20 select-none">
             Recommended
@@ -149,7 +149,7 @@ function LandingPricingCard({
 
       <div className="flex items-center justify-between mb-8">
         <div className={`p-3 rounded-xl border transition-colors ${
-          isYearly 
+          isRecommended 
           ? 'bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/20 group-hover:bg-[#d4af37]/20' 
           : isFree
             ? 'bg-neutral-800/20 text-neutral-400 border border-neutral-800/40 group-hover:border-neutral-700'
@@ -158,13 +158,13 @@ function LandingPricingCard({
           {isFree ? <Zap size={20} /> : <Crown size={20} />}
         </div>
         <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${
-          isYearly 
+          isRecommended 
           ? 'text-[#d4af37]' 
           : isFree
             ? 'text-neutral-500'
             : 'text-neutral-400'
         }`}>
-          {isFree ? 'Entry Level' : isYearly ? 'VIP Elite' : 'VIP Basic'}
+          {isFree ? 'Entry Level' : paket.durasi_hari > 200 ? 'VIP Elite' : 'VIP Basic'}
         </span>
       </div>
 
@@ -181,7 +181,7 @@ function LandingPricingCard({
       <ul className="mb-10 space-y-4 grow text-left border-t border-white/[0.06] pt-8">
         {featuresToRender.map((feature, index) => (
           <li key={index} className="flex items-center text-neutral-300">
-            <Check className={`mr-3 shrink-0 ${isYearly ? 'text-[#d4af37]' : 'text-[#d4af37]/60'}`} size={15} strokeWidth={4} />
+            <Check className={`mr-3 shrink-0 ${isRecommended ? 'text-[#d4af37]' : 'text-[#d4af37]/60'}`} size={15} strokeWidth={4} />
             <span className="text-[11px] font-bold uppercase tracking-tight">{feature}</span>
           </li>
         ))}
@@ -196,14 +196,14 @@ function LandingPricingCard({
       <button 
         onClick={onAction}
         className={`relative group overflow-hidden w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 active:scale-[0.98] ${
-          isYearly 
+          isRecommended 
           ? 'bg-[#d4af37] text-black hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]' 
           : isFree
             ? 'border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10 hover:text-[#d4af37]'
             : 'border border-[#d4af37]/25 bg-[#d4af37]/5 text-[#d4af37] hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10'
         }`}
       >
-        {isYearly && (
+        {isRecommended && (
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
         )}
         {isFree ? 'Mulai Gratis' : 'Dapatkan Akses VIP'}

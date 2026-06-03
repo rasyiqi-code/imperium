@@ -80,6 +80,7 @@ model data_paket_vip {
   harga       Decimal  @db.Decimal
   durasi_hari Int
   fitur       String[]
+  recommended Boolean? @default(false)
 
   @@schema("public")
 }
