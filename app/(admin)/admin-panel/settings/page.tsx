@@ -613,7 +613,7 @@ export default function AdminSettings() {
                 />
               </div>
 
-              <div className="space-y-1.5 text-left">
+               <div className="space-y-1.5 text-left">
                 <label className="text-[10px] font-bold text-neutral-400 block">Discord Redirect URI (Callback)</label>
                 <input 
                   type="text"
@@ -622,6 +622,7 @@ export default function AdminSettings() {
                   onChange={(e) => setDiscordRedirectUri(e.target.value)}
                   className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
                 />
+                <p className="text-[9px] text-neutral-600 font-bold mt-1">URI callback wajib diakhiri dengan /api/discord/callback</p>
               </div>
 
               <button 
