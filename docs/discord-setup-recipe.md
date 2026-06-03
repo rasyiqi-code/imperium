@@ -31,6 +31,21 @@ Aktifkan hanya izin standar untuk anggota komunitas biasa. **Jangan berikan izin
 * [x] **Read Message History** (Sangat penting agar bisa melihat sinyal/pesan lama)
 * [ ] *Nonaktifkan: Mention @everyone, @here, and All Roles*
 
+#### **Voice Channel Permissions**
+* [x] **Connect** (Mengizinkan bergabung ke channel suara VIP jika ada)
+* [x] **Speak** (Mengizinkan berbicara di channel suara)
+* [x] **Video** (Mengizinkan screen share / live stream di channel suara)
+* [x] **Use Voice Activity** (Mengizinkan berbicara secara langsung tanpa push-to-talk)
+* [ ] *Nonaktifkan: Mute Members, Deafen Members, Move Members (Moderator tools)*
+
+#### **Apps & Events Permissions**
+* [x] **Use Application Commands** (Mengizinkan menggunakan slash commands dari aplikasi/bot)
+* [x] **Use Activities** (Mengizinkan menggunakan fitur game/activities Discord)
+* [ ] *Nonaktifkan: Create Events & Manage Events (Biarkan dinonaktifkan kecuali Anda ingin member bisa membuat event)*
+
+#### **Advanced Permissions**
+* [ ] **Administrator** (Wajib dinonaktifkan demi keamanan server!)
+
 ---
 
 ## 2. Setup Role 2: `Imperium Bot` (Untuk Bot Discord)
