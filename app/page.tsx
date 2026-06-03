@@ -13,8 +13,8 @@ import CTA from '@/components/CTA';
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
 
 export const metadata = {
-  title: 'Imperium Crypto - Komunitas Premium untuk Belajar Investasi Crypto',
-  description: 'Bergabunglah dengan Imperium Crypto, komunitas eksklusif untuk belajar investasi crypto dengan pendekatan data-driven dan mindset finansial yang tepat.',
+  title: 'Imperium Crypto - Kuasai Analisis, Singkirkan Noise',
+  description: 'Kuasai analisis, singkirkan noise, dan pimpin imperium kripto Anda sendiri bersama komunitas VIP premium.',
   alternates: {
     canonical: './',
   },
@@ -22,8 +22,8 @@ export const metadata = {
     type: "website",
     locale: "id_ID",
     url: siteUrl,
-    title: 'Imperium Crypto - Komunitas Premium untuk Belajar Investasi Crypto',
-    description: 'Bergabunglah dengan Imperium Crypto, komunitas eksklusif untuk belajar investasi crypto dengan pendekatan data-driven dan mindset finansial yang tepat.',
+    title: 'Imperium Crypto - Kuasai Analisis, Singkirkan Noise',
+    description: 'Kuasai analisis, singkirkan noise, dan pimpin imperium kripto Anda sendiri bersama komunitas VIP premium.',
     images: [
       {
         url: "/crypto_login.png",
@@ -35,8 +35,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: 'Imperium Crypto - Komunitas Premium untuk Belajar Investasi Crypto',
-    description: 'Bergabunglah dengan Imperium Crypto, komunitas eksklusif untuk belajar investasi crypto dengan pendekatan data-driven dan mindset finansial yang tepat.',
+    title: 'Imperium Crypto - Kuasai Analisis, Singkirkan Noise',
+    description: 'Kuasai analisis, singkirkan noise, dan pimpin imperium kripto Anda sendiri bersama komunitas VIP premium.',
     images: ["/crypto_login.png"],
   },
 };
