@@ -51,7 +51,7 @@ export default function AboutImperium() {
         </h2>
 
         {/* EDITORIAL MAGAZINE GRID */}
-        <div className="w-full border-y border-white/[0.08] bg-black/10 flex overflow-x-auto md:block snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 gap-4 md:gap-0 py-4 md:py-0">
+        <div className="w-[calc(100%+3rem)] md:w-full border-y border-white/[0.08] bg-black/10 flex overflow-x-auto md:block snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 gap-4 md:gap-0 py-4 md:py-0">
           
           {/* BARIS 1: Gambar Kiri (40%) | Teks Kanan (60%) */}
           <div className="flex flex-col md:grid md:grid-cols-12 items-stretch w-[85vw] md:w-full shrink-0 snap-center border border-white/[0.08] md:border-0 md:border-b border-white/[0.08] bg-neutral-900/30 md:bg-transparent rounded-2xl md:rounded-none overflow-hidden">
