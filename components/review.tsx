@@ -57,7 +57,7 @@ const reviews = [
 
 export default function Reviews() {
   return (
-    <section className="bg-[#0b0b0b] py-24 md:py-32 overflow-hidden relative">
+    <section className="bg-[#0b0b0b] pt-16 pb-20 md:pt-20 md:pb-24 overflow-hidden relative">
       {/* Ambient glow tipis */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-500/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
       
@@ -167,7 +167,7 @@ export default function Reviews() {
         </div>
 
         {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
-        <div className="flex items-center justify-center gap-4 mt-28">
+        <div className="flex items-center justify-center gap-4 mt-16 md:mt-20">
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
           {/* Node Sirkuit yang berdenyut */}
           <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />

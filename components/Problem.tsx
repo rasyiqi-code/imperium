@@ -7,7 +7,7 @@ export default function Problem() {
       {/* Ambient glow tipis di latar belakang */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-500/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-16 pb-20 md:pt-20 md:pb-24">
         <div className="mx-auto max-w-4xl text-center">
           
           {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
@@ -110,7 +110,7 @@ export default function Problem() {
         </div>
 
         {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
-        <div className="flex items-center justify-center gap-4 mt-24">
+        <div className="flex items-center justify-center gap-4 mt-16 md:mt-20">
           <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
           {/* Node Sirkuit yang berdenyut */}
           <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
