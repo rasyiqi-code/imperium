@@ -17,6 +17,8 @@ export default function UserDashboard() {
   const [member, setMember] = useState<MemberVIP | null>(null)
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [freeInviteLink, setFreeInviteLink] = useState('#')
+  const [vipInviteLink, setVipInviteLink] = useState('#')
   const router = useRouter()
 
   useEffect(() => {
@@ -67,6 +69,8 @@ export default function UserDashboard() {
           if (res.ok) {
             const p = data.profile
             const m = data.membership
+            if (data.freeInviteLink) setFreeInviteLink(data.freeInviteLink)
+            if (data.vipInviteLink) setVipInviteLink(data.vipInviteLink)
 
             const mergedData: MemberVIP = {
               id_user_auth: user.id,
@@ -121,7 +125,7 @@ export default function UserDashboard() {
       {/* ===== Status & Discord Cards ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
         <StatusCard member={member} />
-        <DiscordCard member={member} />
+        <DiscordCard member={member} freeInviteLink={freeInviteLink} vipInviteLink={vipInviteLink} />
       </div>
 
       {/* ===== Live Trading Signals ===== */}

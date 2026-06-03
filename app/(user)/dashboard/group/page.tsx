@@ -35,7 +35,7 @@ export default function GroupPage() {
 
             if (profile?.plan === 'vip' && vipData) {
               if (vipData.id_discord_user) {
-                setVipLink(`https://discord.gg/${vipData.kode_invite_unik}`)
+                setVipLink(data.vipInviteLink || '#')
                 setHasDiscord(true)
               } else {
                 setVipLink('/api/discord/auth')
@@ -43,7 +43,9 @@ export default function GroupPage() {
               }
             }
 
-            if (data.telegramLink) {
+            if (data.freeInviteLink && data.freeInviteLink !== '#') {
+              setFreeLink(data.freeInviteLink)
+            } else if (data.telegramLink) {
               setFreeLink(data.telegramLink)
             }
           }
@@ -83,22 +85,33 @@ export default function GroupPage() {
 
         {/* Link VIP */}
         {isVip ? (
-          <a 
-            href={vipLink} 
-            target={hasDiscord ? "_blank" : undefined}
-            rel="noopener noreferrer"
-            className="p-5 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl flex justify-between items-center group hover:border-yellow-500/50 transition-all text-left"
-          >
-            <div>
-              <div className="text-yellow-500 font-bold">
-                {hasDiscord ? 'Masuk Server Discord VIP' : 'Hubungkan Discord VIP'}
+          <div className="flex flex-col gap-2 w-full">
+            <a 
+              href={vipLink} 
+              target={hasDiscord ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              className="p-5 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl flex justify-between items-center group hover:border-yellow-500/50 transition-all text-left w-full"
+            >
+              <div>
+                <div className="text-yellow-500 font-bold">
+                  {hasDiscord ? 'Masuk Server Discord VIP' : 'Hubungkan Discord VIP'}
+                </div>
+                <div className="text-[10px] uppercase font-black tracking-widest text-neutral-400">
+                  {hasDiscord ? 'Sinyal & Edukasi (Terhubung)' : 'Otorisasi Akun Terlebih Dahulu'}
+                </div>
               </div>
-              <div className="text-[10px] uppercase font-black tracking-widest text-neutral-400">
-                {hasDiscord ? 'Sinyal & Edukasi (Terhubung)' : 'Otorisasi Akun Terlebih Dahulu'}
-              </div>
-            </div>
-            <ExternalLink size={18} className="text-yellow-500 group-hover:scale-110 transition-all" />
-          </a>
+              <ExternalLink size={18} className="text-yellow-500 group-hover:scale-110 transition-all" />
+            </a>
+            {/* Opsi otorisasi ulang / gabung server VIP secara aman */}
+            {hasDiscord && (
+              <a 
+                href="/api/discord/auth"
+                className="text-[10px] text-yellow-500/70 hover:text-yellow-500 font-bold transition-all text-center hover:underline"
+              >
+                Belum masuk server? Otorisasi & Gabung VIP
+              </a>
+            )}
+          </div>
         ) : (
           <div className="p-5 bg-black/50 border border-neutral-900 opacity-50 rounded-2xl flex justify-between items-center text-left">
             <div>

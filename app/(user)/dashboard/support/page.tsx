@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MessageSquare, Send, Mail, RefreshCw, Clock, ChevronDown, ChevronUp } from 'lucide-react'
+import { MessageSquare, Send, Mail, Clock, ChevronDown, ChevronUp } from 'lucide-react'
 import Loader from '@/components/Loader'
 
 interface SupportConfig {

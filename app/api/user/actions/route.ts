@@ -29,7 +29,17 @@ export async function POST(request: Request) {
           })
         ])
 
-        return NextResponse.json({ profile, membership })
+        let vipInviteLink = process.env.DISCORD_VIP_INVITE_LINK || '#'
+        if (vipInviteLink.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE') && process.env.DISCORD_VIP_GUILD_ID) {
+          vipInviteLink = `https://discord.com/channels/${process.env.DISCORD_VIP_GUILD_ID}`
+        }
+
+        return NextResponse.json({ 
+          profile, 
+          membership,
+          freeInviteLink: process.env.DISCORD_FREE_INVITE_LINK || '#',
+          vipInviteLink
+        })
       }
 
       case 'getGroupData': {
@@ -48,7 +58,18 @@ export async function POST(request: Request) {
           })
         ])
 
-        return NextResponse.json({ profile, vipData, telegramLink: supportRes?.telegram_link || '#' })
+        let vipInviteLink = process.env.DISCORD_VIP_INVITE_LINK || '#'
+        if (vipInviteLink.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE') && process.env.DISCORD_VIP_GUILD_ID) {
+          vipInviteLink = `https://discord.com/channels/${process.env.DISCORD_VIP_GUILD_ID}`
+        }
+
+        return NextResponse.json({ 
+          profile, 
+          vipData, 
+          telegramLink: supportRes?.telegram_link || '#',
+          freeInviteLink: process.env.DISCORD_FREE_INVITE_LINK || '#',
+          vipInviteLink
+        })
       }
 
       case 'getProfileData': {

@@ -1,20 +1,23 @@
 // components/DiscordCard.tsx
-// Komponen kartu akses komunitas Discord yang menampilkan tombol join server VIP
+// Komponen kartu akses komunitas Discord yang mendukung multi-server (Skenario C)
 import { MemberVIP } from '@/lib/types'
-import { Lock, ExternalLink, Users } from 'lucide-react'
+import { ExternalLink, Users } from 'lucide-react'
 
 interface Props {
   member: MemberVIP | null
+  freeInviteLink?: string
+  vipInviteLink?: string
 }
 
-export default function DiscordCard({ member }: Props) {
+export default function DiscordCard({ member, freeInviteLink = '#', vipInviteLink = '#' }: Props) {
   const isAktif = member?.status_aktif === 'aktif' || member?.status_aktif === 'vip'
+  const isLinked = !!member?.id_discord_user
 
   return (
     <div className="relative overflow-hidden rounded-2xl border bg-neutral-900/50 border-neutral-800 p-6 flex flex-col gap-4">
-      {/* Dekorasi glow sisi kanan atas */}
+      {/* Dekorasi glow sisi kanan atas untuk VIP */}
       {isAktif && (
-        <div className="absolute -top-8 -right-8 w-28 h-28 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-8 -right-8 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
       )}
 
       {/* Header */}
@@ -22,11 +25,11 @@ export default function DiscordCard({ member }: Props) {
         <p className="text-[10px] font-bold text-neutral-500 tracking-widest uppercase">Akses Komunitas</p>
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${
           isAktif
-            ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30'
-            : 'bg-neutral-800 text-neutral-500 border-neutral-700'
+            ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.05)]'
+            : 'bg-neutral-800 text-neutral-400 border-neutral-700'
         }`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${isAktif ? 'bg-indigo-400' : 'bg-neutral-500'}`} />
-          {isAktif ? 'TERBUKA' : 'TERKUNCI'}
+          <span className={`h-1.5 w-1.5 rounded-full ${isAktif ? 'bg-amber-400 animate-pulse' : 'bg-neutral-500'}`} />
+          {isAktif ? 'VIP TIER' : 'FREE TIER'}
         </span>
       </div>
 
@@ -34,8 +37,8 @@ export default function DiscordCard({ member }: Props) {
       <div className="flex items-center gap-3">
         <div className={`p-2.5 rounded-xl border ${
           isAktif
-            ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'
-            : 'bg-neutral-800 border-neutral-700 text-neutral-600'
+            ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+            : 'bg-neutral-800 border-neutral-700 text-neutral-400'
         }`}>
           {/* Ikon Discord SVG */}
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">
@@ -43,9 +46,11 @@ export default function DiscordCard({ member }: Props) {
           </svg>
         </div>
         <div>
-          <p className="text-xl font-extrabold text-white tracking-tight leading-tight">Discord VIP</p>
+          <p className="text-xl font-extrabold text-white tracking-tight leading-tight">
+            {isAktif ? 'Discord VIP Server' : 'Discord Public Server'}
+          </p>
           <p className="text-[11px] text-neutral-500 font-bold mt-0.5 flex items-center gap-1">
-            <Users size={11} /> Server Eksklusif Trader Imperium
+            <Users size={11} /> {isAktif ? 'Komunitas Eksklusif Trader VIP' : 'Komunitas Diskusi Trader Gratis'}
           </p>
         </div>
       </div>
@@ -53,49 +58,57 @@ export default function DiscordCard({ member }: Props) {
       {/* Deskripsi */}
       <p className="text-xs text-neutral-400 leading-relaxed font-medium">
         {isAktif
-          ? member?.id_discord_user
-            ? 'Selamat! Akun Discord VIP Anda telah terhubung. Anda dapat bergabung atau masuk ke server menggunakan tombol di bawah.'
-            : 'Selamat! Akses server Discord VIP sudah terbuka. Silakan hubungkan akun Discord Anda untuk otomatis masuk dan mendapatkan Role VIP.'
-          : 'Upgrade ke paket VIP untuk mendapatkan akses eksklusif ke server Discord komunitas trader Imperium.'}
+          ? isLinked
+            ? 'Selamat! Akun Discord VIP Anda telah terhubung. Anda dapat bergabung atau masuk ke Server VIP menggunakan tombol di bawah.'
+            : 'Selamat! Akses ke Server VIP sudah terbuka. Silakan hubungkan akun Discord Anda untuk otomatis masuk ke Server VIP.'
+          : isLinked
+            ? 'Akun Discord Anda telah terhubung sebagai Member Gratis. Silakan bergabung ke Server Publik kami untuk mengobrol dengan trader lain.'
+            : 'Hubungkan akun Discord Anda untuk bergabung ke Server Publik gratis dan mengobrol dengan sesama trader Imperium.'}
       </p>
 
       {/* Tombol */}
       <div className="mt-auto pt-2 flex flex-col gap-2">
-        {isAktif ? (
-          member?.id_discord_user ? (
-            <>
-              <div className="flex items-center justify-between text-[10px] text-neutral-400 font-bold px-1 uppercase tracking-wider">
-                <span>Status Koneksi:</span>
-                <span className="text-green-400 font-bold flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-green-400" /> Terhubung ({member.id_discord_user})
-                </span>
-              </div>
-              <a
-                href={`https://discord.gg/${member?.kode_invite_unik}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
-              >
-                Masuk Server Discord
-                <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
-              </a>
-            </>
-          ) : (
+        {isLinked ? (
+          <>
+            <div className="flex items-center justify-between text-[10px] text-neutral-400 font-bold px-1 uppercase tracking-wider">
+              <span>Status Koneksi:</span>
+              <span className="text-green-400 font-bold flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-400" /> Terhubung ({member?.id_discord_user})
+              </span>
+            </div>
             <a
-              href="/api/discord/auth"
-              className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
+              href={isAktif ? vipInviteLink : freeInviteLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white transition-all active:scale-[0.98] ${
+                isAktif
+                  ? 'bg-amber-600 hover:bg-amber-500 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]'
+                  : 'bg-indigo-600 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]'
+              }`}
             >
-              Hubungkan Akun Discord VIP
+              {isAktif ? 'Masuk Server Discord VIP' : 'Masuk Server Discord Publik'}
               <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
             </a>
-          )
+
+            {/* Untuk VIP, jika belum masuk server, wajib menggunakan alur otorisasi (OAuth2) untuk bergabung */}
+            {isAktif && (
+              <a
+                href="/api/discord/auth"
+                className="group flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl font-bold text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all active:scale-[0.98]"
+              >
+                Belum Masuk Server? Otorisasi & Gabung VIP
+                <ExternalLink size={13} className="group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            )}
+          </>
         ) : (
-          <button
-            disabled
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-neutral-600 bg-neutral-800 border border-neutral-700 cursor-not-allowed"
+          <a
+            href="/api/discord/auth"
+            className="group flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-[0.98]"
           >
-            <Lock size={14} /> Link Terkunci
-          </button>
+            {isAktif ? 'Hubungkan Akun & Klaim Akses VIP' : 'Hubungkan & Gabung Discord Publik'}
+            <ExternalLink size={15} className="group-hover:translate-x-0.5 transition-transform" />
+          </a>
         )}
       </div>
     </div>

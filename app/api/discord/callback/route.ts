@@ -35,20 +35,16 @@ export async function GET(request: Request) {
 
     const isVip = memberVip?.status_aktif === 'aktif' || memberVip?.status_aktif === 'vip'
 
-    if (!isVip) {
-      console.warn(`Discord Auth Callback: Pengguna ${user.id} tidak memiliki status VIP aktif.`)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=not_vip', request.url))
-    }
-
     // 3. Ambil konfigurasi Discord dari environment variables
     const clientId = process.env.DISCORD_CLIENT_ID
     const clientSecret = process.env.DISCORD_CLIENT_SECRET
     const botToken = process.env.DISCORD_BOT_TOKEN
-    const guildId = process.env.DISCORD_GUILD_ID
+    const freeGuildId = process.env.DISCORD_FREE_GUILD_ID
+    const vipGuildId = process.env.DISCORD_VIP_GUILD_ID
     const vipRoleId = process.env.DISCORD_VIP_ROLE_ID
     const redirectUri = process.env.DISCORD_REDIRECT_URI
 
-    if (!clientId || !clientSecret || !botToken || !guildId || !vipRoleId || !redirectUri) {
+    if (!clientId || !clientSecret || !botToken || !freeGuildId || !vipGuildId || !vipRoleId || !redirectUri) {
       console.error('Discord Auth Callback: Konfigurasi Discord API tidak lengkap di .env.')
       return NextResponse.redirect(new URL('/dashboard?discord=error&message=config_missing', request.url))
     }
@@ -94,48 +90,76 @@ export async function GET(request: Request) {
     const discordUserId = userProfile.id
     const discordUsername = userProfile.username
 
-    // 6. Masukkan pengguna ke server Discord VIP
-    // Endpoint ini akan menambahkan user secara langsung jika belum bergabung
-    const joinResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${discordUserId}`, {
+    // 6. Masukkan pengguna ke server-server yang sesuai
+    // A. Masukkan ke Server Free (Untuk semua anggota, baik Free maupun VIP)
+    console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server Free (${freeGuildId})...`)
+    const freeJoinResponse = await fetch(`https://discord.com/api/guilds/${freeGuildId}/members/${discordUserId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bot ${botToken}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        access_token: userAccessToken,
-        roles: [vipRoleId]
+        access_token: userAccessToken
       })
     })
 
-    if (!joinResponse.ok) {
-      const joinError = await joinResponse.text()
-      console.error('Discord Auth Callback: Gagal menambahkan pengguna ke server.', joinError)
-      return NextResponse.redirect(new URL('/dashboard?discord=error&message=guild_join_failed', request.url))
+    if (!freeJoinResponse.ok) {
+      const freeJoinError = await freeJoinResponse.text()
+      console.warn('Discord Auth Callback: Gagal memasukkan pengguna ke Server Free.', freeJoinError)
+      // Tetap lanjutkan proses agar user VIP tidak terhambat jika server free bermasalah
     }
 
-    // Jika user sudah ada di server (status 204), tambahkan role VIP secara eksplisit
-    if (joinResponse.status === 204) {
-      console.log(`Discord Auth Callback: Pengguna ${discordUsername} sudah di server. Menambahkan role VIP...`)
-      const roleResponse = await fetch(`https://discord.com/api/guilds/${guildId}/members/${discordUserId}/roles/${vipRoleId}`, {
+    // B. Masukkan ke Server VIP (Hanya jika pengguna berstatus VIP aktif)
+    if (isVip) {
+      console.log(`Discord Auth Callback: Memasukkan ${discordUsername} ke Server VIP (${vipGuildId})...`)
+      const vipJoinResponse = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Bot ${botToken}`
-        }
+          Authorization: `Bot ${botToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          access_token: userAccessToken,
+          roles: [vipRoleId]
+        })
       })
 
-      if (!roleResponse.ok) {
-        const roleError = await roleResponse.text()
-        console.error('Discord Auth Callback: Gagal menambahkan role VIP.', roleError)
-        return NextResponse.redirect(new URL('/dashboard?discord=error&message=role_assignment_failed', request.url))
+      if (!vipJoinResponse.ok) {
+        const vipJoinError = await vipJoinResponse.text()
+        console.error('Discord Auth Callback: Gagal menambahkan pengguna ke Server VIP.', vipJoinError)
+        return NextResponse.redirect(new URL('/dashboard?discord=error&message=guild_join_failed', request.url))
+      }
+
+      // Jika user sudah berada di server VIP (HTTP 204), tambahkan role VIP secara manual
+      if (vipJoinResponse.status === 204) {
+        console.log(`Discord Auth Callback: Pengguna ${discordUsername} sudah di server VIP. Menambahkan role VIP...`)
+        const roleResponse = await fetch(`https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}/roles/${vipRoleId}`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bot ${botToken}`
+          }
+        })
+
+        if (!roleResponse.ok) {
+          const roleError = await roleResponse.text()
+          console.error('Discord Auth Callback: Gagal menambahkan role VIP.', roleError)
+          return NextResponse.redirect(new URL('/dashboard?discord=error&message=role_assignment_failed', request.url))
+        }
       }
     }
 
-    // 7. Simpan ID Discord ke database dan perbarui profil keanggotaan
+    // 7. Perbarui ID Discord di database (gunakan upsert agar mendukung pendaftaran free member)
     await prisma.$transaction([
-      prisma.data_member_vip.update({
+      prisma.data_member_vip.upsert({
         where: { id_user_auth: user.id },
-        data: { id_discord_user: discordUserId }
+        update: { id_discord_user: discordUserId },
+        create: {
+          id_user_auth: user.id,
+          email_member: user.email || '',
+          status_aktif: 'free',
+          id_discord_user: discordUserId
+        }
       }),
       prisma.profiles.update({
         where: { id: user.id },
@@ -144,8 +168,10 @@ export async function GET(request: Request) {
       prisma.notifications.create({
         data: {
           user_id: user.id,
-          title: 'Discord VIP Aktif!',
-          message: `Akun Discord kamu (${discordUsername}) telah terhubung dan otomatis masuk ke server VIP.`,
+          title: isVip ? 'Discord VIP Aktif!' : 'Discord Terhubung!',
+          message: isVip
+            ? `Akun Discord kamu (${discordUsername}) telah terhubung, otomatis bergabung ke Server Free dan Server VIP.`
+            : `Akun Discord kamu (${discordUsername}) telah terhubung dan otomatis bergabung ke Server Free.`,
           type: 'success'
         }
       })

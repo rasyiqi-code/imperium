@@ -20,12 +20,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 2. Ambil parameter Discord untuk proses auto-kick
+    // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP
     const botToken = process.env.DISCORD_BOT_TOKEN
-    const guildId = process.env.DISCORD_GUILD_ID
+    const vipGuildId = process.env.DISCORD_VIP_GUILD_ID
 
-    if (!botToken || !guildId) {
-      console.error('Cron Check Subscriptions: Discord Bot Token or Guild ID is not configured.')
+    if (!botToken || !vipGuildId) {
+      console.error('Cron Check Subscriptions: Discord Bot Token or VIP Guild ID is not configured.')
       return NextResponse.json(
         { error: 'Konfigurasi Discord API tidak lengkap di server.' },
         { status: 500 }
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
       if (discordUserId) {
         try {
           const discordRes = await fetch(
-            `https://discord.com/api/guilds/${guildId}/members/${discordUserId}`,
+            `https://discord.com/api/guilds/${vipGuildId}/members/${discordUserId}`,
             {
               method: 'DELETE',
               headers: {
@@ -96,13 +96,12 @@ export async function GET(request: Request) {
             where: { id: member.id },
             data: { status_aktif: 'hangus' }
           }),
-          // Kembalikan status plan profil user menjadi 'free'
+          // Kembalikan status plan profil user menjadi 'free' (biarkan discord_joined tetap true karena mereka masih di Server Free)
           prisma.profiles.update({
             where: { id: userId },
             data: {
               plan: 'free',
-              plan_status: 'free',
-              discord_joined: false
+              plan_status: 'free'
             }
           }),
           // Berikan notifikasi sistem ke user terkait berakhirnya VIP
