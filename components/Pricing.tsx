@@ -45,118 +45,150 @@ export default function Pricing() {
     </div>
   );
 
-  return (
-    <section id="pricing" className="relative overflow-hidden py-24 md:py-32 bg-[#0b0b0b]">
-      {/* Ambient glow redup di belakang grid */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.02] rounded-full blur-[150px] pointer-events-none z-0" />
+  // Mengurutkan paket agar VIP Elite/Yearly selalu di kanan (atau urutan yang konsisten)
+  const sortedPaketList = [...paketList].sort((a, b) => a.harga - b.harga);
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
+  return (
+    <section id="pricing" className="relative overflow-hidden bg-[#0b0b0b]">
+      {/* Ambient glow tipis di latar belakang */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32">
         
-        <div className="mx-auto max-w-3xl mb-20">
-          <h2 className="mb-6 text-balance text-3xl font-black md:text-5xl text-center leading-tight tracking-tight">
+        {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
+        <div className="mx-auto max-w-3xl mb-20 text-center">
+          <h2 className="mb-6 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 leading-tight tracking-tight">
             Membership{" "}
-            <span className="block mt-2 text-center bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(234,179,8,0.15)]">
+            <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.1)]">
               Imperium Crypto
             </span>
           </h2>
-          <p className="mx-auto max-w-xl text-sm md:text-base leading-relaxed text-neutral-400 text-center">
+          <p className="mx-auto max-w-xl text-sm md:text-base leading-relaxed text-neutral-450 text-center">
             Dapatkan akses sinyal harian dan belajar Crypto secara profesional bersama komunitas eksklusif.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 max-w-6xl mx-auto items-stretch">
+        {/* GRID TABEL EDITORIAL (Solid Border, Sudut Tajam) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 border border-white/[0.08] bg-black/10 max-w-6xl mx-auto items-stretch rounded-none overflow-hidden">
           
           {/* 1. PAKET GRATIS (Static) */}
-          <div className="group relative flex flex-col rounded-3xl p-8 border border-white/[0.06] bg-[#0d0d0d]/40 backdrop-blur-md transition-all duration-300 hover:border-yellow-500/25 hover:bg-yellow-500/[0.01] hover:scale-[1.01] hover:shadow-[0_10px_30px_rgba(234,179,8,0.02)] h-full overflow-hidden">
+          <div className="group relative flex flex-col p-8 md:p-10 border-b md:border-b-0 md:border-r border-white/[0.08] transition-all duration-300 hover:bg-[#d4af37]/[0.015] h-full overflow-hidden">
             
             <div className="flex items-center justify-between mb-8">
-              <div className="p-4 rounded-2xl bg-neutral-800/40 text-neutral-400 border border-neutral-800/60 group-hover:border-neutral-700 transition-colors">
-                <Zap size={24} />
+              <div className="p-3.5 rounded bg-neutral-800/20 text-neutral-400 border border-neutral-800/40 group-hover:border-neutral-700 transition-colors">
+                <Zap size={20} />
               </div>
-              <span className="text-xs font-black uppercase tracking-[0.2em] text-neutral-500">Entry Level</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Entry Level</span>
             </div>
 
             <div className="text-left mb-8">
-              <h4 className="text-xl font-bold text-white uppercase tracking-tight mb-2">Free Plan</h4>
+              <h4 className="text-lg font-bold text-white uppercase tracking-tight mb-2">Free Plan</h4>
               <div className="flex items-baseline">
-                <span className="text-4xl font-black text-white">Rp 0</span>
-                <span className="text-neutral-500 ml-2 text-xs font-bold uppercase tracking-widest">/ Selamanya</span>
+                <span className="text-3xl font-black text-white">Rp 0</span>
+                <span className="text-neutral-500 ml-2 text-[10px] font-bold uppercase tracking-widest">/ Selamanya</span>
               </div>
             </div>
 
             <ul className="mb-10 space-y-4 grow text-left border-t border-white/[0.06] pt-8">
               <li className="flex items-center text-neutral-300">
-                <Check className="mr-3 shrink-0 text-yellow-500/50" size={16} strokeWidth={4} />
-                <span className="text-xs font-bold uppercase tracking-tight">Gabung Grup Diskusi Publik</span>
+                <Check className="mr-3 shrink-0 text-[#d4af37]/60" size={15} strokeWidth={4} />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Gabung Grup Diskusi Publik</span>
               </li>
               {[1, 2, 3, 4].map((i) => (
-                <li key={i} className="flex items-center text-neutral-600 opacity-40">
-                  <X className="mr-3 shrink-0 text-red-500/60" size={16} strokeWidth={4} />
-                  <span className="text-xs font-bold uppercase tracking-tight text-neutral-500 line-through">Fitur VIP Terkunci</span>
+                <li key={i} className="flex items-center text-neutral-600 opacity-30">
+                  <X className="mr-3 shrink-0 text-red-500/60" size={15} strokeWidth={4} />
+                  <span className="text-[11px] font-bold uppercase tracking-tight text-neutral-500 line-through">Fitur VIP Terkunci</span>
                 </li>
               ))}
             </ul>
 
             <button 
               onClick={handleAction}
-              className="relative group overflow-hidden w-full py-4.5 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-yellow-500/40 hover:bg-yellow-500/10 hover:text-yellow-400 transition-all duration-300 active:scale-[0.98]"
+              className="relative w-full py-4 rounded-none font-bold text-[10px] uppercase tracking-[0.2em] border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/40 hover:bg-[#d4af37]/10 hover:text-[#d4af37] transition-all duration-300 active:scale-[0.98]"
             >
               Mulai Gratis
             </button>
           </div>
 
           {/* 2 & 3. PAKET VIP (Dinamis dari Database) */}
-          {paketList.map((paket) => (
-            <LandingPricingCard key={paket.id} paket={paket} onAction={handleAction} />
-          ))}
+          {sortedPaketList.map((paket, index) => {
+            const isLast = index === sortedPaketList.length - 1;
+            return (
+              <LandingPricingCard 
+                key={paket.id} 
+                paket={paket} 
+                onAction={handleAction} 
+                isLast={isLast}
+              />
+            );
+          })}
 
         </div>
+
+        {/* Pembatas Section Berbentuk Sirkuit Emas Redup (Circuit Divider) */}
+        <div className="flex items-center justify-center gap-4 mt-24">
+          <div className="h-[1px] w-24 md:w-36 bg-gradient-to-r from-transparent to-yellow-500/20" />
+          {/* Node Sirkuit yang berdenyut */}
+          <div className="w-2.5 h-2.5 rounded-full border border-yellow-500 bg-[#020202] shadow-[0_0_10px_rgba(234,179,8,0.5)] animate-pulse" />
+          <div className="h-[1px] w-24 md:w-36 bg-gradient-to-l from-transparent to-yellow-500/20" />
+        </div>
+
       </div>
     </section>
   );
 }
 
-function LandingPricingCard({ paket, onAction }: { paket: PaketVIP, onAction: () => void }) {
+function LandingPricingCard({ 
+  paket, 
+  onAction,
+  isLast
+}: { 
+  paket: PaketVIP;
+  onAction: () => void;
+  isLast: boolean;
+}) {
   const isYearly = paket.durasi_hari > 200;
 
   return (
-    <div className={`group relative flex flex-col rounded-3xl p-8 transition-all duration-500 h-full overflow-hidden ${
+    <div className={`group relative flex flex-col p-8 md:p-10 transition-all duration-500 h-full overflow-hidden ${
+      isLast ? '' : 'border-b md:border-b-0 md:border-r border-white/[0.08]'
+    } ${
       isYearly 
-      ? 'border-2 border-yellow-500/70 bg-[#111111]/80 backdrop-blur-md animate-breathe hover:scale-[1.03] z-10' 
-      : 'border border-white/[0.06] bg-[#0d0d0d]/40 backdrop-blur-md hover:border-yellow-500/25 hover:bg-yellow-500/[0.01] hover:scale-[1.01] hover:shadow-[0_10px_30px_rgba(234,179,8,0.02)]'
+      ? 'bg-yellow-500/[0.02] border-t-2 border-b-2 md:border-y-0 border-yellow-500/40' 
+      : 'hover:bg-[#d4af37]/[0.015]'
     }`}>
       
       {isYearly && (
         <>
-          <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-2 text-[10px] font-black uppercase text-black rounded-bl-3xl tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.3)] z-20">
+          <div className="absolute top-0 right-0 bg-[#d4af37] px-4 py-1.5 text-[9px] font-black uppercase text-black tracking-widest shadow-[0_2px_10px_rgba(212,175,55,0.2)] z-20 select-none">
             Recommended
           </div>
           {/* Node Emas Aktif Berdenyut di Sudut Kanan Atas */}
-          <div className="absolute top-16 right-6 flex h-2 w-2 z-20">
+          <div className="absolute top-16 right-6 flex h-1.5 w-1.5 z-20">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400/60 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500/80"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500/85"></span>
           </div>
         </>
       )}
 
       <div className="flex items-center justify-between mb-8">
-        <div className={`p-4 rounded-2xl border transition-colors ${
+        <div className={`p-3.5 rounded border transition-colors ${
           isYearly 
-          ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 group-hover:bg-yellow-500/20' 
-          : 'bg-[#0d0d0d] text-yellow-500 border-white/[0.06] group-hover:border-yellow-500/20'
+          ? 'bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/20 group-hover:bg-[#d4af37]/20' 
+          : 'bg-neutral-800/10 text-[#d4af37] border-white/[0.06] group-hover:border-[#d4af37]/20'
         }`}>
-          <Crown size={24} />
+          <Crown size={20} />
         </div>
-        <span className={`text-xs font-black uppercase tracking-[0.2em] ${isYearly ? 'text-yellow-400' : 'text-neutral-400'}`}>
+        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isYearly ? 'text-[#d4af37]' : 'text-neutral-450'}`}>
           VIP {isYearly ? 'Elite' : 'Basic'}
         </span>
       </div>
 
       <div className="text-left mb-8">
-        <h4 className="text-xl font-bold text-white uppercase tracking-tight mb-2">{paket.nama_paket}</h4>
+        <h4 className="text-lg font-bold text-white uppercase tracking-tight mb-2">{paket.nama_paket}</h4>
         <div className="flex items-baseline">
-          <span className="text-4xl font-black text-white">Rp {paket.harga.toLocaleString('id-ID')}</span>
-          <span className="text-neutral-500 ml-2 text-xs font-bold uppercase tracking-widest">/ {paket.durasi_hari} Hari</span>
+          <span className="text-3xl font-black text-white">Rp {paket.harga.toLocaleString('id-ID')}</span>
+          <span className="text-neutral-500 ml-2 text-[10px] font-bold uppercase tracking-widest">/ {paket.durasi_hari} Hari</span>
         </div>
       </div>
 
@@ -164,8 +196,8 @@ function LandingPricingCard({ paket, onAction }: { paket: PaketVIP, onAction: ()
         {paket.fitur && paket.fitur.length > 0 ? (
           paket.fitur.map((feature, index) => (
             <li key={index} className="flex items-center text-neutral-300">
-              <Check className={`mr-3 shrink-0 ${isYearly ? 'text-yellow-400' : 'text-yellow-500/60'}`} size={16} strokeWidth={4} />
-              <span className="text-xs font-bold uppercase tracking-tight">{feature}</span>
+              <Check className={`mr-3 shrink-0 ${isYearly ? 'text-[#d4af37]' : 'text-[#d4af37]/60'}`} size={15} strokeWidth={4} />
+              <span className="text-[11px] font-bold uppercase tracking-tight">{feature}</span>
             </li>
           ))
         ) : (
@@ -175,10 +207,10 @@ function LandingPricingCard({ paket, onAction }: { paket: PaketVIP, onAction: ()
 
       <button 
         onClick={onAction}
-        className={`relative group overflow-hidden w-full py-4.5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 active:scale-[0.98] ${
+        className={`relative group overflow-hidden w-full py-4 rounded-none font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 active:scale-[0.98] ${
           isYearly 
-          ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-black hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(234,179,8,0.35)]' 
-          : 'border border-yellow-500/20 bg-yellow-500/5 text-yellow-400 hover:border-yellow-500/40 hover:bg-yellow-500/10 hover:text-yellow-400'
+          ? 'bg-[#d4af37] text-black hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(212,175,55,0.25)]' 
+          : 'border border-[#d4af37]/20 bg-[#d4af37]/5 text-[#d4af37] hover:border-[#d4af37]/40 hover:bg-[#d4af37]/10'
         }`}
       >
         {isYearly && (
