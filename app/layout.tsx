@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ModalProvider from "@/components/ModalProvider";
+import fs from "fs";
+import path from "path";
 
 // URL dasar situs web, fallback ke domain produksi default jika env tidak disetel
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
@@ -60,6 +62,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Pengecekan Integritas Lisensi - Anti Hapus Kredit Crediblemark
+  try {
+    const footerFilePath = path.join(process.cwd(), "components", "Footer.tsx");
+    if (fs.existsSync(footerFilePath)) {
+      const footerContent = fs.readFileSync(footerFilePath, "utf8");
+      if (!footerContent.includes("https://crediblemark.com")) {
+        throw new Error("System Integrity Violation: Required licensing credits for Crediblemark are missing.");
+      }
+    }
+  } catch (error) {
+    console.error("Lisensi tidak valid:", error);
+    throw new Error("License Integrity Failure: System has been tampered.");
+  }
   return (
     <html lang="id" className="scroll-smooth">
       <head />

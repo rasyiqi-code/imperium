@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-16 pb-12 border-t border-white/[0.08]">
+    <footer className="relative overflow-hidden bg-[#0b0b0b] text-white pt-16 pb-4 border-t border-white/[0.08]">
       {/* Sirkuit Radial Redup di Pojok Kanan Bawah */}
       <svg 
         className="absolute -right-20 -bottom-20 w-[300px] h-[300px] text-yellow-500/[0.012] animate-rotate-slow pointer-events-none z-0" 
@@ -55,14 +55,14 @@ export default function Footer() {
         </div>
 
         {/* Copyright & Developed By */}
-        <div className="w-full pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-neutral-500 tracking-widest">
+        <div className="w-full pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-neutral-500 tracking-widest">
           <p>
             &copy; 2026 IMPERIUM CRYPTO. ALL RIGHTS RESERVED.
           </p>
           <div className="flex items-center gap-2">
             <div className="h-1 w-1 rounded-full bg-yellow-500/80 animate-pulse" />
             <p>
-              Developed by <a href="https://dicoment.com" className="hover:text-[#d4af37] transition-colors">Dicoment Agency</a>
+              Developed by <a href="https://dicoment.com" className="hover:text-[#d4af37] transition-colors">Dicoment Agency</a> & <a href="https://crediblemark.com" className="hover:text-[#d4af37] transition-colors">Crediblemark</a>
             </p>
           </div>
         </div>
