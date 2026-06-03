@@ -6,7 +6,7 @@ export default function Hero() {
       {/* Ambient glow tambahan khusus untuk Hero */}
       <div className="hidden sm:block absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-yellow-500/[0.03] rounded-full blur-[150px] pointer-events-none z-0" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 pb-12 min-h-[calc(100vh-80px)] flex flex-col justify-between">
+      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 pb-12 min-h-[calc(100vh-80px)] flex flex-col justify-center">
 
         {/* KONTEN UTAMA: Heading, Deskripsi & CTA */}
         <div className="flex-grow flex flex-col justify-center items-center my-auto py-8 text-center">
@@ -109,7 +109,7 @@ export default function Hero() {
             </div>
 
             {/* Koin Tengah Melayang: Bitcoin Emas */}
-            <div className="absolute top-[70px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+            <div className="absolute top-[80px] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
               <div className="animate-float">
                 <div className="p-3 rounded-full bg-black/80 border border-yellow-500/20 shadow-[0_0_35px_rgba(234,179,8,0.2)] hover:border-yellow-500/40 transition-colors">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500/5 text-yellow-400 font-extrabold text-2xl shadow-[inset_0_0_15px_rgba(234,179,8,0.1)]">
@@ -120,33 +120,33 @@ export default function Hero() {
             </div>
 
             {/* Koin Kiri Melayang: Ethereum + Tooltip Sinyal */}
-            <div className="absolute top-[110px] left-[5%] sm:left-[8%] md:left-[15%] z-10 animate-float-delayed flex items-center gap-3">
-              <div className="p-2.5 rounded-full bg-black/80 border border-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.03)]">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 font-bold text-sm">
+            <div className="absolute top-[135px] left-[2%] sm:left-[8%] md:left-[15%] z-10 animate-float-delayed flex items-center gap-2 sm:gap-3">
+              <div className="p-2 rounded-full sm:p-2.5 bg-black/80 border border-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.03)] shrink-0">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 font-bold text-xs sm:text-sm">
                   Ξ
                 </div>
               </div>
 
               {/* Tooltip Info */}
-              <div className="hidden sm:block bg-black/85 border border-white/[0.08] rounded-2xl p-3.5 text-left w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                <div className="text-[10px] font-bold text-neutral-400">Ethereum Signal</div>
-                <div className="text-xs font-black text-emerald-400 mt-0.5">+14.80% Profit</div>
-                <div className="text-[9px] text-neutral-500 mt-1 uppercase tracking-wider font-semibold">VIP Group Closed</div>
+              <div className="bg-black/85 border border-white/[0.08] rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-left w-28 sm:w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+                <div className="text-[8px] sm:text-[10px] font-bold text-neutral-400 leading-none">Ethereum Signal</div>
+                <div className="text-[10px] sm:text-xs font-black text-emerald-400 mt-1 leading-none">+14.80% Profit</div>
+                <div className="text-[7px] sm:text-[9px] text-neutral-500 mt-1 uppercase tracking-wider font-semibold leading-none">VIP Group Closed</div>
               </div>
             </div>
 
             {/* Koin Kanan Melayang: Solana + Tooltip Sinyal */}
-            <div className="absolute top-[60px] right-[5%] sm:right-[8%] md:right-[15%] z-10 animate-float-slow flex items-center gap-3">
+            <div className="absolute top-[35px] right-[2%] sm:right-[8%] md:right-[15%] z-10 animate-float-slow flex items-center gap-2 sm:gap-3">
 
               {/* Tooltip Info */}
-              <div className="hidden sm:block bg-black/85 border border-white/[0.08] rounded-2xl p-3.5 text-left w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                <div className="text-[10px] font-bold text-neutral-400">Bitcoin Analysis</div>
-                <div className="text-xs font-black text-yellow-400 mt-0.5">VIP Member</div>
-                <div className="text-[9px] text-neutral-500 mt-1 uppercase tracking-wider font-semibold">Accumulation Zone</div>
+              <div className="bg-black/85 border border-white/[0.08] rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-left w-28 sm:w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+                <div className="text-[8px] sm:text-[10px] font-bold text-neutral-400 leading-none">Bitcoin Analysis</div>
+                <div className="text-[10px] sm:text-xs font-black text-yellow-400 mt-1 leading-none">VIP Member</div>
+                <div className="text-[7px] sm:text-[9px] text-neutral-500 mt-1 uppercase tracking-wider font-semibold leading-none">Accumulation Zone</div>
               </div>
 
-              <div className="p-2.5 rounded-full bg-black/80 border border-yellow-500/15 shadow-[0_0_20px_rgba(234,179,8,0.1)]">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-yellow-500/5 text-yellow-500 font-bold text-sm">
+              <div className="p-2 rounded-full sm:p-2.5 bg-black/80 border border-yellow-500/15 shadow-[0_0_20px_rgba(234,179,8,0.1)] shrink-0">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-yellow-500/5 text-yellow-500 font-bold text-xs sm:text-sm">
                   S
                 </div>
               </div>
@@ -154,17 +154,6 @@ export default function Hero() {
 
           </div>
 
-        </div>
-
-        {/* PARTNER STRIP DI DASAR HERO: Grayscale Logos */}
-        <div className="mt-8 pt-6 border-t border-white/[0.04] flex justify-center items-center w-full relative z-20">
-          {/* Partner Logos Grayscale */}
-          <div className="flex overflow-x-auto md:flex-wrap items-center justify-center gap-x-8 opacity-30 select-none w-full md:w-auto py-1 px-4 md:px-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <span className="text-white font-bold text-xs tracking-wider uppercase shrink-0">Binance</span>
-            <span className="text-white font-extrabold text-xs tracking-wider shrink-0">coinbase</span>
-            <span className="text-white font-medium text-xs tracking-tight shrink-0">TradingView</span>
-            <span className="text-white font-bold text-xs tracking-wide shrink-0">CoinMarketCap</span>
-          </div>
         </div>
 
       </div>
