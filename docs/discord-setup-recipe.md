@@ -115,3 +115,67 @@ Agar materi edukasi, sinyal, dan ruang obrolan VIP aman dari anggota non-VIP, ik
    - Tambahkan Role Bot `Imperium Bot` (berikan akses).
    - Pastikan Role `@everyone` **tidak memiliki akses** (silang merah pada `View Channels`).
 5. Buat channel di dalam kategori ini (misal: `#vip-signals`, `#vip-announcements`, `#vip-chat`). Channel tersebut akan otomatis mewarisi (inherit) hak akses private ini.
+
+---
+
+## 5. Panduan Konfigurasi Discord Developer Portal
+
+Berikut adalah panduan langkah demi langkah untuk mengonfigurasi aplikasi Bot Anda di **Discord Developer Portal** agar terhubung dengan website Imperium:
+
+### 🛠️ Langkah 1: Mendapatkan Client ID & Client Secret
+1. Masuk ke [Discord Developer Portal](https://discord.com/developers/applications).
+2. Pilih aplikasi Anda (contoh: **Imperium Crypto**).
+3. Masuk ke menu **OAuth2 -> General** di panel sebelah kiri.
+4. Anda akan melihat **Client ID** (salin dan masukkan ke `DISCORD_CLIENT_ID="..."` di `.env`).
+5. Klik **Reset Secret** untuk memunculkan **Client Secret** baru. Salin nilainya dan masukkan ke `DISCORD_CLIENT_SECRET="..."` di `.env`.
+
+### 🔑 Langkah 2: Mendapatkan Bot Token
+1. Masuk ke menu **Bot** di panel sebelah kiri.
+2. Cari bagian **Token** (di bawah kolom Username).
+3. Klik tombol **Reset Token** (masukkan kode 2FA jika diminta).
+4. Klik **Copy** pada token yang muncul, lalu masukkan ke `DISCORD_BOT_TOKEN="..."` di `.env`.
+   > [!WARNING]
+   > Token ini hanya muncul sekali. Jika Anda menutup halaman sebelum menyalinnya, Anda harus melakukan *Reset Token* kembali.
+
+### ⚙️ Langkah 3: Mengaktifkan Server Members Intent (PENTING ⚠️)
+Agar bot memiliki izin untuk memasukkan dan mengeluarkan (kick) anggota VIP secara otomatis:
+1. Masuk ke menu **Bot** di panel sebelah kiri.
+2. Gulir ke bawah hingga menemukan bagian **Privileged Gateway Intents**.
+3. Aktifkan (geser tombol toggle ke kanan menjadi **ON / Biru**) pada bagian **Server Members Intent**.
+4. Klik tombol **Save Changes** di bagian bawah halaman.
+
+### 🔄 Langkah 4: Menambahkan Redirect URI
+Agar alur otorisasi (OAuth2) dapat mengarahkan pengguna kembali ke website setelah login sukses:
+1. Masuk ke menu **OAuth2 -> General** di panel sebelah kiri.
+2. Cari bagian **Redirects** (biasanya di bagian bawah halaman).
+3. Klik tombol **Add Redirect** dan masukkan URL callback website Anda:
+   * **Untuk Localhost/Localtunnel:**
+     ```text
+     https://common-webs-deny.loca.lt/api/discord/callback
+     ```
+   * **Untuk Produksi (VPS/Vercel):**
+     ```text
+     https://domain-anda.com/api/discord/callback
+     ```
+4. Klik **Save Changes**.
+
+### 🤖 Langkah 5: Mengundang Bot ke Server VIP Anda
+Agar Bot masuk ke server VIP Anda dan dapat mengelola role/anggota:
+1. Masuk ke menu **OAuth2 -> URL Generator** di panel sebelah kiri.
+2. Pada daftar **Scopes**, centang kotak **`bot`**.
+3. Setelah dicentang, bagian **Bot Permissions** akan muncul di bawahnya. Centang izin-izin wajib berikut:
+   * [x] **Manage Roles**
+   * [x] **Kick Members**
+   * [x] **Create Instant Invite**
+   * [x] **View Channels**
+4. Salin tautan yang muncul pada kolom **Generated URL** di bagian paling bawah halaman.
+5. Buka tab baru di browser Anda, tempel tautan tersebut, lalu pilih **Server VIP** Anda untuk mengundang Bot masuk.
+
+---
+
+### 💡 Pengaturan yang Dapat Diabaikan (Biarkan Kosong)
+Berdasarkan halaman Discord Developer Portal, bagian berikut **tidak perlu diatur** dan aman dibiarkan kosong:
+* **Interactions Endpoint URL**, **Linked Roles Verification URL**, **Terms of Service URL**, dan **Privacy Policy URL** (di menu *General Information* / *OAuth2*).
+* **Install Link** (di menu *Installation*).
+* **Webhooks** (di menu *Webhooks*).
+* **Presence Intent** dan **Message Content Intent** (di menu *Bot*).
