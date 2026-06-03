@@ -51,10 +51,10 @@ export default function AboutImperium() {
         </h2>
 
         {/* EDITORIAL MAGAZINE GRID */}
-        <div className="w-full border-y border-white/[0.08] bg-black/10">
+        <div className="w-full border-y border-white/[0.08] bg-black/10 flex overflow-x-auto md:block snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 gap-4 md:gap-0 py-4 md:py-0">
           
           {/* BARIS 1: Gambar Kiri (40%) | Teks Kanan (60%) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-white/[0.08] items-stretch">
+          <div className="flex flex-col md:grid md:grid-cols-12 items-stretch w-[85vw] md:w-full shrink-0 snap-center border border-white/[0.08] md:border-0 md:border-b border-white/[0.08] bg-neutral-900/30 md:bg-transparent rounded-2xl md:rounded-none overflow-hidden">
             {/* Gambar Kiri */}
             <div className="md:col-span-5 p-6 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/[0.08] relative group overflow-hidden bg-black/20">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
@@ -76,16 +76,16 @@ export default function AboutImperium() {
           </div>
 
           {/* BARIS 2: Teks Kiri (60%) | Gambar Kanan (40%) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 items-stretch">
+          <div className="flex flex-col md:grid md:grid-cols-12 items-stretch w-[85vw] md:w-full shrink-0 snap-center border border-white/[0.08] md:border-0 bg-neutral-900/30 md:bg-transparent rounded-2xl md:rounded-none overflow-hidden">
             {/* Teks Kiri */}
             <div className="md:col-span-7 p-6 md:p-8 flex flex-col justify-center text-left order-2 md:order-1">
               <h3 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] font-extrabold mb-4">Rasionalitas & Tanggung Jawab</h3>
               <p className="text-sm md:text-base leading-relaxed md:leading-loose text-neutral-300">
-                Kami percaya bahwa pemahaman yang rasional, objektif, dan bertanggung jawab adalah kunci utama dalam mengambil keputusan finansial. Imperium Crypto beroperasi secara independen sebagai platform edukasi bebas kebisingan (noise), bukan penyedia nasihat investasi personal, guna mendorong riset mandiri (DYOR) yang mendalam.
+                Kami percaya bahwa pemahaman yang rasional, objektif, and bertanggung jawab adalah kunci utama dalam mengambil keputusan finansial. Imperium Crypto beroperasi secara independen sebagai platform edukasi bebas kebisingan (noise), bukan penyedia nasihat investasi personal, guna mendorong riset mandiri (DYOR) yang mendalam.
               </p>
             </div>
             {/* Gambar Kanan */}
-            <div className="md:col-span-5 p-6 flex items-center justify-center border-t md:border-t-0 md:border-l border-white/[0.08] relative group overflow-hidden bg-black/20 order-1 md:order-2">
+            <div className="md:col-span-5 p-6 flex items-center justify-center border-b md:border-b-0 md:border-l border-white/[0.08] relative group overflow-hidden bg-black/20 order-1 md:order-2">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
               <Image
                 src="/crypto_login.png"
