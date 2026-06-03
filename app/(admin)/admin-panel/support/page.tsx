@@ -13,10 +13,6 @@ interface SupportConfig {
   telegram_link: string
   support_email: string
   operational_hours: string
-  about_content: string
-  privacy_content: string
-  terms_content: string
-  help_content: string
 }
 
 interface FAQ {
@@ -32,11 +28,7 @@ export default function AdminSupportManager() {
     whatsapp_number: '',
     telegram_link: '',
     support_email: '',
-    operational_hours: '',
-    about_content: '',
-    privacy_content: '',
-    terms_content: '',
-    help_content: ''
+    operational_hours: ''
   })
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [loading, setLoading] = useState(true)
@@ -214,25 +206,6 @@ export default function AdminSupportManager() {
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Operasional</label>
             <input type="text" value={config.operational_hours} onChange={(e) => setConfig({ ...config, operational_hours: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600" />
-          </div>
-          <div className="md:col-span-2 border-t border-neutral-800/80 pt-4 mt-2">
-            <h4 className="text-[10px] font-black uppercase text-yellow-500 tracking-widest mb-4">Konten Halaman Dinamis</h4>
-          </div>
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Tentang Kami (About Us)</label>
-            <textarea value={config.about_content || ''} onChange={(e) => setConfig({ ...config, about_content: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-24" />
-          </div>
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Kebijakan Privasi (Privacy Policy)</label>
-            <textarea value={config.privacy_content || ''} onChange={(e) => setConfig({ ...config, privacy_content: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-32" />
-          </div>
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Syarat & Ketentuan (Terms of Service)</label>
-            <textarea value={config.terms_content || ''} onChange={(e) => setConfig({ ...config, terms_content: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-32" />
-          </div>
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-500 tracking-wider ml-1">Deskripsi Halaman Bantuan (Help Desk)</label>
-            <textarea value={config.help_content || ''} onChange={(e) => setConfig({ ...config, help_content: e.target.value })} className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3.5 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-24" />
           </div>
           <button onClick={handleUpdateConfig} disabled={isSaving} className="md:col-span-2 py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 cursor-pointer">
             {isSaving ? <RefreshCw className="animate-spin" size={14} /> : <Save size={14} />} Simpan Perubahan

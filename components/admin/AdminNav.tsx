@@ -13,7 +13,8 @@ import {
   CreditCard,
   MoreHorizontal,
   HelpCircle,
-  LogOut
+  LogOut,
+  FileText
 } from 'lucide-react'
 
 export default function AdminNav() {
@@ -44,8 +45,8 @@ export default function AdminNav() {
     })
   }
 
-  // Cek apakah halaman aktif berada di support atau settings
-  const isMoreActive = pathname === '/admin-panel/support' || pathname === '/admin-panel/settings'
+  // Cek apakah halaman aktif berada di support, settings, atau pages
+  const isMoreActive = pathname === '/admin-panel/support' || pathname === '/admin-panel/settings' || pathname === '/admin-panel/pages'
 
   return (
     <>
@@ -137,6 +138,23 @@ export default function AdminNav() {
             <div className="text-left">
               <p className="text-xs font-black uppercase">Support Manager</p>
               <p className="text-[9px] text-neutral-500 font-bold uppercase mt-0.5 leading-none">Kelola FAQ & Kontak Bantuan</p>
+            </div>
+          </Link>
+
+          {/* Link ke Konten Halaman Dinamis */}
+          <Link 
+            href="/admin-panel/pages" 
+            onClick={() => setIsDrawerOpen(false)}
+            className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
+              pathname === '/admin-panel/pages'
+              ? 'border-yellow-500/30 bg-yellow-500/5 text-yellow-500'
+              : 'border-neutral-900 bg-neutral-900/10 text-white hover:bg-neutral-900/30'
+            }`}
+          >
+            <div className="text-yellow-500"><FileText size={18} /></div>
+            <div className="text-left">
+              <p className="text-xs font-black uppercase">Page Manager</p>
+              <p className="text-[9px] text-neutral-500 font-bold uppercase mt-0.5 leading-none">Kelola Konten Halaman Dinamis</p>
             </div>
           </Link>
 

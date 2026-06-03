@@ -13,7 +13,8 @@ import {
   LogOut,
   Settings,
   Tag,
-  HeadphonesIcon
+  HeadphonesIcon,
+  FileText
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
@@ -73,6 +74,7 @@ export default function Sidebar({ role }: SidebarProps) {
     { name: 'Payment', href: '/admin-panel/payments', icon: <CreditCard size={20} /> },
     { name: 'Pricing', href: '/admin-panel/pricing', icon: <Tag size={20} /> },
     { name: 'Support', href: '/admin-panel/support', icon: <HeadphonesIcon size={20} /> },
+    { name: 'Pages', href: '/admin-panel/pages', icon: <FileText size={20} /> },
     { name: 'Settings', href: '/admin-panel/settings', icon: <Settings size={20} /> },
   ]
 
