@@ -12,6 +12,12 @@ Role ini akan diberikan secara otomatis oleh Bot kepada pengguna yang sukses mel
 
 - `VIP Member` atau `VIP Inner Circle`
 
+### 🔑 Cara Mendapatkan ID Peran (Role ID)
+Untuk memetakan role ini ke file konfigurasi website `.env`:
+1. Aktifkan **Developer Mode** di aplikasi Discord Anda (*User Settings -> Advanced -> Developer Mode*).
+2. Buka **Server Settings -> Roles**, klik kanan peran VIP yang Anda buat, lalu klik **Copy Role ID** (Salin ID Peran).
+3. Tempelkan nilai ID tersebut ke file `.env` pada variabel `DISCORD_VIP_ROLE_ID`.
+
 ### ⚙️ Konfigurasi Permission (Role VIP Member)
 
 Aktifkan hanya izin standar untuk anggota komunitas biasa. **Jangan berikan izin administratif.**
@@ -63,6 +69,11 @@ Role ini biasanya otomatis dibuat saat Anda mengundang Bot menggunakan OAuth2 UR
 ### 📝 Rekomendasi Nama Role
 
 - `Imperium Bot` atau `Imperium Crypto Bot`
+
+### 🔗 Link Undangan Bot Resmi (Bot Invite Link)
+Gunakan link berikut untuk mengundang bot ini masuk ke Server VIP Anda dengan izin default yang diperlukan:
+👉 [Link Undang Bot Imperium](https://discord.com/oauth2/authorize?client_id=1511566783566446683&permissions=268436483&integration_type=0&scope=bot)
+*(Pastikan Anda memilih Server VIP yang benar saat mengundang).*
 
 ### ⚙️ Konfigurasi Permission Penting (Role Bot)
 
@@ -200,3 +211,18 @@ Menu **General Information** berisi informasi dasar aplikasi Anda.
 Bagian berikut tidak perlu diatur untuk kebutuhan aplikasi kita saat ini:
 * **Webhooks** (di menu *Webhooks*).
 * **Presence Intent** dan **Message Content Intent** (di menu *Bot -> Privileged Gateway Intents*). Hanya **Server Members Intent** yang wajib aktif.
+
+---
+
+## 7. Konfigurasi File Environment (`.env`)
+
+Untuk menghubungkan seluruh integrasi ini ke website, pastikan variabel berikut diatur dengan benar di file `.env` root proyek Anda:
+
+```env
+DISCORD_CLIENT_ID="1511566783566446683"
+DISCORD_CLIENT_SECRET="C2c_dh8SQqJNBb1ciBPyEc9e6a85wInW"
+DISCORD_BOT_TOKEN="MTUxMTU2Njc4MzU2NjQ0NjY4Mw.G31_qW.KGkeiBVPTWx2txH0TKg9b8dHA5Wc4-0QcuEd1Q"
+DISCORD_VIP_GUILD_ID="ID_SERVER_VIP_ANDA"
+DISCORD_VIP_ROLE_ID="ID_ROLE_VIP_ANDA"
+DISCORD_REDIRECT_URI="https://<domain-tunnel-anda>.trycloudflare.com/api/discord/callback"
+```
