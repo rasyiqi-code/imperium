@@ -100,7 +100,10 @@ export async function syncMidtransPaymentMethods(): Promise<Response> {
 
   const isProd = mtSettings?.midtrans_is_production === true
 
-  const probeResult = await paymentManager.probePaymentMethods('midtrans', {
+  // Panggil probePaymentMethods langsung dari MidtransProvider
+  // untuk menghindari masalah resolusi tipe di environment Vercel
+  const midtransProvider = paymentManager.getMidtransProvider()
+  const probeResult = await midtransProvider.probePaymentMethods({
     merchantCode: cKey,
     apiKey: sKey,
     sandbox: !isProd,
