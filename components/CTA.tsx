@@ -25,17 +25,17 @@ export default function CTA() {
         </p>
 
         {/* CTA Button */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs mx-auto sm:max-w-none">
           <Link 
             href="/register"
-            className="group relative overflow-hidden px-8 py-4 bg-[#d4af37] hover:bg-[#b8962e] text-black font-black text-xs uppercase tracking-[0.2em] rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(212,175,55,0.15)] hover:shadow-[0_10px_40px_rgba(212,175,55,0.35)]"
+            className="group relative overflow-hidden w-full sm:w-auto text-center px-8 py-4 bg-[#d4af37] hover:bg-[#b8962e] text-black font-black text-xs uppercase tracking-[0.2em] rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(212,175,55,0.15)] hover:shadow-[0_10px_40px_rgba(212,175,55,0.35)]"
           >
             <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer" />
             Gabung Sekarang
           </Link>
           <Link 
             href="/#pricing"
-            className="px-8 py-4 border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10 hover:text-[#d4af37] font-black text-xs uppercase tracking-[0.2em] rounded-full transition-all duration-300 active:scale-95"
+            className="w-full sm:w-auto text-center px-8 py-4 border border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-[#d4af37]/45 hover:bg-[#d4af37]/10 hover:text-[#d4af37] font-black text-xs uppercase tracking-[0.2em] rounded-full transition-all duration-300 active:scale-95"
           >
             Lihat Paket VIP
           </Link>

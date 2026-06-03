@@ -19,7 +19,7 @@ export default function CoreValues() {
           </h2>
 
           {/* Deskripsi Pengantar */}
-          <p className="mx-auto mb-16 max-w-3xl text-sm md:text-base leading-relaxed md:leading-loose text-neutral-455 text-center">
+          <p className="mx-auto mb-10 md:mb-16 max-w-3xl text-sm md:text-base leading-relaxed md:leading-loose text-neutral-455 text-center">
             Imperium Crypto dibangun di atas prinsip rasionalitas, transparansi,
             dan visi jangka panjang dalam memahami dinamika ekonomi digital.
             Nilai-nilai ini menjadi landasan dalam setiap konten, diskusi, dan

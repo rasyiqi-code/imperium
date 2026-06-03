@@ -83,7 +83,7 @@ export default function Hero() {
 
             {/* SVG Grid Mesh Corong Radial (Black Hole Data) */}
             <svg
-              className="absolute w-[580px] h-[340px] text-yellow-500/[0.04] pointer-events-none z-0"
+              className="absolute w-[320px] sm:w-[480px] md:w-[580px] h-[200px] sm:h-[300px] md:h-[340px] text-yellow-500/[0.04] pointer-events-none z-0"
               viewBox="0 0 500 300"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +118,7 @@ export default function Hero() {
             </div>
 
             {/* Koin Kiri Melayang: Ethereum + Tooltip Sinyal */}
-            <div className="absolute top-[110px] left-[8%] md:left-[15%] z-10 animate-float-delayed flex items-center gap-3">
+            <div className="hidden sm:flex absolute top-[110px] left-[8%] md:left-[15%] z-10 animate-float-delayed items-center gap-3">
               <div className="p-2.5 rounded-full bg-black/80 border border-white/[0.08] shadow-[0_0_20px_rgba(255,255,255,0.03)]">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-neutral-300 font-bold text-sm">
                   Ξ
@@ -134,7 +134,7 @@ export default function Hero() {
             </div>
 
             {/* Koin Kanan Melayang: Solana + Tooltip Sinyal */}
-            <div className="absolute top-[60px] right-[8%] md:right-[15%] z-10 animate-float-slow flex items-center gap-3">
+            <div className="hidden sm:flex absolute top-[60px] right-[8%] md:right-[15%] z-10 animate-float-slow items-center gap-3">
 
               {/* Tooltip Info */}
               <div className="hidden sm:block bg-black/85 border border-white/[0.08] rounded-2xl p-3.5 text-left w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">

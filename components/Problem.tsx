@@ -19,7 +19,7 @@ export default function Problem() {
           </h2>
 
           {/* Deskripsi Pengantar */}
-          <p className="mx-auto mb-16 max-w-3xl text-sm md:text-base leading-relaxed md:leading-loose text-neutral-450 text-center">
+          <p className="mx-auto mb-10 md:mb-16 max-w-3xl text-sm md:text-base leading-relaxed md:leading-loose text-neutral-450 text-center">
             Pasar crypto dipenuhi narasi sensasional, opini tanpa dasar data,
             dan euforia jangka pendek. Banyak orang masuk tanpa pemahaman,
             tanpa konteks, dan tanpa mindset finansial yang tepat — berujung
