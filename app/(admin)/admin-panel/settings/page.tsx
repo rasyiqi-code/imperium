@@ -595,7 +595,7 @@ export default function AdminSettings() {
                 <label className="text-[10px] font-bold text-neutral-400 block">Discord VIP Role ID</label>
                 <input 
                   type="text"
-                  placeholder="1511592554963931196"
+                  placeholder="1511636275164090449"
                   value={discordVipRoleId}
                   onChange={(e) => setDiscordVipRoleId(e.target.value)}
                   className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
