@@ -63,7 +63,7 @@ export default function AboutImperium() {
                 alt="Imperium Crypto Chart"
                 width={500}
                 height={330}
-                className="w-full rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
+                className="w-full aspect-[3/2] rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
               />
             </div>
             {/* Teks Kanan */}
@@ -92,7 +92,7 @@ export default function AboutImperium() {
                 alt="Imperium Crypto Community"
                 width={500}
                 height={330}
-                className="w-full rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
+                className="w-full aspect-[3/2] rounded-none object-cover border border-white/[0.08] filter grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-[1.02]"
               />
             </div>
           </div>
