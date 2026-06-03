@@ -5,20 +5,20 @@ export default function Hero() {
     <section className="relative text-white overflow-hidden bg-[#0b0b0b]">
       {/* Ambient glow tambahan khusus untuk Hero */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-yellow-500/[0.03] rounded-full blur-[150px] pointer-events-none z-0" />
-      
+
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 pb-12 min-h-[calc(100vh-80px)] flex flex-col justify-between">
-        
+
         {/* KONTEN UTAMA: Heading, Deskripsi & CTA */}
         <div className="flex-grow flex flex-col justify-center items-center my-auto py-8 text-center">
-          
+
           {/* Logo Watermark & Sirkuit Radial di belakang Headline */}
           <div className="relative mb-6 w-full flex items-center justify-center min-h-[180px] md:min-h-[220px]">
             {/* Sirkuit Radial SVG melambangkan jaringan dan sinyal data */}
             <div className="absolute inset-y-0 left-[20%] md:left-[30%] -translate-x-1/2 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
-              <svg 
-                className="absolute w-[280px] h-[280px] md:w-[380px] md:h-[380px] text-yellow-500/25 animate-rotate-slow" 
-                viewBox="0 0 200 200" 
-                fill="none" 
+              <svg
+                className="absolute w-[280px] h-[280px] md:w-[380px] md:h-[380px] text-yellow-500/25 animate-rotate-slow"
+                viewBox="0 0 200 200"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <circle cx="100" cy="100" r="82" stroke="currentColor" strokeWidth="0.8" strokeDasharray="6 8" />
@@ -80,18 +80,18 @@ export default function Hero() {
 
           {/* ELEMEN INTERAKTIF: 3D Grid Mesh Corong & Koin Melayang */}
           <div className="relative w-full max-w-2xl mx-auto h-[220px] md:h-[260px] flex items-center justify-center overflow-visible z-10 mt-2">
-            
+
             {/* SVG Grid Mesh Corong Radial (Black Hole Data) */}
-            <svg 
-              className="absolute w-[580px] h-[340px] text-yellow-500/[0.04] pointer-events-none z-0" 
-              viewBox="0 0 500 300" 
-              fill="none" 
+            <svg
+              className="absolute w-[580px] h-[340px] text-yellow-500/[0.04] pointer-events-none z-0"
+              viewBox="0 0 500 300"
+              fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <ellipse cx="250" cy="220" rx="240" ry="70" stroke="currentColor" strokeWidth="0.6" strokeDasharray="3 6" />
               <ellipse cx="250" cy="220" rx="190" ry="55" stroke="currentColor" strokeWidth="0.5" />
               <ellipse cx="250" cy="220" rx="140" ry="40" stroke="currentColor" strokeWidth="0.4" strokeDasharray="5 3" />
-              <ellipse cx="250" cy="220" rx="90"  ry="25" stroke="currentColor" strokeWidth="0.3" />
+              <ellipse cx="250" cy="220" rx="90" ry="25" stroke="currentColor" strokeWidth="0.3" />
               <circle cx="250" cy="220" r="10" stroke="currentColor" strokeWidth="0.3" />
               <path d="M 10 220 C 100 220, 200 220, 250 220" stroke="currentColor" strokeWidth="0.4" />
               <path d="M 490 220 C 400 220, 300 220, 250 220" stroke="currentColor" strokeWidth="0.4" />
@@ -124,7 +124,7 @@ export default function Hero() {
                   Ξ
                 </div>
               </div>
-              
+
               {/* Tooltip Info */}
               <div className="hidden sm:block bg-black/85 border border-white/[0.08] rounded-2xl p-3.5 text-left w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
                 <div className="text-[10px] font-bold text-neutral-400">Ethereum Signal</div>
@@ -135,7 +135,7 @@ export default function Hero() {
 
             {/* Koin Kanan Melayang: Solana + Tooltip Sinyal */}
             <div className="absolute top-[60px] right-[8%] md:right-[15%] z-10 animate-float-slow flex items-center gap-3">
-              
+
               {/* Tooltip Info */}
               <div className="hidden sm:block bg-black/85 border border-white/[0.08] rounded-2xl p-3.5 text-left w-36 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
                 <div className="text-[10px] font-bold text-neutral-400">Bitcoin Analysis</div>
@@ -157,9 +157,9 @@ export default function Hero() {
         {/* PARTNER STRIP DI DASAR HERO: Grayscale Logos & Get Started CTA */}
         <div className="mt-8 pt-8 border-t border-white/[0.04] flex flex-col md:flex-row justify-between items-center gap-6 w-full relative z-20">
           {/* Deskripsi Singkat */}
-          <div className="text-center md:text-left max-w-xs">
+          <div className="text-center md:text-left max-w-md md:max-w-none md:whitespace-nowrap">
             <p className="text-[9px] text-neutral-500 uppercase tracking-widest leading-relaxed font-bold">
-              Media Digital Terpercaya & Platform Edukasi Crypto Independen
+              Media Terpercaya & Platform Edukasi Crypto Independen
             </p>
           </div>
 
@@ -173,7 +173,7 @@ export default function Hero() {
 
           {/* CTA Cepat Kanan */}
           <div>
-            <a 
+            <a
               href="#pricing"
               className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-yellow-500/10 hover:border-yellow-500/35 hover:text-yellow-400 px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-neutral-300 transition-all duration-300 active:scale-95 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
             >
