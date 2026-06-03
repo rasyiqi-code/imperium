@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 /* ===============================
@@ -71,6 +71,11 @@ p {
 .bg-gold {
   background-color: var(--gold-primary);
   color: #0b0b0b;
+}
+
+.font-serif-italic {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
 }
 
 
@@ -229,4 +234,26 @@ p {
 .bg-aurora-gold {
   background: radial-gradient(circle, rgba(234, 179, 8, 0.08) 0%, rgba(234, 179, 8, 0.02) 50%, transparent 100%);
 }
+
+/* Animasi mengambang melayang lembut untuk elemen 3D koin/tooltip */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
 

@@ -10,15 +10,15 @@ const Navbar: React.FC = () => {
 
   // Link menu untuk mempermudah maintenance
   const navLinks = [
-    { name: 'Features', href: '#features' },
+    { name: 'Core Values', href: '#values' },
     { name: 'Pricing', href: '#pricing' },
     { name: 'About Us', href: '#about' },
   ];
 
   return (
-    <nav className="bg-[#0a0a0a] border-b border-[#d4af37]/20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <nav className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="max-w-5xl mx-auto rounded-full border border-white/[0.06] bg-black/60 backdrop-blur-md px-6 py-1 shadow-[0_10px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:border-white/[0.1]">
+        <div className="flex justify-between items-center h-16">
           
           {/* KIRI: Logo */}
           <div className="shrink-0 flex items-center">
@@ -26,10 +26,10 @@ const Navbar: React.FC = () => {
               <Image 
                 src="/logo.png" 
                 alt="Imperium Crypto Logo" 
-                width={70} 
-                height={45} 
+                width={56} 
+                height={36} 
                 priority
-                className="cursor-pointer object-contain"
+                className="cursor-pointer object-contain transition-transform duration-300 hover:scale-105"
               />
             </Link>
           </div>
@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
               <Link 
                 key={link.name}
                 href={link.href} 
-                className="text-gray-300 hover:text-[#d4af37] transition-colors font-medium text-sm tracking-wide"
+                className="text-neutral-400 hover:text-yellow-400 transition-colors font-semibold text-xs tracking-wider uppercase"
               >
                 {link.name}
               </Link>
@@ -51,13 +51,13 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-6">
             <Link 
               href="/login" 
-              className="text-[#d4af37] font-medium hover:text-white transition-colors text-sm"
+              className="text-[#d4af37]/80 font-bold hover:text-white transition-colors text-xs tracking-wider uppercase"
             >
               Login
             </Link>
             <Link 
               href="#pricing" 
-              className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-6 py-2.5 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(212,175,55,0.2)] active:scale-95"
+              className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-5 py-2 rounded-full font-bold text-xs uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95"
             >
               Gabung Sekarang
             </Link>
@@ -67,41 +67,41 @@ const Navbar: React.FC = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-[#d4af37] focus:outline-none p-2"
+              className="text-[#d4af37] focus:outline-none p-2 hover:bg-white/5 rounded-full transition-colors"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu (Dropdown) */}
+      {/* Mobile Menu (Dropdown) - Dibuat melayang terpisah dengan gaya serasi */}
       {isOpen && (
-        <div className="md:hidden bg-[#0f0f0f] border-b border-[#d4af37]/20 pb-6 px-4 animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex flex-col space-y-4 pt-4">
+        <div className="absolute top-24 left-4 right-4 bg-[#0f0f0f]/95 border border-white/[0.08] rounded-3xl pb-6 px-6 pt-4 backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.5)] flex flex-col space-y-4 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
+          <div className="flex flex-col space-y-4">
             {navLinks.map((link) => (
               <Link 
                 key={link.name}
                 href={link.href} 
                 onClick={() => setIsOpen(false)}
-                className="text-gray-300 py-2 hover:text-[#d4af37]"
+                className="text-neutral-300 py-2 hover:text-[#d4af37] font-semibold text-xs tracking-wider uppercase transition-colors"
               >
                 {link.name}
               </Link>
             ))}
-            <hr className="border-[#d4af37]/10" />
+            <hr className="border-white/[0.06]" />
             <Link 
               href="/login" 
               onClick={() => setIsOpen(false)}
-              className="text-[#d4af37] py-2"
+              className="text-[#d4af37] py-2 font-bold text-xs tracking-wider uppercase"
             >
               Login
             </Link>
             <Link 
               href="#pricing" 
               onClick={() => setIsOpen(false)}
-              className="bg-[#d4af37] text-black text-center py-3 rounded-lg font-bold"
+              className="bg-[#d4af37] text-black text-center py-3 rounded-2xl font-bold text-xs tracking-wider uppercase shadow-[0_4px_15px_rgba(212,175,55,0.15)]"
             >
               Gabung Sekarang
             </Link>
