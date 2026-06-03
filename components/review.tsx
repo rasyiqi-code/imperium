@@ -1,5 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
 'use client'
 
 import React from 'react';
@@ -8,11 +6,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import Image from 'next/image';
 
-// @ts-ignore
 import 'swiper/css';
-// @ts-ignore
 import 'swiper/css/pagination';
-// @ts-ignore
 import 'swiper/css/navigation';
 
 const reviews = [
