@@ -126,10 +126,10 @@ export default function AdminPageManager() {
   const textValue = config[activeKey] || ''
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
 
       {/* Header Halaman */}
-      <div className="border-b border-neutral-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="hidden md:flex border-b border-neutral-800 pb-4 flex-row justify-between items-center gap-4">
         <div>
           <h1 className="text-xl font-black uppercase tracking-tight text-white flex items-center gap-2">
             Page <span className="text-yellow-500">Manager</span>
@@ -139,21 +139,21 @@ export default function AdminPageManager() {
         <button 
           onClick={handleUpdateConfig} 
           disabled={isSaving} 
-          className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 cursor-pointer"
+          className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 cursor-pointer"
         >
           {isSaving ? <RefreshCw className="animate-spin" size={14} /> : <Save size={14} />} Simpan Semua Perubahan
         </button>
       </div>
 
-      {/* Grid Tab Navigation */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Tab Navigation — scrollable di mobile, grid di desktop */}
+      <div className="flex md:grid md:grid-cols-4 gap-2 md:gap-3 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
         {tabMeta.map((tab) => {
           const isActive = activeTab === tab.id
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`p-4 rounded-2xl border text-left transition-all duration-300 relative group cursor-pointer ${
+              className={`shrink-0 p-2.5 md:p-4 rounded-xl md:rounded-2xl border text-left transition-all duration-300 relative group cursor-pointer ${
                 isActive 
                   ? 'border-yellow-500/40 bg-yellow-500/[0.03] shadow-[0_4px_20px_rgba(234,179,8,0.05)]' 
                   : 'border-neutral-800 bg-neutral-950/20 hover:border-neutral-700/50'
@@ -162,13 +162,13 @@ export default function AdminPageManager() {
               {isActive && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-yellow-500" />
               )}
-              <div className="flex items-center gap-2.5">
-                <div className={`p-2 rounded-xl transition-colors duration-300 ${isActive ? 'bg-yellow-500 text-black' : 'bg-neutral-900 text-neutral-400 group-hover:text-yellow-500'}`}>
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 md:p-2 rounded-lg md:rounded-xl transition-colors duration-300 ${isActive ? 'bg-yellow-500 text-black' : 'bg-neutral-900 text-neutral-400 group-hover:text-yellow-500'}`}>
                   {tab.icon}
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-xs font-black uppercase tracking-wide leading-none ${isActive ? 'text-white' : 'text-neutral-400 group-hover:text-white'}`}>{tab.label}</p>
-                  <p className="text-[9px] text-neutral-500 font-bold truncate mt-1 leading-none">{tab.desc}</p>
+                  <p className={`text-[10px] md:text-xs font-black uppercase tracking-wide leading-none ${isActive ? 'text-white' : 'text-neutral-400 group-hover:text-white'}`}>{tab.label}</p>
+                  <p className="text-[8px] md:text-[9px] text-neutral-500 font-bold truncate mt-0.5 md:mt-1 leading-none hidden md:block">{tab.desc}</p>
                 </div>
               </div>
             </button>
@@ -180,36 +180,34 @@ export default function AdminPageManager() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Kolom Editor (Kiri) */}
-        <div className="lg:col-span-7 bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center border-b border-neutral-900 pb-3">
-              <div>
-                <h3 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+        <div className="lg:col-span-7 bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-xl">
+          <div className="space-y-3 md:space-y-4">
+            <div className="flex justify-between items-start gap-2 border-b border-neutral-900 pb-2 md:pb-3">
+              <div className="min-w-0">
+                <h3 className="text-[10px] md:text-xs font-black uppercase tracking-wider text-white flex items-center gap-2 leading-tight">
                   Edit Konten: {activeMeta?.name}
                 </h3>
-                <p className="text-[9px] text-neutral-500 font-bold mt-1 tracking-wider uppercase">Gunakan paragraf baru (Enter) untuk spasi pemisah konten yang indah</p>
+                <p className="text-[8px] md:text-[9px] text-neutral-500 font-bold mt-0.5 md:mt-1 tracking-wider uppercase leading-tight">Gunakan paragraf baru (Enter) untuk spasi pemisah konten yang indah</p>
               </div>
-              <span className="text-[9px] font-bold px-2 py-1 rounded bg-neutral-900 text-neutral-400 border border-neutral-800 uppercase tracking-widest leading-none shrink-0">
+              <span className="text-[8px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-neutral-900 text-neutral-400 border border-neutral-800 uppercase tracking-widest leading-none shrink-0">
                 {textValue.length} Karakter
               </span>
             </div>
 
-            <div className="space-y-1">
-              <textarea 
-                value={textValue} 
-                onChange={(e) => setConfig({ ...config, [activeKey]: e.target.value })} 
-                className="w-full bg-neutral-900/10 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-2xl p-4 text-xs font-medium outline-none text-white placeholder-neutral-600 min-h-[350px] leading-relaxed font-mono" 
-                placeholder={`Tulis konten halaman ${activeMeta?.name.toLowerCase()} di sini...`}
-              />
-            </div>
+            <textarea 
+              value={textValue} 
+              onChange={(e) => setConfig({ ...config, [activeKey]: e.target.value })} 
+              className="w-full bg-neutral-900/10 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl md:rounded-2xl p-3 md:p-4 text-xs font-medium outline-none text-white placeholder-neutral-600 min-h-[200px] md:min-h-[350px] leading-relaxed font-mono" 
+              placeholder={`Tulis konten halaman ${activeMeta?.name.toLowerCase()} di sini...`}
+            />
           </div>
 
-          <div className="mt-6 pt-4 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <span className="text-[9px] font-bold text-neutral-500 tracking-wider">Perubahan langsung ter-render di Live Preview</span>
+          <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-neutral-900 flex justify-between items-center gap-3">
+            <span className="text-[8px] md:text-[9px] font-bold text-neutral-500 tracking-wider hidden sm:block">Perubahan langsung ter-render di Live Preview</span>
             <button 
               onClick={handleUpdateConfig} 
               disabled={isSaving} 
-              className="w-full sm:w-auto px-5 py-3 bg-neutral-900 hover:bg-neutral-850 text-yellow-500 hover:text-yellow-400 border border-neutral-800 hover:border-neutral-700 font-black rounded-xl text-[10px] tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 cursor-pointer"
+              className="w-full sm:w-auto px-5 py-2.5 md:py-3 bg-neutral-900 hover:bg-neutral-850 text-yellow-500 hover:text-yellow-400 border border-neutral-800 hover:border-neutral-700 font-black rounded-xl text-[10px] tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 cursor-pointer"
             >
               {isSaving ? <RefreshCw className="animate-spin" size={12} /> : <Save size={12} />} Simpan Halaman Ini
             </button>
