@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="relative text-white overflow-hidden bg-[#0b0b0b]">
       {/* Ambient glow tambahan khusus untuk Hero */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-yellow-500/[0.03] rounded-full blur-[150px] pointer-events-none z-0" />
+      <div className="hidden sm:block absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-yellow-500/[0.03] rounded-full blur-[150px] pointer-events-none z-0" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 pb-12 min-h-[calc(100vh-80px)] flex flex-col justify-between">
 
@@ -14,7 +14,7 @@ export default function Hero() {
           {/* Logo Watermark & Sirkuit Radial di belakang Headline */}
           <div className="relative mb-6 w-full flex items-center justify-center min-h-[180px] md:min-h-[220px]">
             {/* Sirkuit Radial SVG melambangkan jaringan dan sinyal data */}
-            <div className="absolute inset-y-0 left-[20%] md:left-[30%] -translate-x-1/2 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
+            <div className="absolute inset-y-0 left-1/2 md:left-[30%] -translate-x-1/2 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
               <svg
                 className="absolute w-[280px] h-[280px] md:w-[380px] md:h-[380px] text-yellow-500/25 animate-rotate-slow"
                 viewBox="0 0 200 200"

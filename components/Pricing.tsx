@@ -51,7 +51,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="relative overflow-hidden pt-12 pb-0 md:pt-16 md:pb-0 bg-[#0b0b0b]">
       {/* Ambient glow tipis di latar belakang */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
+      <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
         

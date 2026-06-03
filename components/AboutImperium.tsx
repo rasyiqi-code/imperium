@@ -4,7 +4,7 @@ export default function AboutImperium() {
   return (
     <section id="about" className="relative overflow-hidden bg-[#0b0b0b]">
       {/* Ambient glow redup di latar belakang */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
+      <div className="hidden sm:block absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-yellow-500/[0.015] rounded-full blur-[150px] pointer-events-none z-0" />
       
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-12 pb-0 md:pt-16 md:pb-0">
         

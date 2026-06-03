@@ -7,7 +7,7 @@ export default function CTA() {
   return (
     <section className="relative overflow-hidden py-16 md:py-24 bg-[#0b0b0b] text-center border-t border-white/[0.04]">
       {/* Background ambient gold glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-yellow-500/[0.025] rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-yellow-500/[0.025] rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-8">
         

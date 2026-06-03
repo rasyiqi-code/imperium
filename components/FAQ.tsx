@@ -71,7 +71,7 @@ export default function FAQ() {
   return (
     <section id="faq" className="relative overflow-hidden pt-12 pb-0 md:pt-16 md:pb-0 bg-[#0b0b0b]">
       {/* Ambient glow tipis */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-500/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-500/[0.01] rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-6">
         

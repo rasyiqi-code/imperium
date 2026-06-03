@@ -83,9 +83,9 @@ export default function RootLayout({
         <div className="absolute inset-0 bg-grid-pattern pointer-events-none z-0" />
         
         {/* Ambient Aurora Glows - Menyediakan kedalaman visual 3D yang dinamis di latar belakang */}
-        <div className="absolute top-[-100px] left-[-150px] w-[500px] h-[500px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[150px] opacity-60 animate-pulse-slow" />
-        <div className="absolute top-[35%] right-[-150px] w-[600px] h-[600px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[180px] opacity-45 animate-pulse-slow" />
-        <div className="absolute bottom-[10%] left-[-200px] w-[550px] h-[550px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[160px] opacity-40 animate-pulse-slow" />
+        <div className="hidden sm:block absolute top-[-100px] left-[-150px] w-[500px] h-[500px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[150px] opacity-60 animate-pulse-slow" />
+        <div className="hidden sm:block absolute top-[35%] right-[-150px] w-[600px] h-[600px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[180px] opacity-45 animate-pulse-slow" />
+        <div className="hidden sm:block absolute bottom-[10%] left-[-200px] w-[550px] h-[550px] rounded-full bg-aurora-gold pointer-events-none z-0 blur-[160px] opacity-40 animate-pulse-slow" />
         
         <div className="relative z-10 min-h-screen">
           <ModalProvider>
