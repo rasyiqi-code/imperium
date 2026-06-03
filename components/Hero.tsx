@@ -14,9 +14,9 @@ export default function Hero() {
           {/* Logo Watermark & Sirkuit Radial di belakang Headline */}
           <div className="relative mb-6 w-full flex items-center justify-center min-h-[180px] md:min-h-[220px]">
             {/* Sirkuit Radial SVG melambangkan jaringan dan sinyal data */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 opacity-[0.12]">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 opacity-40">
               <svg 
-                className="absolute w-[280px] h-[280px] md:w-[360px] md:h-[360px] text-yellow-500/20 animate-rotate-slow" 
+                className="absolute w-[280px] h-[280px] md:w-[380px] md:h-[380px] text-yellow-500/25 animate-rotate-slow" 
                 viewBox="0 0 200 200" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
@@ -32,13 +32,13 @@ export default function Hero() {
               </svg>
 
               {/* Logo utama aplikasi sebagai watermark */}
-              <div className="relative p-4 rounded-full bg-black/40 border border-yellow-500/10 shadow-[0_0_50px_rgba(234,179,8,0.08)]">
+              <div className="relative p-4 rounded-full bg-black/60 border border-yellow-500/15 shadow-[0_0_50px_rgba(234,179,8,0.15)]">
                 <Image
                   src="/logo.png"
                   alt="Watermark Logo"
-                  width={90}
-                  height={90}
-                  className="rounded-full object-contain filter grayscale opacity-50"
+                  width={100}
+                  height={100}
+                  className="rounded-full object-contain opacity-45"
                   priority
                 />
               </div>
