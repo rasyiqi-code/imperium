@@ -70,7 +70,7 @@ Izin berikut **wajib diaktifkan** agar sistem otomatisasi web Next.js dapat beke
 
 #### **General Server Permissions**
 
-- [ ] **Manage Roles** (Wajib! Untuk memberikan/mencabut role `VIP Member`)
+- [x] **Manage Roles** (Wajib! Untuk memberikan/mencabut role `VIP Member`)
 - [x] **View Channels** (Wajib! Agar bot dapat melihat saluran)
 
 #### **Membership Permissions**
