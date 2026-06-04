@@ -52,9 +52,10 @@ async function main() {
     try {
       console.log(`Menjalankan: ${sql.substring(0, 60)}...`);
       await prisma.$executeRawUnsafe(sql);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error(`Gagal menjalankan SQL: ${sql}`);
-      console.error(`Error: ${error.message}`);
+      console.error(`Error: ${err.message}`);
       process.exit(1);
     }
   }
