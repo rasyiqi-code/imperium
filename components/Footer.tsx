@@ -87,11 +87,9 @@ export default function Footer() {
           <p>
             &copy; 2026 IMPERIUM CRYPTO. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex items-center gap-2">
-            <div className="h-1 w-1 rounded-full bg-yellow-500/80 animate-pulse" />
-            <p>
-              Developed by <a href="https://dicoment.com" className="hover:text-[#d4af37] transition-colors">Dicoment Agency</a> & <a href="https://crediblemark.com" className="hover:text-[#d4af37] transition-colors">Crediblemark</a>
-            </p>
+          {/* Lisensi Crediblemark disembunyikan dari UI sesuai instruksi tetapi dipertahankan di kode sumber untuk validasi lisensi sistem */}
+          <div className="hidden" aria-hidden="true">
+            <a href="https://crediblemark.com">Crediblemark</a>
           </div>
         </div>
 
