@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { prisma } from '@/lib/prisma'
 import { getAdminSettings } from '@/lib/adminSettings'
+import { cookies } from 'next/headers'
 
 /**
  * Route API Callback OAuth2 Discord.
@@ -31,12 +32,25 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
     const errorParam = searchParams.get('error')
+    const stateParam = searchParams.get('state')
 
     // Jika pengguna menolak otorisasi atau terjadi error dari Discord
     if (errorParam || !code) {
       console.warn('Discord Auth Callback: Otorisasi ditolak oleh user atau code tidak ada.', errorParam)
       return NextResponse.redirect(new URL('/dashboard?discord=error&message=auth_denied', baseUrl))
     }
+
+    // Verifikasi CSRF dengan membandingkan parameter state dari Discord dengan state di cookie
+    const cookieStore = await cookies()
+    const savedState = cookieStore.get('discord_oauth_state')?.value
+
+    if (!stateParam || !savedState || stateParam !== savedState) {
+      console.warn('Discord Auth Callback: CSRF state mismatch or missing.')
+      return NextResponse.redirect(new URL('/dashboard?discord=error&message=csrf_invalid', baseUrl))
+    }
+
+    // Hapus cookie state setelah berhasil diverifikasi untuk mencegah replay attack
+    cookieStore.delete('discord_oauth_state')
 
     // 1. Validasi sesi pengguna Supabase secara server-side
     const clientSupabase = await createSupabaseServerClient()

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAdminSettings } from '@/lib/adminSettings'
+import { cookies } from 'next/headers'
 
 /**
  * Route API untuk menginisialisasi alur otorisasi OAuth2 Discord.
@@ -20,12 +21,26 @@ export async function GET() {
     )
   }
 
-  // Menyusun URL otorisasi resmi Discord
+  // Generate token acak kriptografis untuk mencegah serangan CSRF (Cross-Site Request Forgery)
+  const state = crypto.randomUUID()
+
+  // Simpan state di cookie dengan durasi kedaluwarsa pendek (5 menit)
+  const cookieStore = await cookies()
+  cookieStore.set('discord_oauth_state', state, {
+    path: '/',
+    maxAge: 300, // 5 menit
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  })
+
+  // Menyusun URL otorisasi resmi Discord dengan menyertakan parameter state
   // Scope 'identify' untuk mengambil detail profil/ID user Discord
   // Scope 'guilds.join' untuk secara otomatis memasukkan user ke server
   const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri
-  )}&response_type=code&scope=identify%20guilds.join`
+  )}&response_type=code&scope=identify%20guilds.join&state=${state}`
 
   return NextResponse.redirect(oauthUrl)
 }
+
