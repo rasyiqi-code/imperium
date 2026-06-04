@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { getAdminSettings } from '@/lib/adminSettings';
 
 export async function POST(request: Request) {
   try {
@@ -22,8 +23,9 @@ export async function POST(request: Request) {
     const httpMethod = 'POST';
     const endpointPath = '/api/webhook/bisnap';
 
-    // 1. Dapatkan Public Key Midtrans dari environment variable
-    const midtransPublicKey = process.env.MIDTRANS_PUBLIC_KEY;
+    // 1. Dapatkan Public Key Midtrans dari database admin_settings
+    const settings = await getAdminSettings();
+    const midtransPublicKey = settings?.midtrans_public_key;
 
     if (!midtransPublicKey) {
       console.warn('BI SNAP Webhook Warning: MIDTRANS_PUBLIC_KEY is not configured. Signature verification skipped.');
