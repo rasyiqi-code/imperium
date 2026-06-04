@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 export default function MobileNav() {
   const pathname = usePathname()
-  const [plan, setPlan] = useState<string>('free')
+  const [plan, setPlan] = useState<string>('loading')
 
   useEffect(() => {
     async function getPlan() {
@@ -23,10 +23,15 @@ export default function MobileNav() {
           const data = await res.json()
           if (res.ok && data.plan) {
             setPlan(data.plan)
+          } else {
+            setPlan('free')
           }
+        } else {
+          setPlan('free')
         }
       } catch (err) {
         console.error("Gagal mendapatkan plan:", err)
+        setPlan('free')
       }
     }
     getPlan()
@@ -34,7 +39,7 @@ export default function MobileNav() {
 
   const navItems = [
     { name: 'Dash', href: '/dashboard', icon: LayoutDashboard },
-    ...(plan !== 'vip' && plan !== 'admin' ? [
+    ...(plan !== 'vip' && plan !== 'admin' && plan !== 'loading' ? [
       { name: 'VIP', href: '/dashboard/upgrade', icon: Crown }
     ] : []),
     { name: 'Group', href: '/dashboard/group', icon: MessageSquare },

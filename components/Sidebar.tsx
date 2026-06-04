@@ -25,7 +25,7 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname()
-  const [userData, setUserData] = useState({ email: '', name: '', plan: 'free' })
+  const [userData, setUserData] = useState({ email: '', name: '', plan: 'loading' })
 
   useEffect(() => {
     async function getUser() {
@@ -48,10 +48,15 @@ export default function Sidebar({ role }: SidebarProps) {
               name: profileData?.full_name || user.email?.split('@')[0] || 'User',
               plan: isVip ? 'vip' : (profileData?.plan || 'free')
             })
+          } else {
+            setUserData(prev => ({ ...prev, plan: 'free' }))
           }
         } catch (err) {
           console.error("Gagal mendapatkan data user:", err)
+          setUserData(prev => ({ ...prev, plan: 'free' }))
         }
+      } else {
+        setUserData(prev => ({ ...prev, plan: 'free' }))
       }
     }
     getUser()
@@ -59,7 +64,7 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const userMenus = [
     { name: 'Dash', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
-    ...(userData.plan !== 'vip' && userData.plan !== 'admin' ? [
+    ...(userData.plan !== 'vip' && userData.plan !== 'admin' && userData.plan !== 'loading' ? [
       { name: 'VIP', href: '/dashboard/upgrade', icon: <Crown size={20} /> },
       { name: 'Konfirmasi Pembayaran', href: '/dashboard/upgrade/confirm', icon: <Crown size={20} /> }
     ] : []),
