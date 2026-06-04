@@ -21,11 +21,11 @@ export default function PaymentInstructions({
         <li>Pilih menu Transfer atau Bayar</li>
         {billerCode ? (
           <>
-            <li>Masukkan Biller Code: <span className="text-white font-bold">{billerCode}</span></li>
-            <li>Masukkan Bill Key: <span className="text-white font-bold">{vaNumber}</span></li>
+            <li>Masukkan Biller Code: <span className="text-white font-bold break-all">{billerCode}</span></li>
+            <li>Masukkan Bill Key: <span className="text-white font-bold break-all">{vaNumber}</span></li>
           </>
         ) : (
-          <li>Masukkan nomor VA: <span className="text-white font-bold">{vaNumber}</span></li>
+          <li>Masukkan nomor VA: <span className="text-white font-bold break-all">{vaNumber}</span></li>
         )}
         <li>Konfirmasi dan selesaikan pembayaran</li>
       </ol>

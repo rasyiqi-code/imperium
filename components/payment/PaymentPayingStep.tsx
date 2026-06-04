@@ -94,11 +94,11 @@ export default function PaymentPayingStep({
           {chargeData.billerCode && (
             <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
               <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Biller Code</p>
-              <div className="flex items-center justify-between">
-                <p className="text-lg font-black text-white tracking-wider font-mono">{chargeData.billerCode}</p>
+              <div className="flex items-center justify-between gap-2 min-w-0">
+                <p className="text-sm sm:text-lg md:text-xl font-black text-white tracking-wider font-mono break-all select-all">{chargeData.billerCode}</p>
                 <button 
                   onClick={() => handleCopy(chargeData.billerCode!)} 
-                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
                 >
                   {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                   {copied ? 'Disalin!' : 'Salin'}
@@ -111,11 +111,11 @@ export default function PaymentPayingStep({
             <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">
               {chargeData.billerCode ? 'Bill Key' : 'Nomor Virtual Account'}
             </p>
-            <div className="flex items-center justify-between">
-              <p className="text-xl font-black text-yellow-500 tracking-wider font-mono">{chargeData.vaNumber}</p>
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all">{chargeData.vaNumber}</p>
               <button 
                 onClick={() => handleCopy(chargeData.vaNumber!)} 
-                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
               >
                 {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                 {copied ? 'Disalin!' : 'Salin'}
@@ -141,11 +141,11 @@ export default function PaymentPayingStep({
           </div>
           <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
             <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Kode Pembayaran</p>
-            <div className="flex items-center justify-between">
-              <p className="text-xl font-black text-yellow-500 tracking-wider font-mono">{chargeData.paymentCode}</p>
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all">{chargeData.paymentCode}</p>
               <button 
                 onClick={() => handleCopy(chargeData.paymentCode!)} 
-                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
               >
                 {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                 {copied ? 'Disalin!' : 'Salin'}
