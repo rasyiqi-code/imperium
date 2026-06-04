@@ -5,9 +5,13 @@ import AboutImperium from '@/components/AboutImperium';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import Pricing from '@/components/Pricing';
-import Reviews from '@/components/review';
 import FAQ from '@/components/FAQ';
 import CTA from '@/components/CTA';
+import dynamic from 'next/dynamic';
+
+// Import komponen ulasan secara dinamis guna memisahkan library Swiper yang berat dari bundle awal
+const Reviews = dynamic(() => import('@/components/review'));
+
 
 // URL dasar situs web
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
