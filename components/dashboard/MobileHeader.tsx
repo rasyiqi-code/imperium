@@ -82,7 +82,14 @@ export default function MobileHeader() {
     <>
       <header className="md:hidden flex items-center justify-between p-6 bg-[#0a0a0a] sticky top-0 z-40 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <Image src="/logo.webp" alt="Logo" width={32} height={32} className="rounded-lg shadow-[0_0_10px_rgba(234,179,8,0.3)]" />
+          <Image 
+            src="/logo.webp" 
+            alt="Logo" 
+            width={32} 
+            height={32} 
+            className="rounded-lg shadow-[0_0_10px_rgba(234,179,8,0.3)]" 
+            style={{ width: '32px', height: '32px' }}
+          />
           <span className="font-black text-lg tracking-tighter text-white uppercase italic">IMPERIUM</span>
         </div>
         

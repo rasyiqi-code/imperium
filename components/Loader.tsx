@@ -28,6 +28,7 @@ export default function Loader({ fullScreen = false, label = 'Memuat...' }: Load
             width={32} 
             height={32} 
             className="object-contain rounded-lg"
+            style={{ width: '32px', height: '32px' }}
           />
         </div>
       </div>
