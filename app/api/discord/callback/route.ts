@@ -18,16 +18,6 @@ export async function GET(request: Request) {
   // Ambil data konfigurasi dari cache (menghindari query berulang)
   const settings = await getAdminSettings()
 
-  // Gunakan origin dari DISCORD_REDIRECT_URI jika tersedia sebagai prioritas utama
-  const redirectUriVal = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
-  if (redirectUriVal) {
-    try {
-      baseUrl = new URL(redirectUriVal).origin
-    } catch {
-      // Abaikan jika format URI salah
-    }
-  }
-
   try {
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
@@ -74,7 +64,7 @@ export async function GET(request: Request) {
     const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
     const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
     const vipRoleId = settings?.discord_vip_role_id || process.env.DISCORD_VIP_ROLE_ID
-    const redirectUri = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
+    const redirectUri = `${baseUrl}/api/discord/callback`
 
     // Wajib ada: clientId, clientSecret, botToken, vipGuildId, dan redirectUri
     if (!clientId || !clientSecret || !botToken || !vipGuildId || !redirectUri || vipGuildId.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE')) {

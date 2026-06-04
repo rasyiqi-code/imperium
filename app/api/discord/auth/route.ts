@@ -6,12 +6,17 @@ import { cookies } from 'next/headers'
  * Route API untuk menginisialisasi alur otorisasi OAuth2 Discord.
  * Mengalihkan pengguna ke Discord Developer Portal dengan scope yang diperlukan.
  */
-export async function GET() {
+export async function GET(request: Request) {
   // Ambil data konfigurasi dari cache (menghindari query berulang)
   const settings = await getAdminSettings()
 
   const clientId = settings?.discord_application_id || process.env.DISCORD_APPLICATION_ID || process.env.DISCORD_CLIENT_ID
-  const redirectUri = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI
+  
+  // Deteksi origin secara dinamis (mendukung localhost, IP lokal HP, dan domain produksi)
+  const host = request.headers.get('x-forwarded-host') || new URL(request.url).host
+  const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
+  const currentOrigin = `${proto}://${host}`
+  const redirectUri = `${currentOrigin}/api/discord/callback`
 
   if (!clientId || !redirectUri) {
     console.error('Discord Auth Error: Application ID or Redirect URI is missing.')
