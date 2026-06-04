@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   // Deteksi domain asal secara aman (mendukung proxy, localtunnel, dan Cloudflare Tunnel)
   const host = request.headers.get('x-forwarded-host') || new URL(request.url).host
   const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
-  let baseUrl = `${proto}://${host}`
+  const baseUrl = `${proto}://${host}`
 
   // Ambil data konfigurasi dari cache (menghindari query berulang)
   const settings = await getAdminSettings()

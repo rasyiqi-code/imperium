@@ -111,7 +111,21 @@ export async function deactivateVip(body: MembershipBody): Promise<Response> {
   const { userId } = body
   if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
 
-  // Transaksi Prisma untuk menonaktifkan status VIP
+  // Dapatkan status_aktif saat ini untuk mendeteksi apakah statusnya 'vip' atau 'aktif'
+  const currentMember = await prisma.data_member_vip.findUnique({
+    where: { id_user_auth: userId },
+    select: { status_aktif: true }
+  })
+
+  if (!currentMember) {
+    return NextResponse.json({ error: 'Member VIP tidak ditemukan' }, { status: 404 })
+  }
+
+  // Jaga status_aktif tetap berada di ['aktif', 'vip'] agar dideteksi oleh kueri cron job.
+  // Jika statusnya bukan itu, paksa ke 'aktif'.
+  const targetStatus = (currentMember.status_aktif === 'vip') ? 'vip' : 'aktif'
+
+  // Transaksi Prisma untuk menonaktifkan status VIP (mengubah menjadi kedaluwarsa)
   await prisma.$transaction([
     prisma.profiles.update({
       where: { id: userId },
@@ -119,7 +133,10 @@ export async function deactivateVip(body: MembershipBody): Promise<Response> {
     }),
     prisma.data_member_vip.update({
       where: { id_user_auth: userId },
-      data: { status_aktif: 'nonaktif' }
+      data: { 
+        tanggal_berakhir: new Date(Date.now() - 60000), // Kedaluwarsa 1 menit yang lalu
+        status_aktif: targetStatus 
+      }
     })
   ])
 
