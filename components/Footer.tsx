@@ -83,7 +83,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright & Developed By */}
-        <div className="w-full pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold text-neutral-500 tracking-widest">
+        <div className="w-full pt-4 border-t border-white/[0.06] flex justify-center items-center text-center text-[10px] font-bold text-neutral-500 tracking-widest">
           <p>
             &copy; 2026 IMPERIUM CRYPTO. ALL RIGHTS RESERVED.
           </p>
