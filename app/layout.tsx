@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ModalProvider from "@/components/ModalProvider";
 import PWARegister from "@/components/PWARegister";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import fs from "fs";
 import path from "path";
 import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
@@ -118,6 +119,7 @@ export default function RootLayout({
         
         <div className="relative z-10 min-h-screen">
           <PWARegister />
+          <PWAInstallPrompt />
           <ModalProvider>
             {children}
           </ModalProvider>
