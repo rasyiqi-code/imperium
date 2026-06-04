@@ -1,8 +1,8 @@
 'use client'
 
 import Sidebar from '@/components/Sidebar'
-import MobileNav from '@/components/MobileNav'
-import MobileHeader from '@/components/MobileHeader'
+import MobileNav from '@/components/dashboard/MobileNav'
+import MobileHeader from '@/components/dashboard/MobileHeader'
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (

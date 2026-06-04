@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { X, ArrowLeft, Loader2 } from 'lucide-react'
-import PaymentSelectStep, { PaymentMethod } from './payment/PaymentSelectStep'
-import PaymentPayingStep, { ChargeResult } from './payment/PaymentPayingStep'
-import PaymentSuccessStep from './payment/PaymentSuccessStep'
-import PaymentErrorStep from './payment/PaymentErrorStep'
+import PaymentSelectStep, { PaymentMethod } from './PaymentSelectStep'
+import PaymentPayingStep, { ChargeResult } from './PaymentPayingStep'
+import PaymentSuccessStep from './PaymentSuccessStep'
+import PaymentErrorStep from './PaymentErrorStep'
 import { formatRupiah, getExpiryCountdown } from '@/lib/payment'
 
 interface PaymentModalProps {

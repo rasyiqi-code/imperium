@@ -1,8 +1,8 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/landing/Navbar';
 import Footer from '@/components/Footer';
-import FAQ from '@/components/FAQ';
+import FAQ from '@/components/landing/FAQ';
 import { Mail, MessageSquare, Send, Clock } from 'lucide-react';
 
 export const revalidate = 0;

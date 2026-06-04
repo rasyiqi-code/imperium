@@ -1,16 +1,16 @@
-import Hero from '@/components/Hero';
-import TrustPositioning from '@/components/CoreValues';
-import ProblemStatement from '@/components/Problem';
-import AboutImperium from '@/components/AboutImperium';
+import Hero from '@/components/landing/Hero';
+import TrustPositioning from '@/components/landing/CoreValues';
+import ProblemStatement from '@/components/landing/Problem';
+import AboutImperium from '@/components/landing/AboutImperium';
 import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
-import Pricing from '@/components/Pricing';
-import FAQ from '@/components/FAQ';
-import CTA from '@/components/CTA';
+import Navbar from '@/components/landing/Navbar';
+import Pricing from '@/components/landing/Pricing';
+import FAQ from '@/components/landing/FAQ';
+import CTA from '@/components/landing/CTA';
 import dynamic from 'next/dynamic';
 
 // Import komponen ulasan secara dinamis guna memisahkan library Swiper yang berat dari bundle awal
-const Reviews = dynamic(() => import('@/components/review'));
+const Reviews = dynamic(() => import('@/components/landing/review'));
 
 
 // URL dasar situs web

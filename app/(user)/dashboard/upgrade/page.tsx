@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { PaketVIP, MemberVIP } from '@/lib/types'
-import PricingCard from '@/components/PricingCard'
-import PaymentModal from '@/components/PaymentModal'
+import PricingCard from '@/components/payment/PricingCard'
+import PaymentModal from '@/components/payment/PaymentModal'
 import { CreditCard, ShieldCheck } from 'lucide-react'
 import Loader from '@/components/Loader'
 
