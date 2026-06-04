@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 import { getAdminSettings } from '@/lib/adminSettings';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
@@ -16,6 +17,26 @@ export async function GET(request: Request) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Validasi kepemilikan transaksi untuk mencegah IDOR (Insecure Direct Object Reference)
+    // Admin dikecualikan dari pengecekan kepemilikan
+    const profile = await prisma.profiles.findUnique({
+      where: { id: user.id },
+      select: { plan: true }
+    });
+
+    if (profile?.plan !== 'admin') {
+      const payment = await prisma.data_pembayaran.findFirst({
+        where: {
+          bukti_transfer: orderId,
+          id_user_auth: user.id
+        }
+      });
+
+      if (!payment) {
+        return NextResponse.json({ error: 'Transaksi tidak ditemukan atau tidak sah' }, { status: 403 });
+      }
     }
 
     // Ambil pengaturan Midtrans dari cache (menghindari query berulang)

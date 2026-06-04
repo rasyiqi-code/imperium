@@ -28,33 +28,39 @@ export async function POST(request: Request) {
     const midtransPublicKey = settings?.midtrans_public_key;
 
     if (!midtransPublicKey) {
-      console.warn('BI SNAP Webhook Warning: MIDTRANS_PUBLIC_KEY is not configured. Signature verification skipped.');
-      // Untuk kemudahan testing jika env belum diisi, kita loloskan dengan log warning
-    } else {
-      // 2. Susun data to verify
-      // Format standard BI SNAP Callback: HTTPMethod:EndpointPath:RawBody:Timestamp
-      const dataToVerify = `${httpMethod}:${endpointPath}:${rawBody}:${timestamp}`;
-
-      // 3. Verifikasi Signature menggunakan Public Key Midtrans (SHA256withRSA)
-      const verify = crypto.createVerify('SHA256');
-      verify.update(dataToVerify);
-      
-      const isValid = verify.verify(
-        midtransPublicKey.replace(/\\n/g, '\n'), // Handle newlines if configured in env
-        signature,
-        'base64'
+      console.error('BI SNAP Webhook Error: MIDTRANS_PUBLIC_KEY is not configured. Webhook rejected.');
+      return NextResponse.json(
+        {
+          responseCode: '4010000',
+          responseMessage: 'Unauthorized. Configuration missing.',
+        },
+        { status: 401 }
       );
+    }
 
-      if (!isValid) {
-        console.error('BI SNAP Webhook Error: Invalid signature');
-        return NextResponse.json(
-          {
-            responseCode: '4010000',
-            responseMessage: 'Unauthorized. Invalid Signature',
-          },
-          { status: 401 }
-        );
-      }
+    // 2. Susun data to verify
+    // Format standard BI SNAP Callback: HTTPMethod:EndpointPath:RawBody:Timestamp
+    const dataToVerify = `${httpMethod}:${endpointPath}:${rawBody}:${timestamp}`;
+
+    // 3. Verifikasi Signature menggunakan Public Key Midtrans (SHA256withRSA)
+    const verify = crypto.createVerify('SHA256');
+    verify.update(dataToVerify);
+    
+    const isValid = verify.verify(
+      midtransPublicKey.replace(/\\n/g, '\n'), // Handle newlines if configured in env
+      signature,
+      'base64'
+    );
+
+    if (!isValid) {
+      console.error('BI SNAP Webhook Error: Invalid signature');
+      return NextResponse.json(
+        {
+          responseCode: '4010000',
+          responseMessage: 'Unauthorized. Invalid Signature',
+        },
+        { status: 401 }
+      );
     }
 
     // 4. Parse request body untuk memproses status pembayaran
