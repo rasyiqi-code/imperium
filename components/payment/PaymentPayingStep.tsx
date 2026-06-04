@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { Clock, ExternalLink, Check, Copy, Loader2 } from 'lucide-react'
+import { Clock, ExternalLink, Loader2 } from 'lucide-react'
 import PaymentInstructions from './PaymentInstructions'
 import { formatRupiah } from '@/lib/payment'
 
@@ -34,12 +34,12 @@ export default function PaymentPayingStep({
   countdown,
   harga,
 }: PaymentPayingStepProps) {
-  const [copied, setCopied] = useState(false)
+  const [copiedField, setCopiedField] = useState<'biller' | 'va' | 'code' | null>(null)
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, field: 'biller' | 'va' | 'code') => {
     navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    setCopiedField(field)
+    setTimeout(() => setCopiedField(null), 2000)
   }
 
   return (
@@ -92,35 +92,45 @@ export default function PaymentPayingStep({
           </div>
 
           {chargeData.billerCode && (
-            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-              <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Biller Code</p>
-              <div className="flex items-center justify-between gap-2 min-w-0">
-                <p className="text-sm sm:text-lg md:text-xl font-black text-white tracking-wider font-mono break-all select-all">{chargeData.billerCode}</p>
-                <button 
-                  onClick={() => handleCopy(chargeData.billerCode!)} 
-                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
-                >
-                  {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                  {copied ? 'Disalin!' : 'Salin'}
-                </button>
+            <div 
+              onClick={() => handleCopy(chargeData.billerCode!, 'biller')}
+              className="bg-neutral-900 border border-neutral-800 hover:border-yellow-500/40 active:scale-[0.99] transition-all rounded-2xl p-4 cursor-pointer relative group"
+            >
+              <div className="flex justify-between items-center mb-1">
+                <p className="text-[9px] font-bold text-neutral-600 tracking-widest uppercase">Biller Code</p>
+                <span className={`text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-all duration-300 ${
+                  copiedField === 'biller' 
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                    : 'bg-neutral-800 text-neutral-500 group-hover:text-yellow-500/80 border border-transparent'
+                }`}>
+                  {copiedField === 'biller' ? 'Tersalin!' : 'Ketuk untuk menyalin'}
+                </span>
               </div>
+              <p className="text-sm sm:text-lg md:text-xl font-black text-white tracking-wider font-mono break-all select-all mt-1">
+                {chargeData.billerCode}
+              </p>
             </div>
           )}
 
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-            <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">
-              {chargeData.billerCode ? 'Bill Key' : 'Nomor Virtual Account'}
-            </p>
-            <div className="flex items-center justify-between gap-2 min-w-0">
-              <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all">{chargeData.vaNumber}</p>
-              <button 
-                onClick={() => handleCopy(chargeData.vaNumber!)} 
-                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
-              >
-                {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                {copied ? 'Disalin!' : 'Salin'}
-              </button>
+          <div 
+            onClick={() => handleCopy(chargeData.vaNumber!, 'va')}
+            className="bg-neutral-900 border border-neutral-800 hover:border-yellow-500/40 active:scale-[0.99] transition-all rounded-2xl p-4 cursor-pointer relative group"
+          >
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-[9px] font-bold text-neutral-600 tracking-widest uppercase">
+                {chargeData.billerCode ? 'Bill Key' : 'Nomor Virtual Account'}
+              </p>
+              <span className={`text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-all duration-300 ${
+                copiedField === 'va' 
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                  : 'bg-neutral-800 text-neutral-500 group-hover:text-yellow-500/80 border border-transparent'
+              }`}>
+                {copiedField === 'va' ? 'Tersalin!' : 'Ketuk untuk menyalin'}
+              </span>
             </div>
+            <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all mt-1">
+              {chargeData.vaNumber}
+            </p>
           </div>
 
           <PaymentInstructions 
@@ -139,18 +149,23 @@ export default function PaymentPayingStep({
               {chargeData.store?.toUpperCase()} — Kode Pembayaran
             </p>
           </div>
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-            <p className="text-[9px] font-bold text-neutral-600 tracking-widest mb-1">Kode Pembayaran</p>
-            <div className="flex items-center justify-between gap-2 min-w-0">
-              <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all">{chargeData.paymentCode}</p>
-              <button 
-                onClick={() => handleCopy(chargeData.paymentCode!)} 
-                className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
-              >
-                {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                {copied ? 'Disalin!' : 'Salin'}
-              </button>
+          <div 
+            onClick={() => handleCopy(chargeData.paymentCode!, 'code')}
+            className="bg-neutral-900 border border-neutral-800 hover:border-yellow-500/40 active:scale-[0.99] transition-all rounded-2xl p-4 cursor-pointer relative group"
+          >
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-[9px] font-bold text-neutral-600 tracking-widest uppercase">Kode Pembayaran</p>
+              <span className={`text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-all duration-300 ${
+                copiedField === 'code' 
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                  : 'bg-neutral-800 text-neutral-500 group-hover:text-yellow-500/80 border border-transparent'
+              }`}>
+                {copiedField === 'code' ? 'Tersalin!' : 'Ketuk untuk menyalin'}
+              </span>
             </div>
+            <p className="text-sm sm:text-lg md:text-xl font-black text-yellow-500 tracking-wider font-mono break-all select-all mt-1">
+              {chargeData.paymentCode}
+            </p>
           </div>
           <div className="bg-neutral-900/50 border border-neutral-800/50 rounded-2xl p-4 space-y-2">
             <p className="text-[9px] font-black text-neutral-600 tracking-[0.2em]">Cara Bayar</p>
