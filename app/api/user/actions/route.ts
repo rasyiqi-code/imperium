@@ -14,8 +14,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 2. Parse body request
-    const body = await request.json()
+    // 2. Parse body request secara aman untuk mencegah crash jika request dibatalkan/kosong
+    let body: { 
+      action?: string; 
+      fullName?: string; 
+      whatsappNumber?: string; 
+      planId?: string; 
+      publicUrl?: string 
+    } = {}
+    
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Data request tidak valid atau kosong' }, { status: 400 })
+    }
+    
     const { action } = body
 
     switch (action) {
