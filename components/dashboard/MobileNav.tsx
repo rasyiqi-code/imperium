@@ -1,47 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Crown, MessageSquare, User, HeadphonesIcon } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
 
 export default function MobileNav() {
   const pathname = usePathname()
-  const [plan, setPlan] = useState<string>('loading')
-
-  useEffect(() => {
-    async function getPlan() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const res = await fetch('/api/user/actions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'getUserPlan' })
-          })
-          const data = await res.json()
-          if (res.ok && data.plan) {
-            setPlan(data.plan)
-          } else {
-            setPlan('free')
-          }
-        } else {
-          setPlan('free')
-        }
-      } catch (err) {
-        console.error("Gagal mendapatkan plan:", err)
-        setPlan('free')
-      }
-    }
-    getPlan()
-  }, [])
 
   const navItems = [
     { name: 'Dash', href: '/dashboard', icon: LayoutDashboard },
-    ...(plan !== 'vip' && plan !== 'admin' && plan !== 'loading' ? [
-      { name: 'VIP', href: '/dashboard/upgrade', icon: Crown }
-    ] : []),
+    { name: 'VIP', href: '/dashboard/upgrade', icon: Crown },
     { name: 'Group', href: '/dashboard/group', icon: MessageSquare },
     { name: 'Profil', href: '/dashboard/profile', icon: User },
     { name: 'Support', href: '/dashboard/support', icon: HeadphonesIcon },

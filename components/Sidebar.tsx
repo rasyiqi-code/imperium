@@ -64,8 +64,8 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const userMenus = [
     { name: 'Dash', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { name: 'VIP', href: '/dashboard/upgrade', icon: <Crown size={20} /> },
     ...(userData.plan !== 'vip' && userData.plan !== 'admin' && userData.plan !== 'loading' ? [
-      { name: 'VIP', href: '/dashboard/upgrade', icon: <Crown size={20} /> },
       { name: 'Konfirmasi Pembayaran', href: '/dashboard/upgrade/confirm', icon: <Crown size={20} /> }
     ] : []),
     { name: 'Group', href: '/dashboard/group', icon: <MessageSquare size={20} /> },
