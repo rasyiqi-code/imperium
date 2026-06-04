@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ModalProvider from "@/components/ModalProvider";
+import PWARegister from "@/components/PWARegister";
 import fs from "fs";
 import path from "path";
 import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
@@ -116,6 +117,7 @@ export default function RootLayout({
         </div>
         
         <div className="relative z-10 min-h-screen">
+          <PWARegister />
           <ModalProvider>
             {children}
           </ModalProvider>
