@@ -29,7 +29,8 @@ export default function OfflinePage() {
             alt="Imperium Crypto Logo" 
             width={180}
             height={48}
-            className="h-10 w-auto object-contain"
+            className="object-contain"
+            style={{ height: '2.5rem', width: 'auto' }}
             priority
           />
         </div>

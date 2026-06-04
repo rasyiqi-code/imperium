@@ -41,7 +41,8 @@ export default function AboutImperium() {
                   alt="Imperium Center Node"
                   width={80}
                   height={80}
-                  className="w-[85%] h-[85%] object-contain"
+                  className="object-contain"
+                  style={{ width: '85%', height: 'auto' }}
                 />
               </div>
             </span>

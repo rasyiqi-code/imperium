@@ -80,7 +80,8 @@ export default function LoginPage() {
                 alt="Imperium Crypto Logo" 
                 width={180}
                 height={48}
-                className="h-12 w-auto object-contain" 
+                className="object-contain"
+                style={{ height: '3rem', width: 'auto' }}
               />
             </div>
             <h1 className="text-3xl font-extrabold text-white tracking-tight uppercase">

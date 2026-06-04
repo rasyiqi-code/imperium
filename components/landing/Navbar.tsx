@@ -30,6 +30,7 @@ const Navbar: React.FC = () => {
                 height={34} 
                 priority
                 className="cursor-pointer object-contain transition-transform duration-300 hover:scale-105 rounded-full"
+                style={{ width: '34px', height: '34px' }}
               />
             </Link>
           </div>

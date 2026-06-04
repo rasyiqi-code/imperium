@@ -138,6 +138,7 @@ export default function Reviews() {
                             src={review.image} 
                             alt={review.name}
                             fill
+                            sizes="40px"
                             className="object-cover filter grayscale group-hover/card:grayscale-0 transition-all duration-500"
                           />
                         </div>
@@ -164,7 +165,7 @@ export default function Reviews() {
             <div className="flex -space-x-2.5">
               {reviews.slice(0, 5).map((rev, i) => (
                 <div key={i} className="h-7 w-7 rounded-full border border-black overflow-hidden relative bg-neutral-850">
-                  <Image src={rev.image} alt="avatar" fill className="object-cover" />
+                  <Image src={rev.image} alt="avatar" fill sizes="28px" className="object-cover" />
                 </div>
               ))}
             </div>
