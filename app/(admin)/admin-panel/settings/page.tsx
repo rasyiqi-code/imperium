@@ -8,12 +8,12 @@ import {
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
-import SettingItem from './components/SettingItem'
-import SystemConfigToggle from './components/SystemConfigToggle'
-import PaymentChannelsList from './components/PaymentChannelsList'
-import ResendSettingsForm from './components/ResendSettingsForm'
-import MidtransSettingsForm from './components/MidtransSettingsForm'
-import DiscordSettingsForm from './components/DiscordSettingsForm'
+import SettingItem from '@/components/admin/settings/SettingItem'
+import SystemConfigToggle from '@/components/admin/settings/SystemConfigToggle'
+import PaymentChannelsList from '@/components/admin/settings/PaymentChannelsList'
+import ResendSettingsForm from '@/components/admin/settings/ResendSettingsForm'
+import MidtransSettingsForm from '@/components/admin/settings/MidtransSettingsForm'
+import DiscordSettingsForm from '@/components/admin/settings/DiscordSettingsForm'
 
 export default function AdminSettings() {
   const { showAlert, showConfirm } = useModal()
