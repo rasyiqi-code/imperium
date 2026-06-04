@@ -88,7 +88,7 @@ export default function MobileHeader() {
             width={32} 
             height={32} 
             className="rounded-lg shadow-[0_0_10px_rgba(234,179,8,0.3)]" 
-            style={{ width: '32px', height: '32px' }}
+            style={{ height: 'auto' }}
           />
           <span className="font-black text-lg tracking-tighter text-white uppercase italic">IMPERIUM</span>
         </div>

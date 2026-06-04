@@ -39,7 +39,7 @@ export default function Hero() {
                   width={100}
                   height={100}
                   className="rounded-full object-contain opacity-45"
-                  style={{ width: '100px', height: '100px' }}
+                  style={{ height: 'auto' }}
                   priority
                 />
               </div>
