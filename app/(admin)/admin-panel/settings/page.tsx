@@ -38,6 +38,7 @@ export default function AdminSettings() {
   const [discordVipRoleId, setDiscordVipRoleId] = useState('')
   const [discordFreeInviteLink, setDiscordFreeInviteLink] = useState('')
   const [discordRedirectUri, setDiscordRedirectUri] = useState('')
+  const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend'>('general')
 
   useEffect(() => {
     let active = true
@@ -135,7 +136,7 @@ export default function AdminSettings() {
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
-    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-5xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
@@ -143,68 +144,117 @@ export default function AdminSettings() {
         <p className="text-[10px] text-neutral-500 font-bold mt-1.5 tracking-wider">Kelola keamanan admin, konfigurasi notifikasi, dan integrasi pihak ketiga</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Kolom Kiri: Profil, Keamanan, Sistem & Metode Pembayaran (Span 5) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Profile Header */}
-          <div className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 flex items-center gap-4 shadow-lg">
-            <div className="h-14 w-14 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-black text-xl uppercase leading-none shrink-0">
-              {adminEmail ? adminEmail.substring(0, 2) : 'AD'}
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-xs font-black text-white leading-none">Super Admin</h2>
-              <p className="text-[10px] text-neutral-500 font-bold mt-2 tracking-tight truncate">{adminEmail || 'admin@imperium.com'}</p>
-            </div>
-          </div>
+      {/* Tab Navigation */}
+      <div className="flex flex-wrap gap-2 border-b border-neutral-800 pb-3 mb-6">
+        <button
+          onClick={() => setActiveTab('general')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'general'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          Umum & Sistem
+        </button>
+        <button
+          onClick={() => setActiveTab('payments')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'payments'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          Metode Pembayaran
+        </button>
+        <button
+          onClick={() => setActiveTab('midtrans')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'midtrans'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          Kredensial Midtrans
+        </button>
+        <button
+          onClick={() => setActiveTab('discord')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'discord'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          Kredensial Discord
+        </button>
+        <button
+          onClick={() => setActiveTab('resend')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'resend'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          Kredensial Resend
+        </button>
+      </div>
 
-          {/* Keamanan Admin */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Keamanan Admin</h3>
-            <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-900/60 shadow-lg">
-              <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} />
-              <div onClick={handleResetPassword} className="cursor-pointer">
-                <SettingItem icon={<Lock size={14}/>} title="Update Password" value="Amankan akun secara berkala" isLink />
+      {/* Tab Contents */}
+      <div className="max-w-4xl">
+        {activeTab === 'general' && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Profile Header */}
+            <div className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 flex items-center gap-4 shadow-lg">
+              <div className="h-14 w-14 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-black text-xl uppercase leading-none shrink-0">
+                {adminEmail ? adminEmail.substring(0, 2) : 'AD'}
               </div>
-              <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" />
+              <div className="min-w-0">
+                <h2 className="text-xs font-black text-white leading-none">Super Admin</h2>
+                <p className="text-[10px] text-neutral-500 font-bold mt-2 tracking-tight truncate">{adminEmail || 'admin@imperium.com'}</p>
+              </div>
             </div>
-          </div>
- 
-          {/* Konfigurasi Sistem */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Konfigurasi Sistem</h3>
-            <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl p-5 space-y-5 shadow-lg">
-              <SystemConfigToggle 
-                icon={<Bell size={14}/>} 
-                title="Notifikasi Email" 
-                desc="Kirim notif ke email setiap ada transfer" 
-                dbField="email_notif_active" 
-              />
-              <SystemConfigToggle 
-                icon={<Globe size={14}/>} 
-                title="Maintenance Mode" 
-                desc="Tutup akses website sementara" 
-                dbField="maintenance_mode" 
-              />
-            </div>
-          </div>
 
-          {/* Metode Pembayaran Aktif */}
-          <div className="space-y-3">
+            {/* Keamanan Admin */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Keamanan Admin</h3>
+              <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-900/60 shadow-lg">
+                <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} />
+                <div onClick={handleResetPassword} className="cursor-pointer">
+                  <SettingItem icon={<Lock size={14}/>} title="Update Password" value="Amankan akun secara berkala" isLink />
+                </div>
+                <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" />
+              </div>
+            </div>
+
+            {/* Konfigurasi Sistem */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Konfigurasi Sistem</h3>
+              <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl p-5 space-y-5 shadow-lg">
+                <SystemConfigToggle 
+                  icon={<Bell size={14}/>} 
+                  title="Notifikasi Email" 
+                  desc="Kirim notif ke email setiap ada transfer" 
+                  dbField="email_notif_active" 
+                />
+                <SystemConfigToggle 
+                  icon={<Globe size={14}/>} 
+                  title="Maintenance Mode" 
+                  desc="Tutup akses website sementara" 
+                  dbField="maintenance_mode" 
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'payments' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Metode Pembayaran Aktif</h3>
             <PaymentChannelsList initialEnabledPayments={enabledPayments} />
           </div>
-        </div>
+        )}
 
-        {/* Kolom Kanan: Integrasi Pihak Ketiga (Resend & Midtrans & Discord) (Span 7) */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Integrasi Resend Email */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Resend Email</h3>
-            <ResendSettingsForm initialApiKey={resendApiKey} initialSenderEmail={resendSenderEmail} />
-          </div>
-
-          {/* Integrasi Kredensial Midtrans */}
-          <div className="space-y-3">
+        {activeTab === 'midtrans' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Kredensial Midtrans</h3>
             <MidtransSettingsForm 
               initialClientKey={midtransClientKey}
@@ -214,9 +264,10 @@ export default function AdminSettings() {
               initialUpgradeMode={midtransUpgradeMode}
             />
           </div>
+        )}
 
-          {/* Integrasi Kredensial Discord */}
-          <div className="space-y-3">
+        {activeTab === 'discord' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Kredensial Discord</h3>
             <DiscordSettingsForm 
               initialApplicationId={discordApplicationId}
@@ -228,11 +279,18 @@ export default function AdminSettings() {
               initialRedirectUri={discordRedirectUri}
             />
           </div>
-        </div>
+        )}
+
+        {activeTab === 'resend' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Resend Email</h3>
+            <ResendSettingsForm initialApiKey={resendApiKey} initialSenderEmail={resendSenderEmail} />
+          </div>
+        )}
       </div>
 
       {/* Logout Button */}
-      <div className="pt-4">
+      <div className="pt-4 max-w-4xl">
         <button 
           onClick={handleLogout} 
           className="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold tracking-widest flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all active:scale-95 duration-300 cursor-pointer"
