@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Crown, MessageSquare, User } from 'lucide-react'
+import { LayoutDashboard, Crown, MessageSquare, User, HeadphonesIcon } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default function MobileNav() {
@@ -44,6 +44,7 @@ export default function MobileNav() {
     ] : []),
     { name: 'Group', href: '/dashboard/group', icon: MessageSquare },
     { name: 'Profil', href: '/dashboard/profile', icon: User },
+    { name: 'Support', href: '/dashboard/support', icon: HeadphonesIcon },
   ]
 
   return (
