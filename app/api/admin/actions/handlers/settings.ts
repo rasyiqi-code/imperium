@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { paymentManager } from '@crediblemark/buayar'
+import { getAdminSettings as getCachedSettings, invalidateAdminSettingsCache } from '@/lib/adminSettings'
 
 interface SettingsBody {
   dbField?: string
@@ -36,6 +37,9 @@ export async function toggleSetting(body: SettingsBody): Promise<Response> {
     data: { [dbField]: value }
   })
 
+  // Invalidasi cache agar perubahan langsung terasa di seluruh sistem
+  invalidateAdminSettingsCache()
+
   return NextResponse.json({ success: true })
 }
 
@@ -53,6 +57,9 @@ export async function updateResendSettings(body: SettingsBody): Promise<Response
       resend_sender_email: senderEmail || null
     }
   })
+
+  // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
 
   return NextResponse.json({ success: true })
 }
@@ -75,6 +82,9 @@ export async function updateMidtransSettings(body: SettingsBody): Promise<Respon
     }
   })
 
+  // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
+
   return NextResponse.json({ success: true })
 }
 
@@ -82,15 +92,8 @@ export async function updateMidtransSettings(body: SettingsBody): Promise<Respon
  * Menyinkronkan daftar metode pembayaran dari Midtrans Dashboard.
  */
 export async function syncMidtransPaymentMethods(): Promise<Response> {
-  // Ambil data server key Midtrans melalui Prisma
-  const mtSettings = await prisma.admin_settings.findUnique({
-    where: { id: 1 },
-    select: {
-      midtrans_server_key: true,
-      midtrans_client_key: true,
-      midtrans_is_production: true
-    }
-  })
+  // Ambil data server key Midtrans melalui cache
+  const mtSettings = await getCachedSettings()
 
   const sKey = mtSettings?.midtrans_server_key || ''
   const cKey = mtSettings?.midtrans_client_key || ''
@@ -118,6 +121,9 @@ export async function syncMidtransPaymentMethods(): Promise<Response> {
     data: { midtrans_enabled_payments: enabled as Prisma.InputJsonValue }
   })
 
+  // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
+
   return NextResponse.json({ success: true, enabled })
 }
 
@@ -136,17 +142,18 @@ export async function updateEnabledPayments(body: SettingsBody): Promise<Respons
     data: { midtrans_enabled_payments: enabledPayments as Prisma.InputJsonValue }
   })
 
+  // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
+
   return NextResponse.json({ success: true })
 }
 
 /**
  * Mengambil seluruh setelan admin sistem.
  */
-export async function getAdminSettings(): Promise<Response> {
-  // Ambil pengaturan admin sistem via Prisma
-  const settings = await prisma.admin_settings.findUnique({
-    where: { id: 1 }
-  })
+export async function getAdminSettingsHandler(): Promise<Response> {
+  // Ambil pengaturan admin sistem via cache (force refresh agar admin selalu melihat data terbaru)
+  const settings = await getCachedSettings(true)
   return NextResponse.json({ success: true, settings })
 }
 
@@ -169,6 +176,9 @@ export async function updateDiscordSettings(body: SettingsBody): Promise<Respons
       discord_redirect_uri: redirectUri || null
     }
   })
+
+  // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
 
   return NextResponse.json({ success: true })
 }

@@ -12,9 +12,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#eab308', // Menggunakan warna tema kuning/amber
     icons: [
       {
-        src: '/logo.png',
+        src: '/logo.webp',
         sizes: 'any',
-        type: 'image/png',
+        type: 'image/webp',
       },
     ],
   };

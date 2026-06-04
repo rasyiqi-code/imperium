@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { getAdminSettings } from './adminSettings';
 
 export async function sendEmail({
   to,
@@ -10,15 +10,8 @@ export async function sendEmail({
   html: string;
 }) {
   try {
-    // 1. Ambil pengaturan email dari database menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        email_notif_active: true,
-        resend_api_key: true,
-        resend_sender_email: true,
-      }
-    });
+    // 1. Ambil pengaturan email dari cache (menghindari query database berulang)
+    const settings = await getAdminSettings();
 
     if (!settings) {
       console.error('Gagal memuat pengaturan email: Pengaturan tidak ditemukan.');

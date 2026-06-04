@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
-import { prisma } from '@/lib/prisma';
+import { getAdminSettings } from '@/lib/adminSettings';
 
 /**
  * All payment methods we support, used as the master registry.
@@ -34,11 +34,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Ambil metode pembayaran aktif dari database menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: { midtrans_enabled_payments: true }
-    });
+    // Ambil metode pembayaran aktif dari cache (menghindari query berulang)
+    const settings = await getAdminSettings();
 
     const enabledIds = (settings?.midtrans_enabled_payments as string[]) || [];
 

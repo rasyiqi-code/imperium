@@ -76,7 +76,7 @@ export default function LoginPage() {
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center mb-4">
               <Image 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Imperium Crypto Logo" 
                 width={180}
                 height={48}
@@ -175,7 +175,7 @@ export default function LoginPage() {
         {/* Gambar background premium */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 hover:scale-105"
-          style={{ backgroundImage: `url('/crypto_login.png')` }}
+          style={{ backgroundImage: `url('/crypto_login.webp')` }}
         />
         {/* Overlay gelap mewah untuk menyatukan gambar dengan tema website */}
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/40" />

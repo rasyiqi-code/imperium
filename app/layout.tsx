@@ -3,6 +3,30 @@ import "./globals.css";
 import ModalProvider from "@/components/ModalProvider";
 import fs from "fs";
 import path from "path";
+import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta-sans',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+});
+
+const lora = Lora({
+  subsets: ['latin'],
+  variable: '--font-lora',
+  style: ['normal', 'italic'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ['latin'],
+  variable: '--font-cormorant-garamond',
+  style: ['normal', 'italic'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+});
 
 // URL dasar situs web, fallback ke domain produksi default jika env tidak disetel
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://imperiumcrypto.com";
@@ -30,7 +54,7 @@ export const metadata: Metadata = {
     siteName: "Imperium Crypto",
     images: [
       {
-        url: "/logo.png",
+        url: "/logo.webp",
         width: 1200,
         height: 630,
         alt: "Imperium Crypto Logo",
@@ -42,7 +66,7 @@ export const metadata: Metadata = {
     title: "Imperium - Komunitas Crypto Profesional",
     description:
       "Bergabunglah dengan komunitas Crypto premium. Diskusi berkualitas, networking autentik, dan insight eksklusif untuk pemula hingga profesional.",
-    images: ["/logo.png"],
+    images: ["/logo.webp"],
   },
   robots: {
     index: true,
@@ -76,7 +100,7 @@ export default function RootLayout({
     throw new Error("License Integrity Failure: System has been tampered.");
   }
   return (
-    <html lang="id" className="scroll-smooth">
+    <html lang="id" className={`scroll-smooth ${plusJakartaSans.variable} ${lora.variable} ${cormorantGaramond.variable}`}>
       <head />
       <body className="relative min-h-screen overflow-x-hidden bg-[#020202] text-white antialiased">
         {/* Pola grid latar belakang */}

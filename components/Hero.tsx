@@ -34,7 +34,7 @@ export default function Hero() {
               {/* Logo utama aplikasi sebagai watermark */}
               <div className="relative p-4 rounded-full bg-black/60 border border-yellow-500/15 shadow-[0_0_50px_rgba(234,179,8,0.15)]">
                 <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Watermark Logo"
                   width={100}
                   height={100}

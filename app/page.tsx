@@ -26,7 +26,7 @@ export const metadata = {
     description: 'Kuasai analisis, singkirkan noise, dan pimpin imperium kripto Anda sendiri bersama komunitas VIP premium.',
     images: [
       {
-        url: "/crypto_login.png",
+        url: "/crypto_login.webp",
         width: 1200,
         height: 675,
         alt: "Imperium Crypto Premium",
@@ -37,7 +37,7 @@ export const metadata = {
     card: "summary_large_image",
     title: 'Imperium Crypto - Kuasai Analisis, Singkirkan Noise',
     description: 'Kuasai analisis, singkirkan noise, dan pimpin imperium kripto Anda sendiri bersama komunitas VIP premium.',
-    images: ["/crypto_login.png"],
+    images: ["/crypto_login.webp"],
   },
 };
 
@@ -54,7 +54,7 @@ export default function Home() {
         "logo": {
           "@type": "ImageObject",
           "@id": `${siteUrl}/#logo`,
-          "url": `${siteUrl}/logo.png`,
+          "url": `${siteUrl}/logo.webp`,
           "caption": "Imperium Crypto Logo"
         },
         "image": {

@@ -2,19 +2,13 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { paymentManager } from '@crediblemark/buayar';
 import { sendEmail } from '@/lib/email';
+import { getAdminSettings } from '@/lib/adminSettings';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    // Ambil pengaturan Midtrans dari database menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        midtrans_client_key: true,
-        midtrans_server_key: true,
-        midtrans_is_production: true
-      }
-    });
+    // Ambil pengaturan Midtrans dari cache (menghindari query berulang)
+    const settings = await getAdminSettings();
 
     const isProduction = settings?.midtrans_is_production === true;
     const clientKey = settings?.midtrans_client_key || '';
@@ -77,13 +71,8 @@ export async function POST(request: Request) {
 
         const durationDays = paket ? (paket.durasi_hari || 30) : 30;
 
-        // Ambil pengaturan Midtrans dari database menggunakan Prisma untuk mode perpanjangan
-        const settingsUpgrade = await prisma.admin_settings.findUnique({
-          where: { id: 1 },
-          select: { midtrans_upgrade_mode: true }
-        });
-        
-        const upgradeMode = settingsUpgrade?.midtrans_upgrade_mode || 'stacking';
+        // Ambil pengaturan mode upgrade dari cache yang sudah di-load di atas
+        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
 
         let baseDate = new Date();
 
@@ -190,7 +179,7 @@ export async function POST(request: Request) {
       </table>
     </div>
     <div style="text-align: center; margin-top: 24px;">
-      <a href="http://localhost:3000/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard VIP</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://imperiumcrypto.com'}/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard VIP</a>
     </div>
   </div>
   <hr style="border: 0; border-top: 1px solid #222; margin: 24px 0;" />

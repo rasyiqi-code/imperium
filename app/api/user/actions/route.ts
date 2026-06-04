@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { prisma } from '@/lib/prisma'
 import { calculateProratedPrice } from '@/lib/payment'
+import { getAdminSettings } from '@/lib/adminSettings'
 
 export async function POST(request: Request) {
   try {
@@ -27,13 +28,7 @@ export async function POST(request: Request) {
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id }
           }),
-          prisma.admin_settings.findUnique({
-            where: { id: 1 },
-            select: {
-              discord_vip_server_id: true,
-              discord_free_invite_link: true
-            }
-          })
+          getAdminSettings()
         ]);
 
         // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
@@ -64,13 +59,7 @@ export async function POST(request: Request) {
             where: { id: 1 },
             select: { telegram_link: true }
           }),
-          prisma.admin_settings.findUnique({
-            where: { id: 1 },
-            select: {
-              discord_vip_server_id: true,
-              discord_free_invite_link: true
-            }
-          })
+          getAdminSettings()
         ]);
 
         // Tautan langsung ke server VIP dibuat dinamis dari server ID agar aman dari kebocoran link invite
@@ -149,10 +138,7 @@ export async function POST(request: Request) {
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id }
           }),
-          prisma.admin_settings.findUnique({
-            where: { id: 1 },
-            select: { midtrans_upgrade_mode: true }
-          })
+          getAdminSettings()
         ])
 
         return NextResponse.json({
@@ -178,12 +164,9 @@ export async function POST(request: Request) {
         }
 
         // Kalkulasi harga prorasi jika setelan aktif
-        const settings = await prisma.admin_settings.findUnique({
-          where: { id: 1 },
-          select: { midtrans_upgrade_mode: true }
-        })
+        const upgradeSettings = await getAdminSettings()
 
-        const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking'
+        const upgradeMode = upgradeSettings?.midtrans_upgrade_mode || 'stacking'
         const currentMember = upgradeMode === 'proration'
           ? await prisma.data_member_vip.findUnique({ where: { id_user_auth: user.id } })
           : null

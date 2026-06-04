@@ -11,7 +11,7 @@ import {
   updateMidtransSettings,
   syncMidtransPaymentMethods,
   updateEnabledPayments,
-  getAdminSettings,
+  getAdminSettingsHandler,
   updateDiscordSettings
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       case 'getPricingPlans':
         return await getPricingPlans()
       case 'getAdminSettings':
-        return await getAdminSettings()
+        return await getAdminSettingsHandler()
       case 'getSupportData':
         return await getSupportData()
       default:

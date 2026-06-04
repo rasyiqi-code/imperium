@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { prisma } from '@/lib/prisma'
+import { getAdminSettings } from '@/lib/adminSettings'
 
 /**
  * Route API Callback OAuth2 Discord.
@@ -13,10 +14,8 @@ export async function GET(request: Request) {
   const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
   let baseUrl = `${proto}://${host}`
 
-  // Ambil data konfigurasi dari database
-  const settings = await prisma.admin_settings.findUnique({
-    where: { id: 1 }
-  })
+  // Ambil data konfigurasi dari cache (menghindari query berulang)
+  const settings = await getAdminSettings()
 
   // Gunakan origin dari DISCORD_REDIRECT_URI jika tersedia sebagai prioritas utama
   const redirectUriVal = settings?.discord_redirect_uri || process.env.DISCORD_REDIRECT_URI

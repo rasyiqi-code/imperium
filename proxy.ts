@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from './lib/prisma'
+import { getAdminSettings } from './lib/adminSettings'
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
@@ -39,39 +40,45 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
   const url = request.nextUrl.pathname
+
+  // Ambil pengaturan admin sekali saja melalui cache (bukan query langsung setiap request)
+  const settings = await getAdminSettings()
+  const isMaintenanceMode = settings?.maintenance_mode === true
 
   // 1. Pengecekan Mode Pemeliharaan (Maintenance Mode)
   if (url === '/maintenance') {
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: { maintenance_mode: true }
-    })
-    
-    if (!settings?.maintenance_mode) {
+    // Jika maintenance mode sudah dinonaktifkan, redirect ke halaman utama
+    if (!isMaintenanceMode) {
       return NextResponse.redirect(new URL('/', request.url))
     }
     return response
   }
 
-  // Ambil pengaturan maintenance
-  const settings = await prisma.admin_settings.findUnique({
-    where: { id: 1 },
-    select: { maintenance_mode: true }
-  })
+  // 2. Pengecekan auth — hanya dipanggil jika benar-benar dibutuhkan (lazy evaluation)
+  // Hindari getUser() untuk halaman publik yang tidak butuh proteksi
+  const needsAuth = isMaintenanceMode
+    || url === '/login'
+    || url === '/register'
+    || url.startsWith('/dashboard')
+    || url.startsWith('/admin-panel')
 
-  if (settings?.maintenance_mode) {
+  // Untuk halaman publik tanpa maintenance mode, langsung kembalikan response tanpa DB/auth call
+  if (!needsAuth) {
+    return response
+  }
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // 3. Jika maintenance mode aktif, hanya admin yang boleh akses
+  if (isMaintenanceMode) {
     let isAdmin = false
     if (user) {
       const profile = await prisma.profiles.findUnique({
         where: { id: user.id },
         select: { plan: true }
       })
-      const userPlan = profile?.plan
-      if (userPlan === 'admin') {
-        isAdmin = true
-      }
+      isAdmin = profile?.plan === 'admin'
     }
     // Blokir pengguna biasa dari semua rute kecuali aset & api
     if (!isAdmin) {
@@ -79,37 +86,36 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 2. Proteksi Halaman Login & Register (Jika sudah login)
+  // 4. Proteksi Halaman Login & Register (Jika sudah login, redirect ke dashboard)
   if (url === '/login' || url === '/register') {
     if (user) {
       const profile = await prisma.profiles.findUnique({
         where: { id: user.id },
         select: { plan: true }
       })
-      
+
       const userPlan = profile?.plan
       const target = userPlan === 'admin' ? '/admin-panel' : '/dashboard'
-      
+
       return NextResponse.redirect(new URL(target, request.url))
     }
     return response
   }
 
-  // 3. Proteksi Halaman yang Membutuhkan Login
+  // 5. Proteksi Halaman yang Membutuhkan Login
   if (!user && (url.startsWith('/dashboard') || url.startsWith('/admin-panel'))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // 4. Proteksi Khusus Rute Admin Panel
+  // 6. Proteksi Khusus Rute Admin Panel — cek role hanya satu kali
   if (user && url.startsWith('/admin-panel')) {
     const profile = await prisma.profiles.findUnique({
       where: { id: user.id },
       select: { plan: true }
     })
-    
-    const userPlan = profile?.plan
-    // 5. Jika bukan admin, arahkan kembali ke dashboard user biasa
-    if (userPlan !== 'admin') {
+
+    // Jika bukan admin, arahkan kembali ke dashboard user biasa
+    if (profile?.plan !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }

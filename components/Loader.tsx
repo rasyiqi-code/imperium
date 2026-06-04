@@ -23,7 +23,7 @@ export default function Loader({ fullScreen = false, label = 'Memuat...' }: Load
         {/* Logo Imperium di tengah yang berdenyut */}
         <div className="absolute w-10 h-10 rounded-xl overflow-hidden bg-black/80 p-1 flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.35)] animate-pulse">
           <Image 
-            src="/logo.png" 
+            src="/logo.webp" 
             alt="Imperium Logo" 
             width={32} 
             height={32} 

@@ -1,3 +1,6 @@
+// URL dasar situs web, diambil dari environment variable agar link email selalu benar di production
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://imperiumcrypto.com';
+
 /**
  * Menghasilkan template HTML untuk email aktivasi manual VIP.
  */
@@ -34,7 +37,7 @@ export function getVipActivationEmailHtml(targetName: string, expiryDateFormatte
       </table>
     </div>
     <div style="text-align: center; margin-top: 24px;">
-      <a href="http://localhost:3000/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard</a>
+      <a href="${siteUrl}/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard</a>
     </div>
   </div>
   <hr style="border: 0; border-top: 1px solid #222; margin: 24px 0;" />
@@ -86,7 +89,7 @@ export function getPaymentConfirmedEmailHtml(
       </table>
     </div>
     <div style="text-align: center; margin-top: 24px;">
-      <a href="http://localhost:3000/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard VIP</a>
+      <a href="${siteUrl}/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard VIP</a>
     </div>
   </div>
   <hr style="border: 0; border-top: 1px solid #222; margin: 24px 0;" />
@@ -136,7 +139,7 @@ export function getPaymentRejectedEmailHtml(
       Silakan periksa kembali bukti transfer Anda atau lakukan konfirmasi pembayaran baru melalui halaman upgrade. Jika Anda merasa ini adalah kesalahan, silakan hubungi tim Support kami di menu Bantuan.
     </p>
     <div style="text-align: center; margin-top: 24px;">
-      <a href="http://localhost:3000/dashboard/upgrade" style="background-color: #ef4444; color: #fff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Coba Lagi / Upgrade</a>
+      <a href="${siteUrl}/dashboard/upgrade" style="background-color: #ef4444; color: #fff; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Coba Lagi / Upgrade</a>
     </div>
   </div>
   <hr style="border: 0; border-top: 1px solid #222; margin: 24px 0;" />

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminSettings } from '@/lib/adminSettings'
 
 /**
  * Route API Cron Job untuk memeriksa keanggotaan VIP yang kedaluwarsa.
@@ -20,14 +21,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP secara dinamis dari database
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        discord_bot_token: true,
-        discord_vip_server_id: true
-      }
-    })
+    // 2. Ambil parameter Discord untuk proses auto-kick dari Server VIP secara dinamis melalui cache
+    const settings = await getAdminSettings()
 
     const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
     const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID

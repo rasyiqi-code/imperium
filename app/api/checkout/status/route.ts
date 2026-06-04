@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
-import { prisma } from '@/lib/prisma';
+import { getAdminSettings } from '@/lib/adminSettings';
 
 export async function GET(request: Request) {
   try {
@@ -18,14 +18,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Ambil pengaturan Midtrans menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        midtrans_server_key: true,
-        midtrans_is_production: true
-      }
-    });
+    // Ambil pengaturan Midtrans dari cache (menghindari query berulang)
+    const settings = await getAdminSettings();
 
     const isProduction = settings?.midtrans_is_production === true;
     const serverKey = settings?.midtrans_server_key || '';

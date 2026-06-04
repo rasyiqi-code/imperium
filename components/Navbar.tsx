@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
           <div className="shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
               <Image 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Imperium Crypto Logo" 
                 width={34} 
                 height={34} 

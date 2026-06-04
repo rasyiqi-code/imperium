@@ -30,8 +30,9 @@ Imperium Crypto adalah platform web keanggotaan premium (VIP) dan edukasi invest
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) dengan `@tailwindcss/postcss`
 - **Komponen & UI**: [Lucide React](https://lucide.dev/), [Swiper](https://swiperjs.com/)
 - **Integrasi Pihak Ketiga**:
-  - `discord.js` untuk interaksi Bot Discord.
+  - Discord REST API via direct `fetch` (bebas dependensi bot yang berat).
   - API BI SNAP Midtrans untuk gerbang pembayaran.
+  - Resend API untuk pengiriman notifikasi email.
 
 ---
 

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { paymentManager } from '@crediblemark/buayar';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 import { prisma } from '@/lib/prisma';
+import { getAdminSettings } from '@/lib/adminSettings';
 
 export async function POST() {
   try {
@@ -25,16 +26,8 @@ export async function POST() {
       return NextResponse.json({ message: "No pending payments found" });
     }
 
-    // Ambil pengaturan Midtrans dari database menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        midtrans_client_key: true,
-        midtrans_server_key: true,
-        midtrans_is_production: true,
-        midtrans_upgrade_mode: true
-      }
-    });
+    // Ambil pengaturan Midtrans dari cache (menghindari query berulang)
+    const settings = await getAdminSettings();
 
     const isProduction = settings?.midtrans_is_production === true;
     const clientKey = settings?.midtrans_client_key || '';

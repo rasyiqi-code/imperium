@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getAdminSettings } from '@/lib/adminSettings';
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient';
 
 export async function GET() {
@@ -12,15 +12,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 2. Ambil pengaturan publik Midtrans menggunakan Prisma
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: {
-        midtrans_client_key: true,
-        midtrans_is_production: true,
-        midtrans_upgrade_mode: true
-      }
-    });
+    // 2. Ambil pengaturan publik Midtrans dari cache (menghindari query berulang)
+    const settings = await getAdminSettings();
 
     if (!settings) {
       console.error('Pengaturan Midtrans tidak ditemukan di database.');

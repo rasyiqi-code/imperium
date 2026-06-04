@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { calculateProratedPrice } from '@/lib/payment'
 import { getVipActivationEmailHtml } from '@/lib/emailTemplates'
+import { getAdminSettings } from '@/lib/adminSettings'
 
 interface MembershipBody {
   userId?: string
@@ -44,11 +45,8 @@ export async function upgradeManual(body: MembershipBody): Promise<Response> {
     where: { id_user_auth: userId }
   })
 
-  // Ambil setelan Midtrans dari database untuk mendapatkan upgrade mode
-  const settings = await prisma.admin_settings.findUnique({
-    where: { id: 1 },
-    select: { midtrans_upgrade_mode: true }
-  })
+  // Ambil setelan Midtrans dari cache untuk mendapatkan upgrade mode
+  const settings = await getAdminSettings()
   const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking'
 
   let baseDate = new Date()
@@ -175,13 +173,10 @@ export async function getMembers(body: MembershipBody): Promise<Response> {
       }
     })
 
-    // Ambil setelan admin untuk bot token dan server ID Discord
-    const settings = await prisma.admin_settings.findUnique({
-      where: { id: 1 },
-      select: { discord_bot_token: true, discord_vip_server_id: true }
-    })
-    const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
-    const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID
+    // Ambil setelan admin untuk bot token dan server ID Discord dari cache
+    const adminSettings = await getAdminSettings()
+    const botToken = adminSettings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
+    const vipGuildId = adminSettings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID
 
     if (vipData && vipData.length > 0) {
       const vipMap = new Map(vipData.map(v => [v.id_user_auth, v]))

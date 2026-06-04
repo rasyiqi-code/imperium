@@ -37,7 +37,7 @@ export default function AboutImperium() {
               {/* Logo Transparan Asli di Tengah */}
               <div className="absolute w-[42%] h-[42%] rounded-full overflow-hidden flex items-center justify-center bg-black border border-[#d4af37]/35 shadow-[0_0_12px_rgba(212,175,55,0.25)]">
                 <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Imperium Center Node"
                   width={80}
                   height={80}
@@ -59,7 +59,7 @@ export default function AboutImperium() {
             <div className="md:col-span-5 p-6 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/[0.08] relative group overflow-hidden bg-black/20">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
               <Image
-                src="/chart.png"
+                src="/chart.webp"
                 alt="Imperium Crypto Chart"
                 width={500}
                 height={330}
@@ -88,7 +88,7 @@ export default function AboutImperium() {
             <div className="md:col-span-5 p-6 flex items-center justify-center border-b md:border-b-0 md:border-l border-white/[0.08] relative group overflow-hidden bg-black/20 order-1 md:order-2">
               <div className="absolute inset-0 bg-yellow-500/[0.01] group-hover:bg-yellow-500/[0.03] transition-colors duration-500 pointer-events-none" />
               <Image
-                src="/crypto_login.png"
+                src="/crypto_login.webp"
                 alt="Imperium Crypto Community"
                 width={500}
                 height={330}
