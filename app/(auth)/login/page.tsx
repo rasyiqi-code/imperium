@@ -113,9 +113,9 @@ export default function LoginPage() {
                   <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase">
                     Password
                   </label>
-                  <a href="https://wa.me/6281995100401?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Imperium%20Crypto%20saya" target="_blank" className="text-[10px] text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition uppercase">
+                  <Link href="/forgot-password" className="text-[10px] text-yellow-500/70 hover:text-yellow-500 font-bold tracking-widest transition uppercase">
                     Lupa?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={16} />
