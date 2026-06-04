@@ -206,10 +206,10 @@ export default function ManageMembers() {
 
   const handleDeactivate = (member: Profile) => {
     showConfirm({
-      title: 'Cabut Akses VIP',
-      message: `Yakin ingin mencabut akses VIP ${member.email}?`,
+      title: 'Set Kedaluwarsa VIP',
+      message: `Yakin ingin mengatur status VIP ${member.email} sebagai kedaluwarsa?`,
       type: 'warning',
-      confirmText: 'Ya, Cabut',
+      confirmText: 'Ya, Set',
       cancelText: 'Batal',
       onConfirm: async () => {
         setIsProcessing(true)
@@ -220,20 +220,20 @@ export default function ManageMembers() {
             body: JSON.stringify({ action: 'deactivateVip', userId: member.id })
           })
           const data = await res.json()
-          if (!res.ok) throw new Error(data.error || 'Gagal menonaktifkan user')
+          if (!res.ok) throw new Error(data.error || 'Gagal memproses perubahan')
 
           const updatedData = { ...member, plan: 'free', plan_status: 'free' }
           setMembers(prev => prev.map(m => m.id === member.id ? updatedData : m))
           setSelectedMember(updatedData)
           showAlert({
-            title: 'Akses VIP Dicabut',
-            message: 'Akses VIP berhasil dicabut.',
+            title: 'VIP Kedaluwarsa',
+            message: 'Akses VIP berhasil diatur sebagai kedaluwarsa.',
             type: 'success'
           })
         } catch (err: unknown) {
           const errMsg = err instanceof Error ? err.message : 'Unknown error'
           showAlert({
-            title: 'Gagal Mencabut',
+            title: 'Gagal Memproses',
             message: `Error: ${errMsg}`,
             type: 'danger'
           })

@@ -120,21 +120,21 @@ export default function MemberDetailModal({
                 )}
               </button>
 
-              {/* Tombol 2: Nonaktifkan VIP */}
+              {/* Tombol 2: Set Kedaluwarsa */}
               {member.plan === 'vip' ? (
                 <button 
                   onClick={() => onDeactivate(member)}
                   disabled={isProcessing}
                   className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Nonaktifkan VIP
+                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Set Kedaluwarsa
                 </button>
               ) : (
                 <button 
                   disabled
                   className="w-full py-2.5 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
                 >
-                  <UserMinus size={14} /> Nonaktifkan VIP
+                  <UserMinus size={14} /> Set Kedaluwarsa
                 </button>
               )}
 
