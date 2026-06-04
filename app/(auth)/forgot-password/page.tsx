@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, RefreshCw, ArrowLeft, CheckCircle2 } from 'lucide-react'
@@ -19,12 +18,17 @@ export default function ForgotPasswordPage() {
     setSuccessMsg('')
 
     try {
-      // Mengirim email pemulihan kata sandi menggunakan Supabase Auth
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      // Mengirim email pemulihan kata sandi menggunakan API server kustom
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
       })
 
-      if (error) throw error
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Gagal mengirim email pemulihan.')
+      }
 
       setSuccessMsg('Tautan pemulihan kata sandi berhasil dikirim! Silakan periksa kotak masuk atau folder spam email Anda.')
     } catch (err: unknown) {
