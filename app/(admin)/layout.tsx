@@ -6,7 +6,7 @@ import AdminHeader from '@/components/admin/AdminHeader'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className="flex h-screen overflow-hidden bg-black">
       {/* Sidebar cuma muncul di PC (md keatas) biasanya diatur di dalam komponen Sidebar lu */}
       <Sidebar role="admin" />
       
