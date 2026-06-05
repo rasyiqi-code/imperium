@@ -4,7 +4,7 @@ import React from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-
+import Image from 'next/image';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -177,11 +177,12 @@ export default function Reviews() {
                       {/* Avatar: Bundar Premium */}
                       <div className="relative w-10 h-10 rounded-full overflow-hidden border border-white/[0.08] p-0.5 bg-neutral-900 group-hover/card:border-[#d4af37]/35 transition-colors duration-500">
                         <div className="relative w-full h-full rounded-full overflow-hidden">
-                          {/* Menggunakan tag img standar karena avatar user dapat memuat domain dinamis yang tidak terdaftar di next.config.js */}
-                          <img 
+                          <Image 
                             src={review.image} 
                             alt={review.name}
-                            className="w-full h-full object-cover filter grayscale group-hover/card:grayscale-0 transition-all duration-500 animate-in fade-in"
+                            fill
+                            sizes="40px"
+                            className="object-cover filter grayscale group-hover/card:grayscale-0 transition-all duration-500 animate-in fade-in"
                           />
                         </div>
                       </div>
@@ -207,8 +208,7 @@ export default function Reviews() {
             <div className="flex -space-x-2.5">
               {displayReviews.slice(0, 5).map((rev, i) => (
                 <div key={i} className="h-7 w-7 rounded-full border border-black overflow-hidden relative bg-neutral-850">
-                  {/* Menggunakan tag img standar karena avatar user dapat memuat domain dinamis yang tidak terdaftar di next.config.js */}
-                  <img src={rev.image} alt="avatar" className="w-full h-full object-cover" />
+                  <Image src={rev.image} alt="avatar" fill sizes="28px" className="object-cover" />
                 </div>
               ))}
             </div>

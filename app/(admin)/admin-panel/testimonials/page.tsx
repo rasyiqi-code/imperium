@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import {
   MessageSquare,
   Plus,
@@ -26,6 +27,31 @@ interface Testimonial {
   rating: number | null
   status_tampil: boolean | null
   created_at: string | null
+}
+
+function TestimonialAvatar({ src, name }: { src: string; name: string }) {
+  const [prevSrc, setPrevSrc] = useState(src)
+  const [imgSrc, setImgSrc] = useState(src)
+
+  if (src !== prevSrc) {
+    setPrevSrc(src)
+    setImgSrc(src)
+  }
+
+  return (
+    <div className="relative h-10 w-10 rounded-full overflow-hidden border border-neutral-800 shrink-0">
+      <Image
+        src={imgSrc}
+        alt={name}
+        fill
+        sizes="40px"
+        className="object-cover"
+        onError={() => {
+          setImgSrc(`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`)
+        }}
+      />
+    </div>
+  )
 }
 
 export default function AdminTestimonialsPage() {
@@ -327,16 +353,9 @@ export default function AdminTestimonialsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
                     {t.foto_user ? (
-                      <img
-                        src={t.foto_user}
-                        alt={t.nama_user}
-                        className="h-10 w-10 rounded-full object-cover border border-neutral-800"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${t.nama_user}`
-                        }}
-                      />
+                      <TestimonialAvatar src={t.foto_user} name={t.nama_user} />
                     ) : (
-                      <div className="h-10 w-10 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 flex items-center justify-center font-bold text-xs uppercase">
+                      <div className="h-10 w-10 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 flex items-center justify-center font-bold text-xs uppercase shrink-0">
                         {t.nama_user.substring(0, 2)}
                       </div>
                     )}
