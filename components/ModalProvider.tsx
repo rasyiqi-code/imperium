@@ -1,9 +1,10 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { usePathname } from 'next/navigation'
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react'
 import FloatingWhatsApp from './FloatingWhatsApp'
+import { supabase } from '@/lib/supabase'
 
 interface ModalOptions {
   title: string
@@ -42,7 +43,22 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   })
 
   const pathname = usePathname()
+  const router = useRouter()
   const isAdminPath = pathname?.startsWith('/admin-panel')
+
+  // Mendengar event auth secara global. Jika terdeteksi alur PASSWORD_RECOVERY dari link email,
+  // secara otomatis arahkan user ke halaman reset password.
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        router.push('/reset-password')
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [router])
 
   const showAlert = (alertOptions: Omit<ModalOptions, 'onCancel' | 'cancelText'>) => {
     setOptions({

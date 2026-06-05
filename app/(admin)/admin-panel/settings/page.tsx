@@ -121,10 +121,11 @@ export default function AdminSettings() {
     })
   }
 
-  const handlePasswordUpdate = async (newPass: string): Promise<boolean> => {
+  const handlePasswordUpdate = async (newPass: string, currentPass: string): Promise<boolean> => {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPass
+        password: newPass,
+        currentPassword: currentPass
       })
 
       if (error) {
