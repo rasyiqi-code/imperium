@@ -95,11 +95,11 @@ export default function AuthPromoPanel() {
             {/* Judul & Deskripsi */}
             <div className="space-y-3">
               <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
-                Selamat Datang, <br />
-                <span className="font-bold font-serif-editorial italic text-[#d4af37] tracking-normal">{name}</span>
+                Selamat Datang Di <br />
+                <span className="font-bold font-serif-editorial italic text-[#d4af37] tracking-normal">Komunitas VIP</span>
               </h2>
               <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
-                Akses VIP Anda telah aktif sepenuhnya. Nikmati keuntungan penuh dari sinyal real-time berakurasi tinggi, panduan harian, dan obrolan privat bersama trader elit di Discord VIP.
+                Halo {name}, terima kasih atas kepercayaan Anda! Akses VIP Anda telah aktif sepenuhnya. Mari bergabung dan nikmati seluruh sinyal trading akurat serta fasilitas premium kami.
               </p>
             </div>
 
@@ -141,11 +141,11 @@ export default function AuthPromoPanel() {
             {/* Judul & Deskripsi */}
             <div className="space-y-3">
               <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
-                Tingkatkan Ke <br />
-                <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">VIP Member</span>
+                Upgrade Akun ke <br />
+                <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Komunitas VIP</span>
               </h2>
               <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
-                Halo {name}, Anda saat ini berada di paket gratis. Buka potensi trading maksimal dengan sinyal real-time berakurasi tinggi, panduan riset pasar eksklusif, serta akses grup Discord private sekarang.
+                Halo {name}, saat ini Anda menggunakan akun gratis. Tingkatkan potensi trading Anda sekarang dengan melakukan upgrade ke VIP untuk membuka semua sinyal real-time dan edukasi premium.
               </p>
             </div>
 
@@ -170,7 +170,7 @@ export default function AuthPromoPanel() {
               href="/dashboard/upgrade" 
               className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
             >
-              Upgrade Ke VIP Sekarang
+              Upgrade ke Komunitas VIP
               <Sparkles size={12} className="animate-pulse" />
             </Link>
           </>
@@ -187,11 +187,11 @@ export default function AuthPromoPanel() {
             {/* Judul & Deskripsi */}
             <div className="space-y-3">
               <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
-                Kuasai Pasar <br />
-                Dengan <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Sinyal Akurat</span>
+                Daftar Gratis & <br />
+                Upgrade ke <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Komunitas VIP</span>
               </h2>
               <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
-                Bergabunglah dengan ribuan trader elit Imperium Crypto. Dapatkan analisis premium, sinyal real-time, strategi profit konsisten, dan akses ke grup privat Discord VIP.
+                Selamat datang di Imperium Crypto! Anda bisa mendaftar akun gratis terlebih dahulu untuk bergabung dengan komunitas dasar kami, atau langsung upgrade ke VIP untuk menikmati akses sinyal akurat.
               </p>
             </div>
 
@@ -199,15 +199,15 @@ export default function AuthPromoPanel() {
             <div className="space-y-3 pt-2">
               <div className="flex items-start gap-3 text-neutral-300">
                 <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">Sinyal & Analisis Terperinci Harian</span>
+                <span className="text-xs font-semibold">Daftar Akun Gratis dengan Mudah</span>
               </div>
               <div className="flex items-start gap-3 text-neutral-300">
                 <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">Grup Private Discord VIP Eksklusif</span>
+                <span className="text-xs font-semibold">Sinyal Akurasi Tinggi Harian (VIP)</span>
               </div>
               <div className="flex items-start gap-3 text-neutral-300">
                 <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">E-Book & Materi Edukasi Lengkap</span>
+                <span className="text-xs font-semibold">Grup Private Discord & Edukasi Elit (VIP)</span>
               </div>
             </div>
 
@@ -216,7 +216,7 @@ export default function AuthPromoPanel() {
               href="/register" 
               className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
             >
-              Mulai Bergabung VIP
+              Daftar Akun Gratis Sekarang
               <ArrowRight size={14} />
             </Link>
           </>
