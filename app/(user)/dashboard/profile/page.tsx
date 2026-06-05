@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar } from 'lucide-react'
+import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar, Key } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
 
@@ -11,6 +11,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [updating, setUpdating] = useState(false)
+  const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordUpdating, setPasswordUpdating] = useState(false)
   
   const [profile, setProfile] = useState({
     id_user_auth: '',
@@ -124,6 +128,58 @@ export default function ProfilePage() {
       })
     } finally {
       setUpdating(false)
+    }
+  }
+
+  const handlePasswordUpdate = async () => {
+    if (newPassword.length < 6) {
+      showAlert({
+        title: 'Password Terlalu Pendek',
+        message: 'Password baru harus minimal 6 karakter.',
+        type: 'warning'
+      })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      showAlert({
+        title: 'Password Tidak Cocok',
+        message: 'Konfirmasi password tidak cocok dengan password baru.',
+        type: 'warning'
+      })
+      return
+    }
+
+    setPasswordUpdating(true)
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        showAlert({
+          title: 'Gagal Mengubah Password',
+          message: error.message || 'Terjadi kesalahan saat memperbarui password.',
+          type: 'danger'
+        })
+      } else {
+        setNewPassword('')
+        setConfirmPassword('')
+        setIsPasswordFormOpen(false)
+        showAlert({
+          title: 'Password Diperbarui',
+          message: 'Password Anda berhasil diperbarui!',
+          type: 'success'
+        })
+      }
+    } catch (err: unknown) {
+      const error = err as Error
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${error.message}`,
+        type: 'danger'
+      })
+    } finally {
+      setPasswordUpdating(false)
     }
   }
 
@@ -264,16 +320,101 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Tombol Simpan (hanya muncul saat edit mode) */}
-          {isEditing && (
+          {/* Tombol Aksi Profil */}
+          {isEditing ? (
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              <button 
+                onClick={() => {
+                  setIsEditing(false)
+                  setTempProfile({ ...profile })
+                }}
+                disabled={updating}
+                className="w-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-xs tracking-widest"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={handleUpdate}
+                disabled={updating}
+                className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-xl font-bold shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-xs tracking-widest"
+              >
+                {updating ? <RefreshCw className="animate-spin" size={16} /> : <><Save size={16} /> Simpan</>}
+              </button>
+            </div>
+          ) : (
             <button 
-              onClick={handleUpdate}
-              disabled={updating}
-              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 rounded-xl font-bold shadow-xl shadow-yellow-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all text-xs tracking-widest mt-1"
+              onClick={() => {
+                setTempProfile({ ...profile })
+                setIsEditing(true)
+              }}
+              className="w-full bg-neutral-900 hover:bg-neutral-800/80 border border-neutral-800 text-neutral-300 hover:text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-xs tracking-widest mt-1"
             >
-              {updating ? <RefreshCw className="animate-spin" size={16} /> : <><Save size={16} /> Simpan Perubahan</>}
+              <Edit3 size={16} /> Edit Profil
             </button>
           )}
+
+          {/* Pembatas / Divider */}
+          <div className="border-t border-neutral-800/60 my-3" />
+
+          {/* Section Keamanan / Ganti Password */}
+          <div className="space-y-3">
+            <h3 className="text-[10px] font-bold text-yellow-500/80 uppercase tracking-widest">Keamanan Akun</h3>
+            
+            {isPasswordFormOpen ? (
+              <div className="bg-neutral-950/45 border border-neutral-800/80 rounded-2xl p-4 space-y-3.5 animate-in zoom-in-95 duration-200">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password Baru</label>
+                  <input
+                    type="password"
+                    placeholder="Masukkan password baru (Min. 6 karakter)..."
+                    className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={passwordUpdating}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Konfirmasi Password Baru</label>
+                  <input
+                    type="password"
+                    placeholder="Ulangi password baru..."
+                    className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={passwordUpdating}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 mt-1">
+                  <button
+                    onClick={() => {
+                      setIsPasswordFormOpen(false)
+                      setNewPassword('')
+                      setConfirmPassword('')
+                    }}
+                    disabled={passwordUpdating}
+                    className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handlePasswordUpdate}
+                    disabled={passwordUpdating || newPassword.length < 6 || confirmPassword.length < 6}
+                    className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    {passwordUpdating ? <RefreshCw className="animate-spin" size={13} /> : 'Simpan Password'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsPasswordFormOpen(true)}
+                className="w-full py-3 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-[10px] font-black tracking-[0.15em] uppercase text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Key size={13} /> Ganti Password Akun
+              </button>
+            )}
+          </div>
 
           {/* Pembatas / Divider */}
           <div className="border-t border-neutral-800/60 my-3" />
