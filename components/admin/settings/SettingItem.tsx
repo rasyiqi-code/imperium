@@ -7,9 +7,10 @@ interface SettingItemProps {
   title: string
   value: string
   isLink?: boolean
+  linkText?: string
 }
 
-export default function SettingItem({ icon, title, value, isLink }: SettingItemProps) {
+export default function SettingItem({ icon, title, value, isLink, linkText }: SettingItemProps) {
   return (
     <div className="flex items-center justify-between p-4 hover:bg-neutral-900/40 transition-all duration-300">
       <div className="flex items-center gap-4">
@@ -21,7 +22,7 @@ export default function SettingItem({ icon, title, value, isLink }: SettingItemP
       </div>
       {isLink && (
         <span className="text-yellow-500 text-[10px] font-black tracking-widest hover:text-yellow-400 transition-colors duration-300">
-          Edit
+          {linkText || 'Edit'}
         </span>
       )}
     </div>

@@ -160,6 +160,60 @@ export default function AdminSettings() {
     }
   }
 
+  const handleManageDevices = () => {
+    if (typeof window === 'undefined') return
+
+    const ua = navigator.userAgent
+    let os = 'OS Lain'
+    let browser = 'Browser Lain'
+
+    if (ua.includes('Windows')) os = 'Windows'
+    else if (ua.includes('Macintosh') || ua.includes('Mac OS')) os = 'macOS'
+    else if (ua.includes('Linux')) os = 'Linux'
+    else if (ua.includes('Android')) os = 'Android'
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS'
+
+    if (ua.includes('Chrome')) browser = 'Chrome'
+    else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari'
+    else if (ua.includes('Firefox')) browser = 'Firefox'
+    else if (ua.includes('Edge') || ua.includes('Edg')) browser = 'Edge'
+
+    const deviceInfo = `${browser} di ${os}`
+
+    showConfirm({
+      title: 'Perangkat Terdaftar',
+      message: `Perangkat aktif Anda saat ini:\n• ${deviceInfo} (Perangkat Ini)\n\nApakah Anda ingin keluar dari semua perangkat lain yang terhubung dengan akun admin ini?`,
+      type: 'warning',
+      confirmText: 'Ya, Logout Lainnya',
+      cancelText: 'Tutup',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.auth.signOut({ scope: 'others' })
+          if (error) {
+            showAlert({
+              title: 'Gagal Logout',
+              message: error.message,
+              type: 'danger'
+            })
+          } else {
+            showAlert({
+              title: 'Logout Berhasil',
+              message: 'Berhasil keluar dari semua perangkat lainnya.',
+              type: 'success'
+            })
+          }
+        } catch (err: unknown) {
+          const error = err as Error
+          showAlert({
+            title: 'Error',
+            message: `Gagal: ${error.message}`,
+            type: 'danger'
+          })
+        }
+      }
+    })
+  }
+
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
@@ -298,7 +352,9 @@ export default function AdminSettings() {
                   </div>
                 )}
 
-                <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" />
+                <div onClick={handleManageDevices} className="cursor-pointer">
+                  <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" isLink linkText="Kelola" />
+                </div>
               </div>
             </div>
 
