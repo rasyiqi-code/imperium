@@ -114,41 +114,30 @@ export default function MemberDetailModal({
             )}
           </div>
 
-          {/* Form Ubah Password (Collapsible) */}
-          <div className="pt-4 border-t border-neutral-900">
-            <button
-              onClick={() => setIsPasswordFormOpen(!isPasswordFormOpen)}
-              className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-colors duration-200 cursor-pointer"
-            >
-              <Key size={12} />
-              {isPasswordFormOpen ? 'Sembunyikan Ubah Password' : 'Ubah Password Member'}
-            </button>
-
-            {isPasswordFormOpen && (
-              <div className="mt-3 p-4 rounded-2xl bg-neutral-900/40 border border-neutral-800 space-y-3 animate-in slide-in-from-top-2 duration-200">
-                <p className="text-[10px] text-neutral-500 font-bold leading-relaxed">
-                  Masukkan password baru di bawah ini. Password akan diupdate langsung di Supabase Auth tanpa perlu konfirmasi email ke pengguna.
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Minimal 6 karakter..."
-                    className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-neutral-700 font-mono"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={isLocalProcessing}
-                  />
-                  <button
-                    onClick={handlePasswordSubmit}
-                    disabled={isLocalProcessing || newPassword.length < 6}
-                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
-                  >
-                    {isLocalProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
-                  </button>
-                </div>
+          {isPasswordFormOpen && (
+            <div className="p-4 rounded-2xl bg-neutral-900/40 border border-neutral-800 space-y-3 animate-in slide-in-from-top-2 duration-200">
+              <p className="text-[10px] text-neutral-500 font-bold leading-relaxed">
+                Masukkan password baru di bawah ini. Password akan diupdate langsung di Supabase Auth tanpa perlu konfirmasi email ke pengguna.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Minimal 6 karakter..."
+                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-neutral-700 font-mono"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={isLocalProcessing}
+                />
+                <button
+                  onClick={handlePasswordSubmit}
+                  disabled={isLocalProcessing || newPassword.length < 6}
+                  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                >
+                  {isLocalProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
           
           {/* Grid Tombol Aksi */}
           <div className="pt-4 border-t border-neutral-900">
@@ -214,6 +203,18 @@ export default function MemberDetailModal({
                 className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Trash2 size={14} /> Hapus Akun
+              </button>
+
+              {/* Tombol 5: Setel Password Baru (Lebar Penuh) */}
+              <button 
+                onClick={() => setIsPasswordFormOpen(!isPasswordFormOpen)}
+                className={`col-span-2 w-full py-2.5 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
+                  isPasswordFormOpen
+                  ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/35 shadow-lg shadow-yellow-500/5'
+                  : 'bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 text-neutral-400 hover:text-white'
+                }`}
+              >
+                <Key size={14} /> {isPasswordFormOpen ? 'Tutup Set Password' : 'Setel Password Baru'}
               </button>
 
             </div>
