@@ -58,9 +58,9 @@ export default function Pricing() {
         {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
         <div className="mx-auto max-w-3xl mb-12 text-center">
           <h2 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 leading-tight tracking-tight">
-            Membership{" "}
+            Take Action{" "}
             <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
-              Imperium Crypto
+              &amp; Join
             </span>
           </h2>
         </div>
