@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useEffect, useState, useCallback } from 'react'
-import { TrendingUp, TrendingDown, ExternalLink, RefreshCw, Lock } from 'lucide-react'
+import { TrendingUp, TrendingDown, RefreshCw, Lock, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 // --- Tipe Data ---
 interface CoinData {
@@ -23,20 +24,17 @@ interface TradingSignalsProps {
   onUpgradeClick: () => void
 }
 
-// --- Komponen skeleton per baris ---
+// --- Skeleton per baris ---
 function CoinRowSkeleton() {
   return (
     <div className="flex items-center justify-between px-4 py-4 bg-neutral-950/60 border border-neutral-800/60 rounded-xl animate-pulse">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-neutral-800" />
-        <div className="space-y-1.5">
-          <div className="w-20 h-3 bg-neutral-800 rounded" />
-          <div className="w-14 h-2 bg-neutral-800/60 rounded" />
-        </div>
+        <div className="w-7 h-7 rounded-full bg-neutral-800" />
+        <div className="w-24 h-3 bg-neutral-800 rounded" />
       </div>
-      <div className="text-right space-y-1.5">
-        <div className="w-24 h-3 bg-neutral-800 rounded ml-auto" />
-        <div className="w-16 h-2 bg-neutral-800/60 rounded ml-auto" />
+      <div className="flex items-center gap-3">
+        <div className="w-20 h-3 bg-neutral-800 rounded" />
+        <div className="w-12 h-4 bg-neutral-800/60 rounded" />
       </div>
     </div>
   )
@@ -49,7 +47,6 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
-  // Ambil data dari API internal kita yang memanggil FreeCryptoAPI
   const fetchMarketData = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true)
     try {
@@ -68,10 +65,8 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
   }, [])
 
   useEffect(() => {
-    // Bungkus dengan void agar eslint tidak mendeteksi setState synchronous
     const load = () => { void fetchMarketData() }
     load()
-    // Refresh otomatis setiap 60 detik
     const interval = setInterval(load, 60_000)
     return () => clearInterval(interval)
   }, [fetchMarketData])
@@ -112,80 +107,74 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
         </div>
       </div>
 
-      {/* Daftar Coin */}
-      <div className="p-4 space-y-2">
-        {loading
-          ? Array.from({ length: 5 }).map((_, i) => <CoinRowSkeleton key={i} />)
-          : coins.map((coin) => {
-              const isUp = (coin.change24h ?? 0) >= 0
-              const changeColor = isUp ? 'text-green-400' : 'text-red-400'
-              const changeBg = isUp ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'
+      {/* Daftar Coin — dibatasi tinggi dengan overflow-hidden agar overlay bisa bekerja */}
+      <div className="relative">
+        <div className="p-4 space-y-2">
+          {loading
+            ? Array.from({ length: 5 }).map((_, i) => <CoinRowSkeleton key={i} />)
+            : coins.map((coin) => {
+                const isUp = (coin.change24h ?? 0) >= 0
+                const changeColor = isUp ? 'text-green-400' : 'text-red-400'
+                const changeBg   = isUp ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'
+                // Tampilkan volume hanya jika tersedia dan bukan "—"
+                const hasVol = coin.volume24h && coin.volume24h !== '—'
 
-              return (
-                <div
-                  key={coin.symbol}
-                  className="flex items-center justify-between px-4 py-3.5 bg-neutral-950/60 border border-neutral-800/60 rounded-xl hover:border-neutral-700 transition-all group"
-                >
-                  {/* Kiri: Ikon + Nama Pair */}
-                  <div className="flex items-center gap-3">
-                    {/* Ikon coin dari CoinMarketCap CDN */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${getCmcId(coin.cmcSlug)}.png`}
-                      alt={coin.symbol}
-                      width={28}
-                      height={28}
-                      className="rounded-full"
-                      onError={(e) => {
-                        // Fallback ke teks ikon jika gambar gagal
-                        const target = e.currentTarget as HTMLImageElement
-                        target.style.display = 'none'
-                        const fallback = target.nextElementSibling as HTMLElement | null
-                        if (fallback) fallback.style.display = 'flex'
-                      }}
-                    />
-                    {/* Fallback ikon teks */}
-                    <span
-                      className="w-7 h-7 rounded-full bg-yellow-500/10 border border-yellow-500/20 items-center justify-center text-xs font-black text-yellow-500/70 hidden"
-                    >
-                      {coin.icon}
-                    </span>
+                return (
+                  <div
+                    key={coin.symbol}
+                    className="flex items-center justify-between px-4 py-3.5 bg-neutral-950/60 border border-neutral-800/60 rounded-xl hover:border-neutral-700 transition-all"
+                  >
+                    {/* Kiri: Ikon + Nama Pair */}
+                    <div className="flex items-center gap-3">
+                      {/* Logo coin dari CoinMarketCap CDN */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`https://s2.coinmarketcap.com/static/img/coins/64x64/${getCmcId(coin.cmcSlug)}.png`}
+                        alt={coin.symbol}
+                        width={28}
+                        height={28}
+                        className="rounded-full shrink-0"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement
+                          target.style.display = 'none'
+                          const fallback = target.nextElementSibling as HTMLElement | null
+                          if (fallback) fallback.style.display = 'flex'
+                        }}
+                      />
+                      {/* Fallback ikon teks jika logo gagal dimuat */}
+                      <span className="w-7 h-7 rounded-full bg-yellow-500/10 border border-yellow-500/20 items-center justify-center text-xs font-black text-yellow-500/70 hidden shrink-0">
+                        {coin.icon}
+                      </span>
 
-                    <div>
-                      <p className="text-xs font-extrabold text-neutral-200 tracking-widest uppercase">{coin.pair}</p>
-                      <p className="text-[9px] text-neutral-600 font-bold mt-0.5">
-                        Vol 24h: <span className="text-neutral-500">{coin.volume24h ?? '—'}</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Kanan: Harga + Perubahan + Teaser VIP */}
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      {/* Harga live */}
-                      <p className="text-xs font-black text-white font-mono tracking-tight">
-                        {coin.price ?? '—'}
-                      </p>
-                      {/* % Perubahan 24h */}
-                      {coin.change24h !== null ? (
-                        <span className={`inline-flex items-center gap-0.5 text-[9px] font-bold mt-0.5 px-1.5 py-0.5 rounded border ${changeBg} ${changeColor}`}>
-                          {isUp ? <TrendingUp size={8} /> : <TrendingDown size={8} />}
-                          {isUp ? '+' : ''}{coin.change24h.toFixed(2)}%
-                        </span>
-                      ) : (
-                        <span className="text-[9px] text-neutral-700 font-bold">—</span>
-                      )}
+                      <div>
+                        <p className="text-xs font-extrabold text-neutral-200 tracking-widest uppercase">{coin.pair}</p>
+                        {/* Tampilkan vol hanya jika ada datanya */}
+                        {hasVol && (
+                          <p className="text-[9px] text-neutral-600 font-bold mt-0.5">
+                            Vol 24h: <span className="text-neutral-500">{coin.volume24h}</span>
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Teaser signal VIP tersembunyi */}
-                    <div className="relative">
-                      {isVip ? (
-                        /* Anggota VIP: badge signal (placeholder — detail di Discord) */
-                        <div className="text-[8px] font-black px-2 py-1 rounded border border-yellow-500/30 bg-yellow-500/5 text-yellow-500/70 uppercase tracking-wider whitespace-nowrap">
-                          Lihat di Discord
-                        </div>
-                      ) : (
-                        /* Non-VIP: ikon kunci mini */
+                    {/* Kanan: Harga + Badge % Perubahan + Kunci non-VIP */}
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-xs font-black text-white font-mono tracking-tight">
+                          {coin.price ?? '—'}
+                        </p>
+                        {coin.change24h !== null ? (
+                          <span className={`inline-flex items-center gap-0.5 text-[9px] font-bold mt-0.5 px-1.5 py-0.5 rounded border ${changeBg} ${changeColor}`}>
+                            {isUp ? <TrendingUp size={8} /> : <TrendingDown size={8} />}
+                            {isUp ? '+' : ''}{coin.change24h.toFixed(2)}%
+                          </span>
+                        ) : (
+                          <span className="text-[9px] text-neutral-700 font-bold">—</span>
+                        )}
+                      </div>
+
+                      {/* Kunci kecil untuk non-VIP — VIP tidak ditampilkan apa-apa di sini */}
+                      {!isVip && (
                         <button
                           onClick={onUpgradeClick}
                           className="p-1.5 rounded-lg bg-neutral-800/60 border border-neutral-700 text-neutral-600 hover:text-yellow-500 hover:border-yellow-500/30 transition-all active:scale-90"
@@ -196,34 +185,40 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
                       )}
                     </div>
                   </div>
-                </div>
-              )
-            })}
-
-        {/* Banner teaser — tampil untuk semua member (free & VIP) */}
-        <div className="mt-3 px-4 py-3.5 bg-gradient-to-r from-yellow-500/5 via-amber-500/5 to-transparent border border-yellow-500/15 rounded-xl flex items-center justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-black text-yellow-400/80 uppercase tracking-wider">Sinyal Lengkap di Komunitas VIP</p>
-            <p className="text-[9px] text-neutral-500 mt-0.5 leading-relaxed">
-              Entry point, Stop Loss, Take Profit & analisis teknikal lengkap tersedia eksklusif di Discord VIP Imperium.
-            </p>
-          </div>
-          <a
-            href="https://discord.gg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 flex items-center gap-1 text-[9px] font-bold text-yellow-500 hover:text-yellow-400 transition-colors"
-          >
-            Gabung <ExternalLink size={9} />
-          </a>
+                )
+              })}
         </div>
+
+        {/* Overlay gradient fade ke bawah — tampil untuk non-VIP sebagai teaser */}
+        {!loading && (
+          <div className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.7) 45%, rgba(10,10,10,0.97) 100%)'
+            }}
+          />
+        )}
+
+        {/* Tombol CTA upgrade — tampil di atas overlay untuk semua member */}
+        {!loading && (
+          <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-1.5 pointer-events-none">
+            <p className="text-[9px] font-bold text-neutral-400 tracking-wide">
+              Sinyal lengkap tersedia untuk member <span className="text-yellow-500">VIP</span>
+            </p>
+            <Link
+              href="/dashboard/upgrade"
+              className="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[10px] font-black uppercase tracking-wider shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 hover:scale-105 transition-all duration-200 active:scale-95"
+            >
+              Upgrade ke VIP <ArrowRight size={12} />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
 /**
- * Mapping slug CMC ke ID numerik untuk mendapatkan logo.
+ * Mapping slug CMC ke ID numerik untuk mendapatkan logo coin.
  * ID ini stabil dan tidak berubah di CoinMarketCap.
  */
 function getCmcId(slug: string): number {
