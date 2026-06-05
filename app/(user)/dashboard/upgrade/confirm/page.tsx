@@ -3,9 +3,9 @@
 import { useState, useEffect, Suspense, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, ChevronDown } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Clock, ExternalLink, Info } from 'lucide-react'
 import { User } from '@supabase/supabase-js'
-import { PaketVIP, MemberVIP } from '@/lib/types'
+import { PaketVIP, MemberVIP, Payment } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
 import { calculateProratedPrice } from '@/lib/payment/helpers'
@@ -25,6 +25,7 @@ function ConfirmContent() {
   const [selectedPaket, setSelectedPaket] = useState<PaketVIP | null>(null)
   const [upgradeMode, setUpgradeMode] = useState('stacking')
   const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
+  const [pendingPayment, setPendingPayment] = useState<Payment | null>(null)
 
   // Load Data dengan Guard
   useEffect(() => {
@@ -51,9 +52,11 @@ function ConfirmContent() {
             const memberData = data.memberData
             const packages = data.paketList || []
             const upMode = data.upgradeMode
+            const pendingPay = data.pendingPayment
 
             if (memberData) setCurrentMember(memberData)
             setUpgradeMode(upMode)
+            if (pendingPay) setPendingPayment(pendingPay)
 
             if (packages.length > 0) {
               setListPaket(packages)
@@ -151,10 +154,92 @@ function ConfirmContent() {
     }
   }
 
-  if (fetching || !selectedPaket) return <Loader label="Memuat Riwayat Pembayaran..." />
+  if (fetching) return <Loader label="Memuat Riwayat Pembayaran..." />
+
+  if (pendingPayment) {
+    return (
+      <div className="p-4 md:p-8 space-y-6 w-full mx-auto pb-32 bg-black min-h-screen text-white font-sans text-left animate-in fade-in duration-300">
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-neutral-500 hover:text-white transition-all cursor-pointer">
+          <ArrowLeft size={18} />
+          <span className="text-xs font-bold tracking-widest">Kembali</span>
+        </button>
+
+        <div className="space-y-1">
+          <h1 className="text-sm font-bold uppercase tracking-tight">Konfirmasi Pembayaran</h1>
+          <p className="text-xs text-neutral-500 font-bold tracking-tight leading-none">Imperium Crypto VIP Portal</p>
+        </div>
+
+        {/* Status Pending Card */}
+        <div className="rounded-3xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md p-6 md:p-8 space-y-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/2 blur-2xl rounded-full" />
+          
+          <div className="flex flex-col md:flex-row gap-5 items-start justify-between">
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/25 text-yellow-500 flex items-center justify-center shrink-0 animate-pulse">
+                <Clock size={24} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-black text-white">Menunggu Verifikasi Admin</h3>
+                <p className="text-xs text-neutral-450 font-medium leading-relaxed">
+                  Bukti transfer Anda telah kami terima dan saat ini sedang ditinjau oleh Admin. 
+                  Akses VIP akan otomatis aktif setelah pembayaran dikonfirmasi.
+                </p>
+              </div>
+            </div>
+            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-yellow-500/20 bg-yellow-500/10 text-yellow-500 self-start md:self-auto shrink-0 leading-none">
+              Pending
+            </span>
+          </div>
+
+          <div className="border-t border-neutral-850 pt-5 space-y-4">
+            <h4 className="text-xs font-bold text-neutral-400 tracking-wider uppercase">Rincian Transaksi</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-neutral-950 p-5 rounded-2xl border border-neutral-900">
+              <div className="space-y-1">
+                <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Paket Pilihan</span>
+                <span className="text-xs font-bold text-white block">{pendingPayment.nama_paket}</span>
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Total Pembayaran</span>
+                <span className="text-xs font-bold text-yellow-500 block">Rp {Number(pendingPayment.harga_bayar).toLocaleString('id-ID')}</span>
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Tanggal Pengiriman</span>
+                <span className="text-xs font-bold text-white block">
+                  {pendingPayment.created_at ? new Date(pendingPayment.created_at).toLocaleString('id-ID') : '-'}
+                </span>
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Bukti Transfer</span>
+                <a 
+                  href={pendingPayment.bukti_transfer} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-500 hover:underline hover:text-yellow-400 leading-none cursor-pointer"
+                >
+                  Lihat Bukti Terkirim <ExternalLink size={12} />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Warning / Informative Banner */}
+          <div className="p-4 bg-neutral-900/40 rounded-xl border border-neutral-850 flex gap-3 items-start text-[11px] text-neutral-500 leading-relaxed font-medium">
+            <Info size={16} className="text-neutral-500 shrink-0 mt-0.5" />
+            <p>
+              Untuk mencegah pembayaran ganda, Anda tidak dapat mengirim bukti transfer baru sebelum transaksi ini disetujui atau ditolak oleh Admin. 
+              Pengecekan manual dilakukan setiap hari antara pukul <strong>09:00 - 21:00 WIB</strong>. Jika butuh bantuan cepat, silakan hubungi Support.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!selectedPaket) return <Loader label="Memuat Riwayat Pembayaran..." />
+
   return (
     <div className="p-4 md:p-8 space-y-6 w-full mx-auto pb-32 bg-black min-h-screen text-white font-sans text-left">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-neutral-500 hover:text-white transition-all">
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-neutral-500 hover:text-white transition-all cursor-pointer">
         <ArrowLeft size={18} />
         <span className="text-xs font-bold tracking-widest">Kembali</span>
       </button>

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { PaketVIP, MemberVIP } from '@/lib/types'
+import { PaketVIP, MemberVIP, Payment } from '@/lib/types'
 import PricingCard from '@/components/payment/PricingCard'
 import PaymentModal from '@/components/payment/PaymentModal'
-import { CreditCard, ShieldCheck } from 'lucide-react'
+import { CreditCard, ShieldCheck, Info } from 'lucide-react'
 import Loader from '@/components/Loader'
 import { calculateProratedPrice } from '@/lib/payment/helpers'
 
@@ -16,6 +16,7 @@ export default function UpgradePage() {
   const [showPayment, setShowPayment] = useState(false)
   const [upgradeMode, setUpgradeMode] = useState('stacking')
   const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
+  const [pendingPayment, setPendingPayment] = useState<Payment | null>(null)
 
   useEffect(() => {
     async function loadPaket() {
@@ -37,10 +38,14 @@ export default function UpgradePage() {
             const packages = allPackages.filter(p => Number(p.harga) > 0)
             const memberData = data.memberData
             const upMode = data.upgradeMode
+            const pendingPay = data.pendingPayment
 
             setUpgradeMode(upMode)
             if (memberData) {
               setCurrentMember(memberData)
+            }
+            if (pendingPay) {
+              setPendingPayment(pendingPay)
             }
 
             setPaketList(packages)
@@ -95,6 +100,19 @@ export default function UpgradePage() {
         </h1>
       </div>
 
+      {pendingPayment && (
+        <div className="flex gap-3.5 p-4.5 bg-yellow-500/5 rounded-2xl border border-yellow-500/15 text-left items-start text-xs font-medium text-yellow-550 leading-relaxed max-w-lg mx-auto shadow-md">
+          <Info size={16} className="text-yellow-500 shrink-0 mt-0.5 animate-pulse" />
+          <div className="space-y-0.5">
+            <p className="font-black text-white text-[11px] uppercase tracking-wider">Menunggu Verifikasi Manual</p>
+            <p className="text-neutral-500 font-bold leading-normal">
+              Anda telah mengonfirmasi pembayaran manual untuk paket <strong>{pendingPayment.nama_paket}</strong> (Rp {Number(pendingPayment.harga_bayar).toLocaleString('id-ID')}). 
+              Silakan tunggu proses verifikasi admin selesai. Anda tidak dapat melakukan transaksi baru sementara waktu.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Grid Pricing: Responsif 1 kol (mobile) / 2 kol (PC) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {paketList.map((p) => {
@@ -119,10 +137,14 @@ export default function UpgradePage() {
         <div className="w-full max-w-md space-y-4 text-center">
           <button 
             onClick={() => setShowPayment(true)}
-            disabled={!selectedId}
-            className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 tracking-tight text-sm"
+            disabled={!selectedId || !!pendingPayment}
+            className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 tracking-tight text-sm cursor-pointer"
           >
-            <CreditCard size={20}/> Bayar Sekarang
+            {pendingPayment ? (
+              <>Verifikasi Sedang Diproses</>
+            ) : (
+              <><CreditCard size={20}/> Bayar Sekarang</>
+            )}
           </button>
 
           <div className="flex items-center justify-center gap-2 text-neutral-600">

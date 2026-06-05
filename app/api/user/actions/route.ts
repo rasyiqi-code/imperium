@@ -144,20 +144,30 @@ export async function POST(request: Request) {
       }
 
       case 'getUpgradeData': {
-        const [paketList, memberData, configData] = await Promise.all([
+        const [paketList, memberData, configData, pendingPayment] = await Promise.all([
           prisma.data_paket_vip.findMany({
             orderBy: { harga: 'asc' }
           }),
           prisma.data_member_vip.findUnique({
             where: { id_user_auth: user.id }
           }),
-          getAdminSettings()
+          getAdminSettings(),
+          prisma.data_pembayaran.findFirst({
+            where: {
+              id_user_auth: user.id,
+              status_pembayaran: 'pending'
+            },
+            orderBy: {
+              created_at: 'desc'
+            }
+          })
         ])
 
         return NextResponse.json({
           paketList,
           memberData,
-          upgradeMode: configData?.midtrans_upgrade_mode || 'stacking'
+          upgradeMode: configData?.midtrans_upgrade_mode || 'stacking',
+          pendingPayment
         })
       }
 
