@@ -37,7 +37,18 @@ export default function RegisterPage() {
     })
 
     if (authError) {
-      setMessage(`Gagal: ${authError.message}`)
+      let friendlyMessage = authError.message
+      const rawMessage = authError.message.toLowerCase()
+
+      if (rawMessage.includes('user already registered')) {
+        friendlyMessage = 'Email tersebut sudah terdaftar. Silakan masuk menggunakan akun Anda.'
+      } else if (rawMessage.includes('password should be at least')) {
+        friendlyMessage = 'Password harus memiliki panjang minimal 6 karakter.'
+      } else if (rawMessage.includes('invalid email address')) {
+        friendlyMessage = 'Format alamat email tidak valid.'
+      }
+
+      setMessage(`Gagal: ${friendlyMessage}`)
       setLoading(false)
       return
     }

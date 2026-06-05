@@ -59,7 +59,20 @@ export default function LoginPage() {
       const errorResponse = err as { message?: string }
       console.error('FULL ERROR DEBUG:', errorResponse)
       
-      setErrorMsg(errorResponse.message || 'Akses Ditolak: Periksa koneksi atau kredensial.')
+      let friendlyMessage = 'Akses Ditolak: Periksa koneksi atau kredensial.'
+      const rawMessage = errorResponse.message || ''
+      
+      if (rawMessage.toLowerCase().includes('invalid login credentials')) {
+        friendlyMessage = 'Email atau password yang Anda masukkan salah.'
+      } else if (rawMessage.toLowerCase().includes('email not confirmed')) {
+        friendlyMessage = 'Email Anda belum diverifikasi. Silakan periksa kotak masuk email Anda.'
+      } else if (rawMessage.toLowerCase().includes('invalid email address')) {
+        friendlyMessage = 'Format alamat email tidak valid.'
+      } else if (rawMessage) {
+        friendlyMessage = rawMessage
+      }
+
+      setErrorMsg(friendlyMessage)
       setLoading(false)
     }
   }
