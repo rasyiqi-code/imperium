@@ -1,101 +1,19 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { 
-  RefreshCw, 
-  Edit3, 
-  CheckCircle2, 
-  Save, 
-  X,
-  Package,
-  Plus
-} from 'lucide-react'
+import { Edit3, CheckCircle2, Package, Plus } from 'lucide-react'
 import { PaketVIP } from '@/lib/types'
-import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
+import AddPlanModal from '@/components/admin/pricing/AddPlanModal'
+import EditPlanModal from '@/components/admin/pricing/EditPlanModal'
 
 export default function PricingEditor() {
-  const { showAlert } = useModal()
   const [plans, setPlans] = useState<PaketVIP[]>([])
   const [loading, setLoading] = useState(true)
   const [editModal, setEditModal] = useState<PaketVIP | null>(null)
-  const [saving, setSaving] = useState(false)
-  
   const [showAddModal, setShowAddModal] = useState(false)
-  const [newPlan, setNewPlan] = useState<Omit<PaketVIP, 'id'>>({
-    nama_paket: '',
-    harga: 0,
-    durasi_hari: 30,
-    fitur: [],
-    recommended: false
-  })
-  const [creating, setCreating] = useState(false)
 
-  const handleCreate = async () => {
-    if (!newPlan.nama_paket.trim()) {
-      showAlert({
-        title: 'Nama Paket Kosong',
-        message: 'Nama paket wajib diisi!',
-        type: 'warning'
-      })
-      return
-    }
-    if (newPlan.harga < 0) {
-      showAlert({
-        title: 'Harga Tidak Valid',
-        message: 'Harga harus bernilai positif!',
-        type: 'warning'
-      })
-      return
-    }
-    if (newPlan.durasi_hari <= 0) {
-      showAlert({
-        title: 'Durasi Tidak Valid',
-        message: 'Durasi hari harus lebih dari 0!',
-        type: 'warning'
-      })
-      return
-    }
-    setCreating(true)
-    
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'createPricingPlan',
-          nama_paket: newPlan.nama_paket,
-          harga: newPlan.harga,
-          durasi_hari: newPlan.durasi_hari,
-          fitur: newPlan.fitur,
-          recommended: newPlan.recommended
-        })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal membuat paket pricing baru')
-      
-      setShowAddModal(false)
-      setNewPlan({
-        nama_paket: '',
-        harga: 0,
-        durasi_hari: 30,
-        fitur: [],
-        recommended: false
-      })
-      const updatedPlans = await fetchPlans()
-      setPlans(updatedPlans)
-    } catch (err: unknown) {
-      const error = err as Error
-      showAlert({
-        title: 'Error',
-        message: `Gagal: ${error.message}`,
-        type: 'danger'
-      })
-    } finally {
-      setCreating(false)
-    }
-  }
-
+  // Ambil paket VIP dari database
   const fetchPlans = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/actions', {
@@ -128,42 +46,6 @@ export default function PricingEditor() {
     }
   }, [fetchPlans])
 
-  const handleUpdate = async () => {
-    if (!editModal) return
-    setSaving(true)
-    
-    try {
-      const res = await fetch('/api/admin/actions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'updatePricingPlan',
-          planId: editModal.id,
-          nama_paket: editModal.nama_paket,
-          harga: editModal.harga,
-          durasi_hari: editModal.durasi_hari,
-          fitur: editModal.fitur,
-          recommended: editModal.recommended
-        })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Gagal mengubah paket pricing')
-      
-      setEditModal(null)
-      const updatedPlans = await fetchPlans()
-      setPlans(updatedPlans)
-    } catch (err: unknown) {
-      const error = err as Error
-      showAlert({
-        title: 'Error',
-        message: `Gagal: ${error.message}`,
-        type: 'danger'
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
-
   if (loading) return <Loader label="Memuat Konfigurasi Harga..." />
 
   return (
@@ -183,6 +65,7 @@ export default function PricingEditor() {
         </button>
       </div>
 
+      {/* Grid Paket */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {plans.map((plan) => (
           <div key={plan.id} className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 hover:border-yellow-500/30 shadow-lg hover:shadow-yellow-500/2 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
@@ -223,174 +106,27 @@ export default function PricingEditor() {
         ))}
       </div>
 
-      {/* MODAL EDIT */}
-      {editModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setEditModal(null)} />
-          
-          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
-              <h3 className="text-xs font-black tracking-wider text-white">Edit Pricing Plan</h3>
-              <button 
-                onClick={() => setEditModal(null)} 
-                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
-              >
-                <X size={14}/>
-              </button>
-            </div>
- 
-            <div className="p-6 space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Nama Paket</label>
-                <input 
-                  type="text" 
-                  value={editModal.nama_paket} 
-                  onChange={e => setEditModal({...editModal, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                />
-              </div>
- 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Harga (Rp)</label>
-                  <input 
-                    type="number" 
-                    value={editModal.harga} 
-                    onChange={e => setEditModal({...editModal, harga: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Durasi (Hari)</label>
-                  <input 
-                    type="number" 
-                    value={editModal.durasi_hari} 
-                    onChange={e => setEditModal({...editModal, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                  />
-                </div>
-              </div>
- 
-              <div className="flex items-center gap-2 p-1">
-                <input 
-                  type="checkbox" 
-                  id="edit-recommended"
-                  checked={editModal.recommended || false} 
-                  onChange={e => setEditModal({...editModal, recommended: e.target.checked})}
-                  className="w-4 h-4 rounded border-neutral-800 text-yellow-500 focus:ring-yellow-500/50 bg-neutral-900 accent-yellow-500 cursor-pointer"
-                />
-                <label htmlFor="edit-recommended" className="text-[10px] font-bold text-neutral-300 tracking-widest cursor-pointer select-none">Rekomendasikan Paket Ini</label>
-              </div>
+      {/* Modal Tambah Paket */}
+      <AddPlanModal 
+        isOpen={showAddModal} 
+        onClose={() => setShowAddModal(false)} 
+        onSuccess={async () => {
+          const updated = await fetchPlans()
+          setPlans(updated)
+        }} 
+      />
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
-                <textarea 
-                  rows={3}
-                  value={editModal.fitur?.join(', ') || ''} 
-                  onChange={e => setEditModal({...editModal, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-20"
-                  placeholder="Contoh: Sinyal VIP, Mentorship"
-                />
-              </div>
- 
-              <button 
-                onClick={handleUpdate}
-                disabled={saving}
-                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98]"
-              >
-                {saving ? <RefreshCw className="animate-spin" size={14}/> : <Save size={14}/>} Simpan Perubahan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL TAMBAH */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 text-left">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setShowAddModal(false)} />
-          
-          <div className="relative w-full max-w-md bg-neutral-950/80 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-neutral-900 flex justify-between items-center bg-neutral-950/50">
-              <h3 className="text-xs font-black tracking-wider text-white">Tambah Paket Pricing Baru</h3>
-              <button 
-                onClick={() => setShowAddModal(false)} 
-                className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
-              >
-                <X size={14}/>
-              </button>
-            </div>
- 
-            <div className="p-6 space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Nama Paket</label>
-                <input 
-                  type="text" 
-                  value={newPlan.nama_paket} 
-                  onChange={e => setNewPlan({...newPlan, nama_paket: e.target.value})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                  placeholder="Contoh: Paket 3 Bulan"
-                />
-              </div>
- 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Harga (Rp)</label>
-                  <input 
-                    type="number" 
-                    value={newPlan.harga} 
-                    onChange={e => setNewPlan({...newPlan, harga: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                    placeholder="299000"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Durasi (Hari)</label>
-                  <input 
-                    type="number" 
-                    value={newPlan.durasi_hari} 
-                    onChange={e => setNewPlan({...newPlan, durasi_hari: Number(e.target.value)})}
-                    className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600"
-                    placeholder="90"
-                  />
-                </div>
-              </div>
- 
-              <div className="flex items-center gap-2 p-1">
-                <input 
-                  type="checkbox" 
-                  id="add-recommended"
-                  checked={newPlan.recommended || false} 
-                  onChange={e => setNewPlan({...newPlan, recommended: e.target.checked})}
-                  className="w-4 h-4 rounded border-neutral-800 text-yellow-500 focus:ring-yellow-500/50 bg-neutral-900 accent-yellow-500 cursor-pointer"
-                />
-                <label htmlFor="add-recommended" className="text-[10px] font-bold text-neutral-300 tracking-widest cursor-pointer select-none">Rekomendasikan Paket Ini</label>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-500 tracking-widest ml-1">Fitur (Pisahkan dengan koma)</label>
-                <textarea 
-                  rows={3}
-                  value={newPlan.fitur?.join(', ') || ''} 
-                  onChange={e => setNewPlan({...newPlan, fitur: e.target.value.split(',').map(f => f.trim())})}
-                  className="w-full bg-neutral-900/20 border border-neutral-800 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl p-3 text-xs font-bold outline-none text-white placeholder-neutral-600 min-h-20"
-                  placeholder="Sinyal VIP, Mentorship, Akademi Crypto"
-                />
-              </div>
- 
-              <button 
-                onClick={handleCreate}
-                disabled={creating}
-                className="w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black rounded-xl text-[10px] tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25 active:scale-[0.98]"
-              >
-                {creating ? <RefreshCw className="animate-spin" size={14}/> : <Plus size={14}/>} Simpan Paket Baru
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal Edit Paket */}
+      <EditPlanModal 
+        key={editModal?.id || 'none'}
+        plan={editModal} 
+        isOpen={!!editModal} 
+        onClose={() => setEditModal(null)} 
+        onSuccess={async () => {
+          const updated = await fetchPlans()
+          setPlans(updated)
+        }} 
+      />
     </div>
   )
 }
