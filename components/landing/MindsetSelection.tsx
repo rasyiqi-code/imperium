@@ -3,11 +3,11 @@ import Image from "next/image";
 
 export default function MindsetSelection() {
   return (
-    <section id="mindset" className="relative overflow-hidden bg-black py-16 md:py-24">
+    <section id="mindset" className="relative overflow-hidden bg-black py-12 md:py-16">
       {/* Ambient glow tipis di latar belakang */}
       <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.015] rounded-full blur-[140px] pointer-events-none z-0" />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-8 sm:px-12 md:px-16">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 sm:px-10 md:px-12">
         
         {/* HEADER DENGAN GARIS PEMBATAS */}
         <div className="w-full flex items-center justify-center gap-4 mb-4">
@@ -19,14 +19,14 @@ export default function MindsetSelection() {
         </div>
 
         {/* JUDUL UTAMA */}
-        <div className="text-center mb-16 md:mb-20">
+        <div className="text-center mb-10 md:mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
             di Dunia ini Ada 2 Tipe Orang,
           </h2>
         </div>
 
         {/* GRID DUA KARTU KOMPARATIF */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-4xl mx-auto">
           
           {/* KARTU 1 (KIRI): Yang Berani Bertindak (Centang Biru, Aksen Cyan/Biru) */}
           <div className="relative group cursor-pointer aspect-[4/3]">
@@ -51,8 +51,8 @@ export default function MindsetSelection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
             </div>
 
-            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu) */}
-            <div className="absolute -bottom-6 -left-6 z-20 w-[85%] sm:w-[80%] p-4 md:p-5 rounded-2xl bg-[#1a1506]/95 border border-[#d4af37]/45 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#251e09] group-hover:border-[#d4af37]">
+            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu - rounded-none) */}
+            <div className="absolute -bottom-4 -left-4 z-20 w-[80%] sm:w-[75%] p-3 md:p-3.5 rounded-none bg-[#1a1506]/95 border border-[#d4af37]/45 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#251e09] group-hover:border-[#d4af37]">
               <p className="text-xs sm:text-sm md:text-base font-bold tracking-tight text-white leading-snug">
                 Keberanian melangkah{" "}
                 <span className="text-[#00d9ff] underline decoration-[#00d9ff] decoration-2 underline-offset-4 font-extrabold">
@@ -78,8 +78,8 @@ export default function MindsetSelection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
             </div>
             
-            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu) */}
-            <div className="absolute -bottom-6 -left-6 z-20 w-[85%] sm:w-[80%] p-4 md:p-5 rounded-2xl bg-[#0e0e0e]/95 border border-white/10 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#161616] group-hover:border-white/20">
+            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu - rounded-none) */}
+            <div className="absolute -bottom-4 -left-4 z-20 w-[80%] sm:w-[75%] p-3 md:p-3.5 rounded-none bg-[#0e0e0e]/95 border border-white/10 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#161616] group-hover:border-white/20">
               <p className="text-xs sm:text-sm md:text-base font-bold tracking-tight text-neutral-200 leading-snug">
                 Ilmu yang dipelajari{" "}
                 <span className="text-purple-300 font-extrabold">
