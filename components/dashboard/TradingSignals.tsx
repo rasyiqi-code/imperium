@@ -208,7 +208,7 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
               href="/dashboard/upgrade"
               className="pointer-events-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[10px] font-black uppercase tracking-wider shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/40 hover:scale-105 transition-all duration-200 active:scale-95"
             >
-              Upgrade ke VIP <ArrowRight size={12} />
+              Lihat di Komunitas <ArrowRight size={12} />
             </Link>
           </div>
         )}
