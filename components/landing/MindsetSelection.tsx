@@ -52,9 +52,9 @@ export default function MindsetSelection() {
             {/* Konten Teks Overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-20">
               <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-snug">
-                Tapi keberanian mengambil risiko{" "}
+                Keberanian melangkah{" "}
                 <span className="underline decoration-[#00d9ff] decoration-2 underline-offset-4">
-                  adalah fondasi awal menuju kesuksesan.
+                  adalah awal dari segala arah.
                 </span>
               </p>
             </div>
@@ -77,7 +77,7 @@ export default function MindsetSelection() {
             {/* Konten Teks Overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-20">
               <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-neutral-200 leading-snug">
-                Pengetahuan yang kamu pelajari tidak pernah membuatmu gagal.
+                Ilmu yang dipelajari takkan pernah menjadi rugi.
               </p>
             </div>
           </div>
