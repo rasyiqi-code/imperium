@@ -50,6 +50,9 @@ export default function AdminSettings() {
   const [newAdminName, setNewAdminName] = useState('')
   const [newAdminWa, setNewAdminWa] = useState('')
   const [isAddAdminProcessing, setIsAddAdminProcessing] = useState(false)
+  const [isEmailFormOpen, setIsEmailFormOpen] = useState(false)
+  const [newAdminEmailState, setNewAdminEmailState] = useState('')
+  const [emailUpdating, setEmailUpdating] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -289,6 +292,66 @@ export default function AdminSettings() {
     }
   }
 
+  const handleEmailUpdate = async () => {
+    if (!newAdminEmailState) {
+      showAlert({
+        title: 'Email Kosong',
+        message: 'Email baru tidak boleh kosong!',
+        type: 'warning'
+      })
+      return
+    }
+
+    setEmailUpdating(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        showAlert({
+          title: 'Sesi Habis',
+          message: 'Sesi Anda telah habis. Silakan login kembali.',
+          type: 'danger'
+        })
+        return
+      }
+
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateAdminEmail',
+          adminUserId: user.id,
+          newEmail: newAdminEmailState
+        })
+      })
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        setAdminEmail(newAdminEmailState)
+        setIsEmailFormOpen(false)
+        showAlert({
+          title: 'Email Diperbarui',
+          message: 'Email admin berhasil diperbarui!',
+          type: 'success'
+        })
+      } else {
+        showAlert({
+          title: 'Gagal Mengubah Email',
+          message: data.error || 'Terjadi kesalahan saat memperbarui email.',
+          type: 'danger'
+        })
+      }
+    } catch (err: unknown) {
+      const error = err as Error
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${error.message}`,
+        type: 'danger'
+      })
+    } finally {
+      setEmailUpdating(false)
+    }
+  }
+
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
@@ -472,7 +535,48 @@ export default function AdminSettings() {
             <div className="space-y-3">
               <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Keamanan Admin</h3>
               <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-900/60 shadow-lg">
-                <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} />
+                {isEmailFormOpen ? (
+                  <div className="p-4 bg-neutral-900/25 border border-neutral-900 rounded-2xl m-3 space-y-3.5 animate-in zoom-in-95 duration-200 text-left">
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Email Baru</label>
+                      <input
+                        type="email"
+                        placeholder="Masukkan email baru..."
+                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                        value={newAdminEmailState}
+                        onChange={(e) => setNewAdminEmailState(e.target.value)}
+                        disabled={emailUpdating}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                      <button
+                        onClick={() => {
+                          setIsEmailFormOpen(false)
+                          setNewAdminEmailState('')
+                        }}
+                        disabled={emailUpdating}
+                        className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer text-center"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        onClick={handleEmailUpdate}
+                        disabled={emailUpdating || !newAdminEmailState || newAdminEmailState === adminEmail}
+                        className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed text-center flex items-center justify-center gap-1.5"
+                      >
+                        {emailUpdating ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div onClick={() => {
+                    setNewAdminEmailState(adminEmail)
+                    setIsEmailFormOpen(true)
+                  }} className="cursor-pointer">
+                    <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} isLink linkText="Ubah" />
+                  </div>
+                )}
                 
                 {isPasswordFormOpen ? (
                   <div className="p-4 bg-neutral-900/25 border border-neutral-900 rounded-2xl m-3 space-y-3.5 animate-in zoom-in-95 duration-200 text-left">

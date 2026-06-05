@@ -1,19 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@supabase/supabase-js'
-
-// Inisialisasi Supabase Admin Client menggunakan service role key untuk manajemen pengguna tingkat tinggi
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-const supabaseAdmin = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    })
-  : null
+import crypto from 'crypto'
 
 interface UsersBody {
   ids?: string[]
@@ -62,20 +49,13 @@ export async function updateUserPassword(body: UpdatePasswordBody): Promise<Resp
     return NextResponse.json({ error: 'Password baru harus memiliki minimal 6 karakter!' }, { status: 400 })
   }
 
-  if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Supabase admin client tidak terkonfigurasi. Pastikan SUPABASE_SERVICE_ROLE_KEY tersedia.' }, { status: 500 })
-  }
-
   try {
-    // Memperbarui password user menggunakan auth admin client (tanpa konfirmasi email)
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(
-      userId,
-      { password: newPassword }
-    )
-
-    if (error) {
-      throw error
-    }
+    // Memperbarui password user secara langsung di database auth.users menggunakan fungsi crypt pgcrypto
+    await prisma.$executeRawUnsafe(`
+      UPDATE auth.users 
+      SET encrypted_password = crypt($1, gen_salt('bf', 10)), updated_at = NOW() 
+      WHERE id = $2::uuid
+    `, newPassword, userId)
 
     return NextResponse.json({ success: true })
   } catch (error: unknown) {
@@ -105,42 +85,102 @@ export async function createAdminUser(body: CreateAdminBody): Promise<Response> 
     return NextResponse.json({ error: 'Password harus memiliki minimal 6 karakter!' }, { status: 400 })
   }
 
-  if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Supabase admin client tidak terkonfigurasi. Pastikan SUPABASE_SERVICE_ROLE_KEY tersedia.' }, { status: 500 })
-  }
-
   try {
-    // 1. Buat pengguna di Supabase Auth
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    const newUserId = crypto.randomUUID()
+
+    // 1. Buat pengguna langsung di database auth.users dengan password terenkripsi bcrypt
+    await prisma.$executeRawUnsafe(`
+      INSERT INTO auth.users (
+        id,
+        instance_id,
+        email,
+        encrypted_password,
+        email_confirmed_at,
+        invited_at,
+        confirmation_token,
+        confirmation_sent_at,
+        recovery_token,
+        recovery_sent_at,
+        email_change_token_new,
+        email_change,
+        email_change_sent_at,
+        last_sign_in_at,
+        raw_app_meta_data,
+        raw_user_meta_data,
+        is_super_admin,
+        created_at,
+        updated_at,
+        phone,
+        phone_confirmed_at,
+        phone_change,
+        phone_change_token,
+        phone_change_sent_at,
+        email_change_token_current,
+        email_change_confirm_status,
+        banned_until,
+        reauthentication_token,
+        reauthentication_sent_at,
+        is_sso_user,
+        deleted_at,
+        role,
+        aud
+      ) VALUES (
+        $1::uuid,
+        '00000000-0000-0000-0000-000000000000'::uuid,
+        $2,
+        crypt($3, gen_salt('bf', 10)),
+        NOW(),
+        NULL,
+        '',
+        NULL,
+        '',
+        NULL,
+        '',
+        '',
+        NULL,
+        NULL,
+        '{"provider": "email", "providers": ["email"]}'::jsonb,
+        $4::jsonb,
+        false,
+        NOW(),
+        NOW(),
+        NULL,
+        NULL,
+        '',
+        '',
+        NULL,
+        '',
+        0,
+        NULL,
+        '',
+        NULL,
+        false,
+        NULL,
+        'authenticated',
+        'authenticated'
+      )
+    `,
+      newUserId,
       email,
       password,
-      email_confirm: true,
-      user_metadata: {
-        full_name: fullName,
-        whatsapp_number: whatsappNumber || ''
-      }
-    })
+      JSON.stringify({ full_name: fullName, whatsapp_number: whatsappNumber || '' })
+    )
 
-    if (authError) {
-      throw authError
-    }
-
-    const newUser = authData.user
-    if (!newUser) {
-      throw new Error('Gagal membuat user di Supabase Auth')
-    }
+    // Jeda 1 detik untuk memberi waktu trigger database profiles selesai jika ada
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // 2. Update/upsert tabel profiles untuk menandai plan sebagai 'admin'
     await prisma.profiles.upsert({
-      where: { id: newUser.id },
+      where: { id: newUserId },
       update: {
+        email: email,
         plan: 'admin',
         plan_status: 'admin',
         full_name: fullName,
         whatsapp_number: whatsappNumber || ''
       },
       create: {
-        id: newUser.id,
+        id: newUserId,
         email: email,
         full_name: fullName,
         plan: 'admin',
@@ -156,4 +196,46 @@ export async function createAdminUser(body: CreateAdminBody): Promise<Response> 
     return NextResponse.json({ error: err.message || 'Terjadi kesalahan saat membuat admin baru' }, { status: 500 })
   }
 }
+
+interface UpdateAdminEmailBody {
+  adminUserId?: string
+  newEmail?: string
+}
+
+/**
+ * Memperbarui email administrator secara langsung lewat sisi server tanpa konfirmasi email verifikasi.
+ */
+export async function updateAdminEmail(body: UpdateAdminEmailBody, currentAdminId: string): Promise<Response> {
+  const { adminUserId, newEmail } = body
+  if (!adminUserId || !newEmail) {
+    return NextResponse.json({ error: 'ID Admin dan email baru wajib diisi!' }, { status: 400 })
+  }
+
+  // Pengamanan: Hanya admin yang sedang login yang boleh mengganti emailnya sendiri
+  if (adminUserId !== currentAdminId) {
+    return NextResponse.json({ error: 'Anda hanya dapat mengganti email Anda sendiri!' }, { status: 403 })
+  }
+
+  try {
+    // 1. Perbarui email langsung di database auth.users secara instan
+    await prisma.$executeRawUnsafe(`
+      UPDATE auth.users 
+      SET email = $1, email_confirmed_at = NOW(), updated_at = NOW() 
+      WHERE id = $2::uuid
+    `, newEmail, adminUserId)
+
+    // 2. Perbarui email di tabel profiles
+    await prisma.profiles.update({
+      where: { id: adminUserId },
+      data: { email: newEmail }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error('Gagal memperbarui email admin:', err)
+    return NextResponse.json({ error: err.message || 'Terjadi kesalahan saat memperbarui email' }, { status: 500 })
+  }
+}
+
 
