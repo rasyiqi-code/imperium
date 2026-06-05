@@ -14,7 +14,7 @@ export default function CTA() {
         {/* Title */}
         <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-neutral-300 tracking-tight leading-relaxed max-w-2xl mx-auto">
           {"\"Jika seseorang mengosongkan dompetnya ke dalam kepalanya, "}
-          <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
+          <span className="font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
             {"tidak ada seorang pun yang bisa mengambilnya.\""}
           </span>
         </h2>
