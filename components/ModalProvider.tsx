@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react'
 import FloatingWhatsApp from './FloatingWhatsApp'
 
@@ -39,6 +40,9 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
     confirmText: 'OK',
     cancelText: 'Batal'
   })
+
+  const pathname = usePathname()
+  const isAdminPath = pathname?.startsWith('/admin-panel')
 
   const showAlert = (alertOptions: Omit<ModalOptions, 'onCancel' | 'cancelText'>) => {
     setOptions({
@@ -87,7 +91,8 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalContext.Provider value={{ showAlert, showConfirm }}>
       {children}
-      <FloatingWhatsApp />
+      {/* Jangan tampilkan tombol melayang WhatsApp di area admin-panel */}
+      {!isAdminPath && <FloatingWhatsApp />}
       
       {isOpen && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
