@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { paymentManager } from '@crediblemark/buayar';
 import { sendEmail } from '@/lib/email';
 import { getAdminSettings } from '@/lib/adminSettings';
+import { getPaymentConfirmedEmailHtml } from '@/lib/emailTemplates';
 
 export async function POST(request: Request) {
   try {
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
           }
         });
 
-        // 9. Kirim Email Notifikasi via Resend
+        // 9. Kirim Email Notifikasi via Resend (menggunakan template terpusat)
         try {
           const targetUser = await prisma.profiles.findUnique({
             where: { id: userId },
@@ -148,46 +149,12 @@ export async function POST(request: Request) {
           });
 
           const expiryDateFormatted = expiryDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-          const mailHtml = `<div style="background-color: #000; color: #fff; font-family: sans-serif; padding: 24px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #333;">
-  <div style="text-align: center; margin-bottom: 24px;">
-    <h2 style="color: #fbbf24; font-size: 24px; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Imperium Crypto</h2>
-    <p style="color: #6b7280; font-size: 12px; margin-top: 4px; text-transform: uppercase;">Payment Successful</p>
-  </div>
-  <div style="margin-bottom: 24px;">
-    <p style="font-size: 16px; margin: 0 0 12px;">Halo <strong>${targetUser?.full_name || payment.email_member}</strong>,</p>
-    <p style="font-size: 14px; color: #d1d5db; line-height: 1.6; margin: 0 0 16px;">
-      Pembayaran Anda via Midtrans untuk paket <strong>${payment.nama_paket}</strong> telah berhasil diproses. Akun VIP Anda kini aktif!
-    </p>
-    <div style="background-color: #111; border: 1px solid #222; border-radius: 6px; padding: 16px; margin-bottom: 20px;">
-      <table style="width: 100%; font-size: 13px; color: #9ca3af; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 4px 0; font-weight: bold; color: #fff;">Nama Paket:</td>
-          <td style="padding: 4px 0; text-align: right; color: #fbbf24;">${payment.nama_paket}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; font-weight: bold; color: #fff;">Jumlah Bayar:</td>
-          <td style="padding: 4px 0; text-align: right; color: #fff;">Rp ${Number(payment.harga_bayar).toLocaleString('id-ID')}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; font-weight: bold; color: #fff;">Tanggal Berakhir:</td>
-          <td style="padding: 4px 0; text-align: right; color: #fff;">${expiryDateFormatted}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; font-weight: bold; color: #fff;">Status Transaksi:</td>
-          <td style="padding: 4px 0; text-align: right; color: #10b981; font-weight: bold; text-transform: uppercase;">SUCCESS / SETTLED</td>
-        </tr>
-      </table>
-    </div>
-    <div style="text-align: center; margin-top: 24px;">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://imperiumcrypto.com'}/dashboard" style="background-color: #fbbf24; color: #000; text-decoration: none; padding: 12px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">Masuk ke Dashboard VIP</a>
-    </div>
-  </div>
-  <hr style="border: 0; border-top: 1px solid #222; margin: 24px 0;" />
-  <div style="text-align: center; font-size: 11px; color: #4b5563;">
-    <p style="margin: 0 0 4px;">Jika Anda memiliki pertanyaan, silakan hubungi tim dukungan kami.</p>
-    <p style="margin: 0;">&copy; ${new Date().getFullYear()} Imperium Crypto. All rights reserved.</p>
-  </div>
-</div>`;
+          const mailHtml = getPaymentConfirmedEmailHtml(
+            targetUser?.full_name || payment.email_member,
+            payment.nama_paket as string,
+            Number(payment.harga_bayar),
+            expiryDateFormatted
+          );
 
           await sendEmail({
             to: payment.email_member,
