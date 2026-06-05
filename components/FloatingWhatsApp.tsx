@@ -7,8 +7,13 @@ export default function FloatingWhatsApp() {
   const pathname = usePathname()
   const [showTooltip, setShowTooltip] = useState(false)
   const [whatsappNumber, setWhatsappNumber] = useState('62812345678')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true)
+    }, 0)
+
     async function fetchSupportConfig() {
       try {
         const res = await fetch('/api/support')
@@ -24,10 +29,12 @@ export default function FloatingWhatsApp() {
     }
 
     fetchSupportConfig()
+
+    return () => clearTimeout(timer)
   }, [])
 
-  // Jangan tampilkan jika nomor tidak ada
-  if (!whatsappNumber) return null
+  // Cegah rendering di sisi server (SSR) untuk menghindari Hydration Mismatch
+  if (!mounted || !whatsappNumber) return null
 
   // Deteksi rute dashboard untuk menyesuaikan posisi di mobile agar tidak bertumpuk dengan MobileNav
   const isDashboard = pathname?.startsWith('/dashboard')
