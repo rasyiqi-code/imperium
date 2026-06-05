@@ -2,10 +2,12 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { 
-  Save, RefreshCw, FileText, Info, Shield, HelpCircle, Eye 
+  Save, RefreshCw, FileText, Info, Shield, HelpCircle 
 } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
+import PageEditor from '@/components/admin/pages/PageEditor'
+import PageLivePreview from '@/components/admin/pages/PageLivePreview'
 
 interface SupportConfig {
   about_content: string
@@ -29,6 +31,7 @@ export default function AdminPageManager() {
   const [isSaving, setIsSaving] = useState(false)
   const isMounted = useRef(true)
 
+  // Ambil data konten halaman statis dari API
   const fetchData = useCallback(async () => {
     if (!isMounted.current) return
     setLoading(true)
@@ -66,6 +69,7 @@ export default function AdminPageManager() {
     }
   }, [fetchData])
 
+  // Tangani pembaruan konfigurasi konten
   const handleUpdateConfig = async () => {
     setIsSaving(true)
     try {
@@ -102,7 +106,7 @@ export default function AdminPageManager() {
 
   if (loading) return <Loader label="Memuat Konten Halaman..." />
 
-  // Tab Config metadata
+  // Konfigurasi metadata tab navigasi
   const tabMeta = [
     { id: 'about' as TabType, name: 'Tentang Kami', icon: <Info size={16} />, label: 'Tentang', desc: 'Company Profile & Visi Misi' },
     { id: 'privacy' as TabType, name: 'Privacy Policy', icon: <Shield size={16} />, label: 'Privasi', desc: 'Kebijakan Perlindungan Data' },
@@ -112,7 +116,6 @@ export default function AdminPageManager() {
 
   const activeMeta = tabMeta.find(t => t.id === activeTab)
 
-  // Get active text content for char counter & text manipulation
   const getActiveContentKey = () => {
     switch (activeTab) {
       case 'about': return 'about_content'
@@ -129,7 +132,7 @@ export default function AdminPageManager() {
     <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-32 bg-transparent text-white text-left font-sans animate-in fade-in duration-300">
 
       {/* Header Halaman */}
-      <div className="hidden md:flex border-b border-neutral-800 pb-4 flex-row justify-between items-center gap-4">
+      <div className="hidden md:flex border-b border-neutral-800 pb-4 flex-row justify-between items-center gap-4 text-left">
         <div>
           <h1 className="text-xl font-black uppercase tracking-tight text-white flex items-center gap-2">
             Page <span className="text-yellow-500">Manager</span>
@@ -145,7 +148,7 @@ export default function AdminPageManager() {
         </button>
       </div>
 
-      {/* Tab Navigation — scrollable di mobile, grid di desktop */}
+      {/* Tab Navigation */}
       <div className="flex md:grid md:grid-cols-4 gap-2 md:gap-3 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
         {tabMeta.map((tab) => {
           const isActive = activeTab === tab.id
@@ -176,98 +179,24 @@ export default function AdminPageManager() {
         })}
       </div>
 
-      {/* Dua Kolom Editor + Live Preview */}
+      {/* Editor + Live Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
-        {/* Kolom Editor (Kiri) */}
-        <div className="lg:col-span-7 bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col justify-between shadow-xl">
-          <div className="space-y-3 md:space-y-4">
-            <div className="flex justify-between items-start gap-2 border-b border-neutral-900 pb-2 md:pb-3">
-              <div className="min-w-0">
-                <h3 className="text-[10px] md:text-xs font-black uppercase tracking-wider text-white flex items-center gap-2 leading-tight">
-                  Edit Konten: {activeMeta?.name}
-                </h3>
-                <p className="text-[8px] md:text-[9px] text-neutral-500 font-bold mt-0.5 md:mt-1 tracking-wider uppercase leading-tight">Gunakan paragraf baru (Enter) untuk spasi pemisah konten yang indah</p>
-              </div>
-              <span className="text-[8px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-neutral-900 text-neutral-400 border border-neutral-800 uppercase tracking-widest leading-none shrink-0">
-                {textValue.length} Karakter
-              </span>
-            </div>
+        {/* Editor Area */}
+        <PageEditor 
+          title={activeMeta?.name || 'Halaman'}
+          value={textValue}
+          onChange={(val) => setConfig({ ...config, [activeKey]: val })}
+          isSaving={isSaving}
+          onSave={handleUpdateConfig}
+        />
 
-            <textarea 
-              value={textValue} 
-              onChange={(e) => setConfig({ ...config, [activeKey]: e.target.value })} 
-              className="w-full bg-neutral-900/10 border border-neutral-850 focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 transition-all duration-300 rounded-xl md:rounded-2xl p-3 md:p-4 text-xs font-medium outline-none text-white placeholder-neutral-600 min-h-[200px] md:min-h-[350px] leading-relaxed font-mono" 
-              placeholder={`Tulis konten halaman ${activeMeta?.name.toLowerCase()} di sini...`}
-            />
-          </div>
-
-          <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-neutral-900 flex justify-between items-center gap-3">
-            <span className="text-[8px] md:text-[9px] font-bold text-neutral-500 tracking-wider hidden sm:block">Perubahan langsung ter-render di Live Preview</span>
-            <button 
-              onClick={handleUpdateConfig} 
-              disabled={isSaving} 
-              className="w-full sm:w-auto px-5 py-2.5 md:py-3 bg-neutral-900 hover:bg-neutral-850 text-yellow-500 hover:text-yellow-400 border border-neutral-800 hover:border-neutral-700 font-black rounded-xl text-[10px] tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all duration-300 cursor-pointer"
-            >
-              {isSaving ? <RefreshCw className="animate-spin" size={12} /> : <Save size={12} />} Simpan Halaman Ini
-            </button>
-          </div>
-        </div>
-
-        {/* Kolom Live Preview (Kanan) */}
-        <div className="lg:col-span-5 bg-neutral-950/20 backdrop-blur-md border border-neutral-900 rounded-3xl p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group">
-          {/* Ornamen Pendaran radial redup di pojok preview */}
-          <div className="absolute -right-16 -bottom-16 w-40 h-40 bg-yellow-500/[0.02] rounded-full blur-2xl pointer-events-none -z-15" />
-          
-          <div className="space-y-4 flex-grow flex flex-col">
-            <div className="flex justify-between items-center border-b border-neutral-900 pb-3">
-              <h3 className="text-xs font-black uppercase tracking-wider text-neutral-450 flex items-center gap-2">
-                <Eye size={14} className="text-yellow-500" /> Live Preview
-              </h3>
-              <span className="text-[8px] font-black px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/10 text-yellow-500 uppercase tracking-widest leading-none shrink-0">
-                Front-end Tampilan
-              </span>
-            </div>
-
-            {/* Simulasi Casing Glassmorphism Halaman Depan */}
-            <div className="flex-grow bg-black/60 border border-white/[0.04] rounded-2xl p-6 relative min-h-[300px] flex flex-col justify-between">
-              {/* Efek Garis Emas Halus di Bagian Atas Card */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent" />
-              
-              <div className="space-y-4">
-                {/* Header Judul Halaman Depan */}
-                <div className="text-center pb-4 border-b border-white/[0.04]">
-                  <h4 className="text-[9px] font-black uppercase tracking-wider text-[#d4af37] leading-none mb-1">
-                    {activeMeta?.id === 'about' ? 'Company Profile' : activeMeta?.id === 'privacy' ? 'Security & Privacy' : activeMeta?.id === 'terms' ? 'Terms & Rules' : 'Support Center'}
-                  </h4>
-                  <h2 className="text-base font-black uppercase text-white tracking-wide leading-none">
-                    {activeMeta?.name}
-                  </h2>
-                </div>
-
-                {/* Body Content Real-time render */}
-                <div className="text-[10px] sm:text-xs text-neutral-400 font-medium leading-relaxed space-y-3 max-h-[220px] overflow-y-auto pr-1">
-                  {textValue ? (
-                    textValue.split('\n').map((para, idx) => (
-                      <p key={idx} className="whitespace-pre-line text-left">
-                        {para}
-                      </p>
-                    ))
-                  ) : (
-                    <p className="text-neutral-600 italic text-center py-10 uppercase tracking-wider font-bold text-[9px]">Belum ada konten yang ditulis...</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Simulasi CTA Bawah */}
-              <div className="border-t border-white/[0.04] pt-4 mt-4 text-center">
-                <div className="inline-block bg-[#d4af37] text-black px-4 py-1.5 rounded-full font-bold text-[8px] uppercase tracking-widest scale-95 opacity-70">
-                  {activeMeta?.id === 'about' ? 'Gabung VIP Komunitas' : activeMeta?.id === 'help' ? 'Kirim WhatsApp' : 'Kembali Ke Beranda'}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Live Preview Area */}
+        <PageLivePreview 
+          activeTab={activeTab}
+          title={activeMeta?.name || 'Halaman'}
+          value={textValue}
+        />
 
       </div>
 
