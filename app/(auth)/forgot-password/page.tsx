@@ -1,18 +1,16 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, RefreshCw, ArrowLeft, CheckCircle2 } from 'lucide-react'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
-  const captchaRef = useRef<HCaptcha>(null)
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,35 +18,10 @@ export default function ForgotPasswordPage() {
     setErrorMsg('')
     setSuccessMsg('')
 
-    const siteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
-    if (!siteKey) {
-      console.error('hCaptcha Error: NEXT_PUBLIC_HCAPTCHA_SITE_KEY tidak terdefinisi di environment variables.')
-      setErrorMsg('Gagal mengirim: Konfigurasi Captcha belum lengkap di server (NEXT_PUBLIC_HCAPTCHA_SITE_KEY belum di-load). Harap restart server dev.')
-      setLoading(false)
-      return
-    }
-
-    let token = ''
     try {
-      // Jalankan verifikasi captcha secara asinkronus (invisible)
-      const captchaResponse = await captchaRef.current?.execute({ async: true })
-      token = captchaResponse?.response || ''
-    } catch (err) {
-      console.error('Error executing captcha:', err)
-    }
-
-    if (!token) {
-      setErrorMsg('Gagal: Selesaikan verifikasi captcha terlebih dahulu.')
-      setLoading(false)
-      return
-    }
-
-
-    try {
-      // Mengirim email pemulihan kata sandi menggunakan Supabase Auth (Client-side) dengan menyertakan token captcha
+      // Mengirim email pemulihan kata sandi menggunakan Supabase Auth (Client-side)
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
-        captchaToken: token
       })
 
       if (error) throw error
@@ -58,12 +31,10 @@ export default function ForgotPasswordPage() {
       const errorResponse = err as { message?: string }
       console.error('FORGOT PASSWORD ERROR:', errorResponse)
       setErrorMsg(errorResponse.message || 'Gagal mengirim email pemulihan. Pastikan email terdaftar.')
-      captchaRef.current?.resetCaptcha() // Reset captcha jika terjadi kesalahan
     } finally {
       setLoading(false)
     }
   }
-
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans">
@@ -158,18 +129,7 @@ export default function ForgotPasswordPage() {
                     <span>Kembali ke Login</span>
                   </Link>
                 </div>
-
-                {/* Komponen hCaptcha invisible untuk proteksi bot */}
-                <HCaptcha
-                  ref={captchaRef}
-                  sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
-                  size="invisible"
-                  onVerify={(token) => console.log('Captcha terverifikasi:', token)}
-                  onExpire={() => captchaRef.current?.resetCaptcha()}
-                />
               </form>
-
-
             )}
           </div>
         </div>

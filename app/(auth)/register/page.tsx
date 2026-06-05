@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { User, Phone, Mail, Lock, Eye, EyeOff, RefreshCw } from 'lucide-react'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -16,7 +15,6 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
-  const captchaRef = useRef<HCaptcha>(null)
   const router = useRouter()
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -24,37 +22,12 @@ export default function RegisterPage() {
     setLoading(true)
     setMessage('')
 
-    const siteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
-    if (!siteKey) {
-      console.error('hCaptcha Error: NEXT_PUBLIC_HCAPTCHA_SITE_KEY tidak terdefinisi di environment variables.')
-      setMessage('Gagal mendaftar: Konfigurasi Captcha belum lengkap di server (NEXT_PUBLIC_HCAPTCHA_SITE_KEY belum di-load). Harap restart server dev.')
-      setLoading(false)
-      return
-    }
-
-    let token = ''
-    try {
-      // Jalankan verifikasi captcha secara asinkronus (invisible)
-      const captchaResponse = await captchaRef.current?.execute({ async: true })
-      token = captchaResponse?.response || ''
-    } catch (err) {
-      console.error('Error executing captcha:', err)
-    }
-
-    if (!token) {
-      setMessage('Gagal: Selesaikan verifikasi captcha terlebih dahulu.')
-      setLoading(false)
-      return
-    }
-
-
-    // 1. SignUp ke Supabase Auth dengan menyertakan token captcha
+    // 1. SignUp ke Supabase Auth
     // Trigger "on_auth_user_created" di database akan otomatis bikin baris di tabel profiles
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        captchaToken: token,
         data: {
           full_name: nama,
           whatsapp_number: whatsapp,
@@ -76,7 +49,6 @@ export default function RegisterPage() {
       }
 
       setMessage(`Gagal: ${friendlyMessage}`)
-      captchaRef.current?.resetCaptcha() // Reset captcha jika registrasi gagal
       setLoading(false)
       return
     }
@@ -91,14 +63,12 @@ export default function RegisterPage() {
         }, 1500)
       } else {
         setMessage('Registrasi sukses! Silakan periksa kotak masuk email Anda untuk melakukan verifikasi akun sebelum masuk.')
-        captchaRef.current?.resetCaptcha()
         setLoading(false)
       }
     }
     
     setLoading(false)
   }
-
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans">
@@ -220,18 +190,7 @@ export default function RegisterPage() {
                   </>
                 )}
               </button>
-
-              {/* Komponen hCaptcha invisible untuk proteksi bot */}
-              <HCaptcha
-                ref={captchaRef}
-                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
-                size="invisible"
-                onVerify={(token) => console.log('Captcha terverifikasi:', token)}
-                onExpire={() => captchaRef.current?.resetCaptcha()}
-              />
             </form>
-
-
 
             {/* Notifikasi Message */}
             {message && (
