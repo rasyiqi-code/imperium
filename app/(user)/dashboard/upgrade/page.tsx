@@ -139,12 +139,9 @@ export default function UpgradePage() {
       </div>
 
       {/* Info Tambahan */}
-      <div className="bg-neutral-900/30 border border-neutral-800 p-6 rounded-3xl text-center">
-        {/* Teks disederhanakan agar lebih bersih dan to-the-point */}
-        <p className="text-neutral-500 text-[11px] leading-relaxed max-w-lg mx-auto italic">
-          Akses VIP otomatis aktif setelah pembayaran berhasil.
-        </p>
-      </div>
+      <p className="text-neutral-500 text-[11px] text-center leading-relaxed max-w-lg mx-auto italic">
+        Akses VIP otomatis aktif setelah pembayaran berhasil.
+      </p>
 
       {/* Payment Modal */}
       {selectedPaket && (
