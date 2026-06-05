@@ -60,24 +60,24 @@ export default function MemberDetailModal({
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={onClose} />
       
-      <div className="relative w-full max-w-md md:max-w-2xl bg-neutral-950/90 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-6 border-b border-neutral-900 bg-neutral-950/50">
-          <h3 className="font-black tracking-wider text-white text-xs leading-none uppercase">Member Detail</h3>
+      <div className="relative w-full max-w-md md:max-w-xl bg-neutral-950/90 backdrop-blur-md border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between p-4 px-6 border-b border-neutral-900 bg-neutral-950/50">
+          <h3 className="font-black tracking-wider text-white text-[10px] leading-none uppercase">Member Detail</h3>
           <button onClick={onClose} className="text-neutral-500 hover:text-white transition-all cursor-pointer">
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
         
-        <div className="p-6 space-y-6">
+        <div className="p-5 space-y-4">
           {/* Grid Informasi Member (2 Kolom di Desktop) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            <InfoItem label="Email Address" value={member.email} icon={<Mail size={14}/>} />
-            <InfoItem label="Full Name" value={member.full_name || 'Anonymous'} icon={<User size={14}/>} />
-            <InfoItem label="WhatsApp" value={member.whatsapp_number || 'NA'} icon={<Smartphone size={14}/>} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
+            <InfoItem label="Email Address" value={member.email} icon={<Mail size={13}/>} />
+            <InfoItem label="Full Name" value={member.full_name || 'Anonymous'} icon={<User size={13}/>} />
+            <InfoItem label="WhatsApp" value={member.whatsapp_number || 'NA'} icon={<Smartphone size={13}/>} />
             <InfoItem 
               label="Tanggal Daftar" 
               value={member.created_at ? new Date(member.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} 
-              icon={<User size={14}/>} 
+              icon={<User size={13}/>} 
             />
             <InfoItem 
               label="Status Discord" 
@@ -88,26 +88,26 @@ export default function MemberDetailModal({
                 member.discord_status === 'no_discord' ? 'Belum Menghubungkan Discord' :
                 member.discord_status === 'error' ? 'Gagal memuat status (API error)' : 'Tidak Diketahui'
               } 
-              icon={<MessageSquare size={14}/>} 
+              icon={<MessageSquare size={13}/>} 
             />
             {member.id_discord_user && (
-              <InfoItem label="ID User Discord" value={member.id_discord_user} icon={<MessageSquare size={14}/>} />
+              <InfoItem label="ID User Discord" value={member.id_discord_user} icon={<MessageSquare size={13}/>} />
             )}
             
             {member.plan === 'vip' && (
               <>
-                <div className="col-span-1 md:col-span-2 pt-2 border-t border-neutral-900/60" />
-                <InfoItem label="Paket VIP Aktif" value={member.vip_plan_name || 'VIP'} icon={<PlusCircle size={14}/>} />
+                <div className="col-span-1 md:col-span-2 pt-1.5 border-t border-neutral-900/60" />
+                <InfoItem label="Paket VIP Aktif" value={member.vip_plan_name || 'VIP'} icon={<PlusCircle size={13}/>} />
                 <InfoItem 
                   label="Tanggal Mulai VIP" 
                   value={member.vip_activated_at ? new Date(member.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} 
-                  icon={<RefreshCw size={14}/>} 
+                  icon={<RefreshCw size={13}/>} 
                 />
                 <div className="col-span-1 md:col-span-2">
                   <InfoItem 
                     label="Tanggal Expired VIP" 
                     value={member.vip_expired_at ? new Date(member.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'} 
-                    icon={<RefreshCw size={14}/>} 
+                    icon={<RefreshCw size={13}/>} 
                   />
                 </div>
               </>
@@ -115,15 +115,15 @@ export default function MemberDetailModal({
           </div>
 
           {isPasswordFormOpen && (
-            <div className="p-4 rounded-2xl bg-neutral-900/40 border border-neutral-800 space-y-3 animate-in slide-in-from-top-2 duration-200">
-              <p className="text-[10px] text-neutral-500 font-bold leading-relaxed">
+            <div className="p-3 rounded-2xl bg-neutral-900/25 border border-neutral-800/80 space-y-2 animate-in slide-in-from-top-2 duration-200">
+              <p className="text-[9px] text-neutral-500 font-bold leading-relaxed">
                 Masukkan password baru di bawah ini. Password akan diupdate langsung di Supabase Auth tanpa perlu konfirmasi email ke pengguna.
               </p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   placeholder="Minimal 6 karakter..."
-                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-neutral-700 font-mono"
+                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-1.5 text-xs font-bold text-white placeholder-neutral-750 font-mono"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   disabled={isLocalProcessing}
@@ -131,7 +131,7 @@ export default function MemberDetailModal({
                 <button
                   onClick={handlePasswordSubmit}
                   disabled={isLocalProcessing || newPassword.length < 6}
-                  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                  className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
                 >
                   {isLocalProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
                 </button>
@@ -140,23 +140,23 @@ export default function MemberDetailModal({
           )}
           
           {/* Grid Tombol Aksi */}
-          <div className="pt-4 border-t border-neutral-900">
+          <div className="pt-3.5 border-t border-neutral-900">
             <div className="grid grid-cols-2 gap-2">
               
               {/* Tombol 1: Upgrade / Perpanjang VIP */}
               <button 
                 onClick={() => onUpgrade(member)}
                 disabled={isProcessing}
-                className={`w-full py-2.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`w-full py-2.2 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   member.plan === 'vip' 
                   ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
                   : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
                 }`}
               >
                 {isProcessing ? (
-                  <RefreshCw className="animate-spin" size={14} />
+                  <RefreshCw className="animate-spin" size={13} />
                 ) : member.plan === 'vip' ? (
-                  <><PlusCircle size={14} /> Perpanjang VIP</>
+                  <><PlusCircle size={13} /> Perpanjang VIP</>
                 ) : (
                   'Upgrade ke VIP'
                 )}
@@ -167,16 +167,16 @@ export default function MemberDetailModal({
                 <button 
                   onClick={() => onDeactivate(member)}
                   disabled={isProcessing}
-                  className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-2.2 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <UserMinus size={14} />} Set Kedaluwarsa
+                  {isProcessing ? <RefreshCw className="animate-spin" size={13} /> : <UserMinus size={13} />} Set Kedaluwarsa
                 </button>
               ) : (
                 <button 
                   disabled
-                  className="w-full py-2.5 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
+                  className="w-full py-2.2 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
                 >
-                  <UserMinus size={14} /> Set Kedaluwarsa
+                  <UserMinus size={13} /> Set Kedaluwarsa
                 </button>
               )}
 
@@ -191,30 +191,30 @@ export default function MemberDetailModal({
                 }`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full py-2.2 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <MessageSquare size={14} /> Chat WhatsApp
+                <MessageSquare size={13} /> Chat WhatsApp
               </a>
 
               {/* Tombol 4: Hapus Akun */}
               <button 
                 onClick={() => onDelete(member.id)} 
                 disabled={isProcessing}
-                className="w-full py-2.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.2 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Trash2 size={14} /> Hapus Akun
+                <Trash2 size={13} /> Hapus Akun
               </button>
 
               {/* Tombol 5: Setel Password Baru (Lebar Penuh) */}
               <button 
                 onClick={() => setIsPasswordFormOpen(!isPasswordFormOpen)}
-                className={`col-span-2 w-full py-2.5 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
+                className={`col-span-2 w-full py-2.2 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
                   isPasswordFormOpen
                   ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/35 shadow-lg shadow-yellow-500/5'
                   : 'bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 text-neutral-400 hover:text-white'
                 }`}
               >
-                <Key size={14} /> {isPasswordFormOpen ? 'Tutup Set Password' : 'Setel Password Baru'}
+                <Key size={13} /> {isPasswordFormOpen ? 'Tutup Set Password' : 'Setel Password Baru'}
               </button>
 
             </div>
@@ -227,11 +227,11 @@ export default function MemberDetailModal({
 
 function InfoItem({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[10px] font-bold text-neutral-500 tracking-wider flex items-center gap-1.5 leading-none">
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[9px] font-bold text-neutral-500 tracking-wider flex items-center gap-1.5 leading-none">
         {icon} {label}
       </span>
-      <span className="text-xs font-bold text-white truncate">{value}</span>
+      <span className="text-[11px] font-bold text-white truncate">{value}</span>
     </div>
   )
 }
