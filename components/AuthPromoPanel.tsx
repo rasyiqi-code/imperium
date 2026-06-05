@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Crown, Sparkles, CheckCircle2, ArrowRight, UserCheck } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 type UserStatus = 'loading' | 'guest' | 'free' | 'vip'
 
 export default function AuthPromoPanel() {
+  const pathname = usePathname()
   const [status, setStatus] = useState<UserStatus>('loading')
   const [name, setName] = useState('')
 
@@ -178,47 +180,139 @@ export default function AuthPromoPanel() {
 
         {status === 'guest' && (
           <>
-            {/* Badge Status */}
-            <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
-              <Crown size={12} />
-              Akses Elit Imperium
-            </div>
-            
-            {/* Judul & Deskripsi */}
-            <div className="space-y-3">
-              <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
-                Daftar Gratis & <br />
-                Upgrade ke <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Komunitas VIP</span>
-              </h2>
-              <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
-                Selamat datang di Imperium Crypto! Anda bisa mendaftar akun gratis terlebih dahulu untuk bergabung dengan komunitas dasar kami, atau langsung upgrade ke VIP untuk menikmati akses sinyal akurat.
-              </p>
-            </div>
+            {pathname === '/register' ? (
+              <>
+                {/* Badge Status */}
+                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
+                  <Crown size={12} />
+                  Pendaftaran Member
+                </div>
+                
+                {/* Judul & Deskripsi */}
+                <div className="space-y-3">
+                  <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
+                    Daftar Gratis & <br />
+                    Upgrade ke <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Komunitas VIP</span>
+                  </h2>
+                  <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
+                    Selamat datang di Imperium Crypto! Anda bisa mendaftar akun gratis terlebih dahulu untuk bergabung dengan komunitas dasar kami, atau langsung upgrade ke VIP untuk menikmati akses sinyal akurat.
+                  </p>
+                </div>
 
-            {/* List Benefit */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-start gap-3 text-neutral-300">
-                <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">Daftar Akun Gratis dengan Mudah</span>
-              </div>
-              <div className="flex items-start gap-3 text-neutral-300">
-                <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">Sinyal Akurasi Tinggi Harian (VIP)</span>
-              </div>
-              <div className="flex items-start gap-3 text-neutral-300">
-                <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
-                <span className="text-xs font-semibold">Grup Private Discord & Edukasi Elit (VIP)</span>
-              </div>
-            </div>
+                {/* List Benefit */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Daftar Akun Gratis dengan Mudah</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Sinyal Akurasi Tinggi Harian (VIP)</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Grup Private Discord & Edukasi Elit (VIP)</span>
+                  </div>
+                </div>
 
-            {/* Tombol Aksi */}
-            <Link 
-              href="/register" 
-              className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
-            >
-              Daftar Akun Gratis Sekarang
-              <ArrowRight size={14} />
-            </Link>
+                {/* Tombol Aksi */}
+                <Link 
+                  href="/login" 
+                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-neutral-800 active:scale-[0.98] cursor-pointer"
+                >
+                  Sudah Punya Akun? Masuk Di Sini
+                  <ArrowRight size={14} />
+                </Link>
+              </>
+            ) : pathname === '/login' ? (
+              <>
+                {/* Badge Status */}
+                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
+                  <Crown size={12} />
+                  Login Member
+                </div>
+                
+                {/* Judul & Deskripsi */}
+                <div className="space-y-3">
+                  <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
+                    Masuk Ke <br />
+                    <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Imperium Portal</span>
+                  </h2>
+                  <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
+                    Selamat datang kembali! Silakan masuk ke akun Anda untuk memantau sinyal aktif, mengakses modul edukasi premium, atau melakukan upgrade ke komunitas VIP.
+                  </p>
+                </div>
+
+                {/* List Benefit */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Akses Dashboard Personal Member</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Pantau Sinyal & Paket Membership Aktif</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Upgrade ke Komunitas VIP dengan Prorasi</span>
+                  </div>
+                </div>
+
+                {/* Tombol Aksi */}
+                <Link 
+                  href="/register" 
+                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
+                >
+                  Belum Punya Akun? Daftar Gratis
+                  <ArrowRight size={14} />
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Badge Status */}
+                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
+                  <Crown size={12} />
+                  Keamanan Akun
+                </div>
+                
+                {/* Judul & Deskripsi */}
+                <div className="space-y-3">
+                  <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
+                    Amankan Akses <br />
+                    <span className="font-bold text-[#d4af37] tracking-normal font-serif-editorial italic">Akun Trading Anda</span>
+                  </h2>
+                  <p className="text-neutral-400 text-xs md:text-sm leading-relaxed">
+                    Kami berkomitmen menjaga privasi dan keamanan akun Anda. Ikuti prosedur pemulihan kata sandi dengan aman agar terhindar dari penyalahgunaan.
+                  </p>
+                </div>
+
+                {/* List Benefit */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Protokol Pemulihan Sandi yang Aman</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Enkripsi Data Pengguna Tingkat Tinggi</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-neutral-300">
+                    <CheckCircle2 size={16} className="text-[#d4af37] shrink-0 mt-0.5" />
+                    <span className="text-xs font-semibold">Dukungan Keamanan Akun 24/7</span>
+                  </div>
+                </div>
+
+                {/* Tombol Aksi */}
+                <Link 
+                  href="/login" 
+                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-neutral-800 active:scale-[0.98] cursor-pointer"
+                >
+                  Kembali ke Login
+                  <ArrowRight size={14} />
+                </Link>
+              </>
+            )}
           </>
         )}
         
