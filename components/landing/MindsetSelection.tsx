@@ -37,9 +37,8 @@ export default function MindsetSelection() {
               </svg>
             </div>
 
-            {/* Gambar Background Berani */}
             <Image
-              src="/path_action.png"
+              src="/path_action_v2.png"
               alt="Orang Yang Mau Melompat"
               fill
               className="object-cover opacity-80 filter grayscale-[20%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-700 pointer-events-none"
@@ -64,7 +63,7 @@ export default function MindsetSelection() {
           <div className="relative group rounded-3xl border border-purple-500/25 bg-[#070707] overflow-hidden aspect-[4/5] transition-all duration-500 hover:border-purple-500/50 hover:shadow-[0_0_35px_rgba(168,85,247,0.08)] cursor-pointer">
             {/* Gambar Background Ragu */}
             <Image
-              src="/path_skeptic.png"
+              src="/path_skeptic_v2.png"
               alt="Orang Yang Mau Berdiam Diri"
               fill
               className="object-cover opacity-60 filter grayscale-[40%] group-hover:grayscale-[10%] group-hover:scale-[1.03] transition-all duration-700 pointer-events-none"
