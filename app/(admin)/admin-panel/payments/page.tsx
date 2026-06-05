@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { Payment } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
+import { exportToCSV } from '@/lib/utils/csv'
 
 export default function PaymentAdmin() {
   const { showAlert, showConfirm } = useModal()
@@ -118,7 +119,7 @@ export default function PaymentAdmin() {
   const hasMore = filtered.length > visibleCount
 
   // Unduh rekap pembayaran tersaring sebagai CSV
-  const exportToCSV = () => {
+  const handleExportCSV = () => {
     const headers = ['ID Pembayaran', 'Email Member', 'Nama Paket', 'Harga Bayar', 'Status', 'Bukti Transfer', 'Tanggal']
     const rows = filtered.map(p => [
       p.id,
@@ -130,20 +131,7 @@ export default function PaymentAdmin() {
       p.created_at ? new Date(p.created_at).toLocaleString('id-ID') : ''
     ])
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
-    ].join('\n')
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', `payments_export_${new Date().getTime()}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    exportToCSV(`payments_export_${new Date().getTime()}.csv`, headers, rows)
   }
 
   return (
@@ -185,7 +173,7 @@ export default function PaymentAdmin() {
             </div>
 
             <button
-              onClick={exportToCSV}
+              onClick={handleExportCSV}
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
             >
               <Download size={12} /> Export CSV
