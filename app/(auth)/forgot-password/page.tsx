@@ -22,7 +22,9 @@ export default function ForgotPasswordPage() {
     try {
       // Mengirim email pemulihan kata sandi menggunakan Supabase Auth (Client-side)
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        // Arahkan ke server route /auth/confirm agar PKCE code verifier dikelola
+        // via cookies (bukan localStorage) sesuai kebutuhan SSR Next.js
+        redirectTo: `${window.location.origin}/auth/confirm?type=recovery`,
       })
 
       if (error) throw error

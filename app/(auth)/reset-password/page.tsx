@@ -23,62 +23,44 @@ function ResetPasswordContent() {
   const [isTokenValid, setIsTokenValid] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  // Verifikasi token pemulihan saat komponen dimuat
+  // Verifikasi token pemulihan saat komponen dimuat.
+  // Catatan: PKCE exchange sudah diproses di server route /auth/confirm,
+  // sehingga saat komponen ini dimuat, sesi sudah aktif via cookies.
   useEffect(() => {
     let active = true
 
-    // Dengarkan perubahan auth state (sangat penting untuk menangkap event PASSWORD_RECOVERY dari hash URL)
+    // Dengarkan event PASSWORD_RECOVERY yang dikirim Supabase SDK
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!active) return
-
-      if (event === 'PASSWORD_RECOVERY') {
-        setIsTokenValid(true)
-        setVerifying(false)
-      } else if (session) {
+      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
         setIsTokenValid(true)
         setVerifying(false)
       }
     })
 
-    async function verifyResetToken() {
+    async function checkSession() {
       try {
-        const code = searchParams.get('code')
-        if (code) {
-          // Alur PKCE: Tukar kode dari query param dengan sesi aktif
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) {
-            console.error('Gagal menukar kode sesi (PKCE):', error)
-          } else {
-            if (active) {
-              setIsTokenValid(true)
-              setVerifying(false)
-            }
-            return
-          }
-        }
-
-        // Cek sesi aktif langsung
+        // Sesi sudah dibuat oleh /auth/confirm — langsung cek keberadaannya
         const { data: { session } } = await supabase.auth.getSession()
         if (session) {
           if (active) {
             setIsTokenValid(true)
             setVerifying(false)
           }
-        } else {
-          // Beri delay 1 detik agar Supabase SDK memiliki waktu memproses hash fragment URL jika ada
-          setTimeout(async () => {
-            if (!active) return
-            const { data: { session: delayedSession } } = await supabase.auth.getSession()
-            if (delayedSession) {
-              setIsTokenValid(true)
-            } else {
-              setIsTokenValid(false)
-            }
-            setVerifying(false)
-          }, 1000)
+          return
+        }
+
+        // Beri jeda 800ms agar cookie sesi sempat dibaca
+        await new Promise((r) => setTimeout(r, 800))
+        if (!active) return
+
+        const { data: { session: retrySession } } = await supabase.auth.getSession()
+        if (active) {
+          setIsTokenValid(!!retrySession)
+          setVerifying(false)
         }
       } catch (err) {
-        console.error('Kesalahan verifikasi token:', err)
+        console.error('Kesalahan verifikasi sesi:', err)
         if (active) {
           setIsTokenValid(false)
           setVerifying(false)
@@ -86,7 +68,7 @@ function ResetPasswordContent() {
       }
     }
 
-    verifyResetToken()
+    void checkSession()
 
     return () => {
       active = false
