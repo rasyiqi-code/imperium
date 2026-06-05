@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Crown, Sparkles, CheckCircle2, ArrowRight, UserCheck } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
@@ -70,30 +69,16 @@ export default function AuthPromoPanel() {
   }
 
   return (
-    <div className="hidden lg:flex sticky top-0 h-screen relative overflow-hidden items-center justify-center bg-neutral-900 border-l border-neutral-800">
-      {/* Background Image Premium dengan transisi halus */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 hover:scale-105"
-        style={{ backgroundImage: "url('/crypto_login.webp')" }}
-      />
-      {/* Overlay gradasi gelap premium untuk menyatukan gambar dengan tema website */}
-      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/75 to-neutral-950/45" />
-      
-      {/* Efek pendaran cahaya emas redup di latar belakang */}
-      <div className="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="hidden lg:flex sticky top-0 h-screen relative overflow-hidden items-center justify-center bg-[#070707] border-l border-neutral-900/50">
+      {/* Efek pendaran cahaya emas sangat redup di latar belakang agar tetap premium */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-yellow-500/[0.015] rounded-full blur-[130px] pointer-events-none" />
 
-      {/* Konten Card dibungkus Glassmorphism mewah */}
-      <div className="relative z-10 w-full max-w-md mx-8 p-8 md:p-10 rounded-3xl bg-neutral-950/75 border border-white/[0.06] backdrop-blur-md shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border-t-white/[0.1] flex flex-col gap-6 text-left group">
+      {/* Konten Teks Langsung (Tanpa Card/Border/Background/Shadow) */}
+      <div className="relative z-10 w-full max-w-md mx-8 flex flex-col gap-6 text-left">
         
         {/* Render Panel berdasarkan Status User */}
         {status === 'vip' && (
           <>
-            {/* Badge Status */}
-            <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
-              <Crown size={12} className="animate-pulse" />
-              Imperium VIP Member
-            </div>
-            
             {/* Judul & Deskripsi */}
             <div className="space-y-3">
               <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
@@ -120,26 +105,11 @@ export default function AuthPromoPanel() {
                 <span className="text-xs font-semibold">Dukungan Prioritas Member Utama 24/7</span>
               </div>
             </div>
-
-            {/* Tombol Aksi */}
-            <Link 
-              href="/dashboard" 
-              className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
-            >
-              Masuk Dashboard VIP
-              <ArrowRight size={14} />
-            </Link>
           </>
         )}
 
         {status === 'free' && (
           <>
-            {/* Badge Status */}
-            <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 text-[10px] font-black uppercase tracking-widest">
-              <UserCheck size={12} />
-              Member Imperium Gratis
-            </div>
-            
             {/* Judul & Deskripsi */}
             <div className="space-y-3">
               <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
@@ -166,15 +136,6 @@ export default function AuthPromoPanel() {
                 <span className="text-xs font-semibold">Prorasi/Upgrade Fleksibel Kapan Saja</span>
               </div>
             </div>
-
-            {/* Tombol Aksi */}
-            <Link 
-              href="/dashboard/upgrade" 
-              className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
-            >
-              Upgrade ke Komunitas VIP
-              <Sparkles size={12} className="animate-pulse" />
-            </Link>
           </>
         )}
 
@@ -182,12 +143,6 @@ export default function AuthPromoPanel() {
           <>
             {pathname === '/register' ? (
               <>
-                {/* Badge Status */}
-                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
-                  <Crown size={12} />
-                  Pendaftaran Member
-                </div>
-                
                 {/* Judul & Deskripsi */}
                 <div className="space-y-3">
                   <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
@@ -214,24 +169,9 @@ export default function AuthPromoPanel() {
                     <span className="text-xs font-semibold">Grup Private Discord & Edukasi Elit (VIP)</span>
                   </div>
                 </div>
-
-                {/* Tombol Aksi */}
-                <Link 
-                  href="/login" 
-                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-neutral-800 active:scale-[0.98] cursor-pointer"
-                >
-                  Sudah Punya Akun? Masuk Di Sini
-                  <ArrowRight size={14} />
-                </Link>
               </>
             ) : pathname === '/login' ? (
               <>
-                {/* Badge Status */}
-                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
-                  <Crown size={12} />
-                  Login Member
-                </div>
-                
                 {/* Judul & Deskripsi */}
                 <div className="space-y-3">
                   <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
@@ -258,24 +198,9 @@ export default function AuthPromoPanel() {
                     <span className="text-xs font-semibold">Upgrade ke Komunitas VIP dengan Prorasi</span>
                   </div>
                 </div>
-
-                {/* Tombol Aksi */}
-                <Link 
-                  href="/register" 
-                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_4px_20px_rgba(212,175,55,0.2)] active:scale-[0.98] cursor-pointer"
-                >
-                  Belum Punya Akun? Daftar Gratis
-                  <ArrowRight size={14} />
-                </Link>
               </>
             ) : (
               <>
-                {/* Badge Status */}
-                <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-[#d4af37] text-[10px] font-black uppercase tracking-widest">
-                  <Crown size={12} />
-                  Keamanan Akun
-                </div>
-                
                 {/* Judul & Deskripsi */}
                 <div className="space-y-3">
                   <h2 className="text-2xl md:text-3xl font-light text-white leading-snug uppercase tracking-tight">
@@ -302,15 +227,6 @@ export default function AuthPromoPanel() {
                     <span className="text-xs font-semibold">Dukungan Keamanan Akun 24/7</span>
                   </div>
                 </div>
-
-                {/* Tombol Aksi */}
-                <Link 
-                  href="/login" 
-                  className="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 hover:text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-neutral-800 active:scale-[0.98] cursor-pointer"
-                >
-                  Kembali ke Login
-                  <ArrowRight size={14} />
-                </Link>
               </>
             )}
           </>
