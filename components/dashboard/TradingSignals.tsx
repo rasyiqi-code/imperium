@@ -191,9 +191,9 @@ export default function TradingSignals({ isVip, onUpgradeClick }: TradingSignals
 
         {/* Overlay gradient fade ke bawah — tampil untuk non-VIP sebagai teaser */}
         {!loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none"
+          <div className="absolute bottom-0 left-0 right-0 h-56 pointer-events-none"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.7) 45%, rgba(10,10,10,0.97) 100%)'
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.5) 30%, rgba(10,10,10,0.92) 70%, rgba(10,10,10,0.99) 100%)'
             }}
           />
         )}
