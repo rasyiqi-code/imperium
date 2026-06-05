@@ -7,6 +7,8 @@ import fs from "fs";
 import path from "path";
 import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { prisma } from "@/lib/prisma";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -84,7 +86,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -102,6 +104,21 @@ export default function RootLayout({
     console.error("Lisensi tidak valid:", error);
     throw new Error("License Integrity Failure: System has been tampered.");
   }
+
+  // Mengambil nomor WhatsApp admin dari tabel support_config di database dengan fallback aman
+  let whatsappNumber = "62812345678";
+  try {
+    const support = await prisma.support_config.findUnique({
+      where: { id: 1 },
+      select: { whatsapp_number: true }
+    });
+    if (support?.whatsapp_number) {
+      whatsappNumber = support.whatsapp_number;
+    }
+  } catch (err) {
+    console.error("Gagal memuat nomor WhatsApp dari support_config:", err);
+  }
+
   return (
     <html lang="id" className={`scroll-smooth ${plusJakartaSans.variable} ${lora.variable} ${cormorantGaramond.variable}`}>
       <head />
@@ -120,6 +137,7 @@ export default function RootLayout({
         <div className="relative z-10 min-h-screen">
           <PWARegister />
           <PWAInstallPrompt />
+          <FloatingWhatsApp whatsappNumber={whatsappNumber} />
           <ModalProvider>
             {children}
           </ModalProvider>

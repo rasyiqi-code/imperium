@@ -73,7 +73,7 @@ export default function PWAInstallPrompt() {
 
   return (
     <div
-      className={`fixed z-[9999] left-4 right-4 md:left-auto md:right-6 max-w-sm p-4 rounded-2xl bg-neutral-950/95 backdrop-blur-md border border-yellow-500/20 shadow-2xl shadow-yellow-500/5 transition-all duration-500 transform translate-y-0 animate-fade-in-up ${
+      className={`fixed z-[9999] left-4 right-4 md:right-auto md:left-6 max-w-sm p-4 rounded-2xl bg-neutral-950/95 backdrop-blur-md border border-yellow-500/20 shadow-2xl shadow-yellow-500/5 transition-all duration-500 transform translate-y-0 animate-fade-in-up ${
         isDashboard 
           ? 'bottom-[76px] md:bottom-6' 
           : 'bottom-4 md:bottom-6'
