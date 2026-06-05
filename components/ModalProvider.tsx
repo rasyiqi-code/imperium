@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react'
+import FloatingWhatsApp from './FloatingWhatsApp'
 
 interface ModalOptions {
   title: string
@@ -86,6 +87,7 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalContext.Provider value={{ showAlert, showConfirm }}>
       {children}
+      <FloatingWhatsApp />
       
       {isOpen && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
