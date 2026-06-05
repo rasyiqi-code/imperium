@@ -20,7 +20,11 @@ export default async function HelpPage() {
     where: { id: 1 },
   });
 
-  const whatsapp = support?.whatsapp_number || '62812345678';
+  const rawWhatsapp = support?.whatsapp_number || '62812345678';
+  const whatsappDigits = rawWhatsapp.replace(/\D/g, '');
+  const whatsapp = whatsappDigits.startsWith('0')
+    ? '62' + whatsappDigits.slice(1)
+    : whatsappDigits;
   const telegram = support?.telegram_link || 'https://t.me/imperiumcrypto';
   const email = support?.support_email || 'support@imperiumcrypto.com';
   const operational = support?.operational_hours || '09:00 - 21:00 WIB';

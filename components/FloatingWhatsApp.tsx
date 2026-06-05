@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 export default function FloatingWhatsApp() {
   const pathname = usePathname()
   const [showTooltip, setShowTooltip] = useState(false)
-  const [whatsappNumber, setWhatsappNumber] = useState('85251999696')
+  const [whatsappNumber, setWhatsappNumber] = useState('62812345678')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -14,8 +14,21 @@ export default function FloatingWhatsApp() {
       setMounted(true)
     }, 0)
 
-    // Catatan: Sesuai permintaan, nomor WhatsApp melayang diarahkan ke nomor khusus +852 5199 9696
-    // sehingga tidak mengambil data nomor admin secara dinamis dari API support.
+    async function fetchSupportConfig() {
+      try {
+        const res = await fetch('/api/support')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.whatsappNumber) {
+            setWhatsappNumber(data.whatsappNumber)
+          }
+        }
+      } catch (err) {
+        console.error('Gagal mengambil nomor WhatsApp admin dari API:', err)
+      }
+    }
+
+    fetchSupportConfig()
 
     return () => clearTimeout(timer)
   }, [])
@@ -26,8 +39,11 @@ export default function FloatingWhatsApp() {
   // Deteksi rute dashboard untuk menyesuaikan posisi di mobile agar tidak bertumpuk dengan MobileNav
   const isDashboard = pathname?.startsWith('/dashboard')
 
-  // Bersihkan karakter non-numerik dari nomor WhatsApp (misal tanda '+', spasi, atau strip)
-  const cleanedPhone = whatsappNumber.replace(/\D/g, '')
+  // Bersihkan karakter non-numerik dan format agar diawali kode negara 62 jika diawali 0
+  const cleanedDigits = whatsappNumber.replace(/\D/g, '')
+  const cleanedPhone = cleanedDigits.startsWith('0')
+    ? '62' + cleanedDigits.slice(1)
+    : cleanedDigits
 
   return (
     <div
