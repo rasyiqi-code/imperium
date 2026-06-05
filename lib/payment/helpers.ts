@@ -71,4 +71,3 @@ export function getExpiryCountdown(expiryTime: string): string {
   const s = Math.floor((diff % 60000) / 1000)
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
-
