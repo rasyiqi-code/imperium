@@ -66,10 +66,10 @@ export default function Reviews() {
         {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
         <div className="text-center mb-16 space-y-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 tracking-tight leading-tight uppercase">
-            Review <span className="font-serif-editorial italic text-[#d4af37] font-normal">Anggota</span>
+            Kata <span className="font-serif-editorial italic text-[#d4af37] font-normal">Mereka</span>
           </h2>
           <p className="text-[10px] font-bold text-neutral-500 tracking-[0.25em] uppercase">
-            Hasil nyata dari komunitas eksklusif
+            Sedikit Cerita dari Komunitas Imperium
           </p>
         </div>
 
