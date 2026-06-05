@@ -420,13 +420,13 @@ export default function AdminTestimonialsPage() {
           />
 
           {/* Kontainer Dialog */}
-          <div className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-neutral-950 border border-neutral-800 shadow-2xl p-6 md:p-8 animate-in fade-in zoom-in duration-200">
+          <div className="relative w-full max-w-lg md:max-w-3xl overflow-y-auto max-h-[90vh] rounded-3xl bg-neutral-950 border border-neutral-800 shadow-2xl p-6 md:p-8 animate-in fade-in zoom-in duration-200">
             {/* Header Modal */}
             <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-6">
               <h3 className="text-sm font-black uppercase tracking-widest text-white">
                 {editingId ? 'Ubah Testimonial Member' : 'Tambah Testimonial Baru'}
               </h3>
-              <button
+              <button 
                 onClick={() => setIsModalOpen(false)}
                 disabled={actionLoading}
                 className="p-1 rounded-lg text-neutral-500 hover:text-white transition cursor-pointer disabled:opacity-50"
@@ -436,115 +436,124 @@ export default function AdminTestimonialsPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Kolom Kiri */}
+                <div className="space-y-4">
+                  {/* Nama Pengulas */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
+                      Nama Member / Pengulas
+                    </label>
+                    <div className="relative group">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={15} />
+                      <input
+                        type="text"
+                        required
+                        className="w-full rounded-2xl bg-neutral-900 p-3 pl-11 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                        placeholder="Sultan Crypto"
+                        value={namaUser}
+                        onChange={(e) => setNamaUser(e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-              {/* Nama Pengulas */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
-                  Nama Member / Pengulas
-                </label>
-                <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={15} />
-                  <input
-                    type="text"
-                    required
-                    className="w-full rounded-2xl bg-neutral-900 p-3 pl-11 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
-                    placeholder="Sultan Crypto"
-                    value={namaUser}
-                    onChange={(e) => setNamaUser(e.target.value)}
-                  />
-                </div>
-              </div>
+                  {/* Peran / Jabatan */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
+                      Peran / Posisi
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full rounded-2xl bg-neutral-900 p-3 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                      placeholder="Full-time Trader (e.g. VIP Member, Analyst)"
+                      value={peranUser}
+                      onChange={(e) => setPeranUser(e.target.value)}
+                    />
+                  </div>
 
-              {/* Peran / Jabatan */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
-                  Peran / Posisi
-                </label>
-                <input
-                  type="text"
-                  className="w-full rounded-2xl bg-neutral-900 p-3 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
-                  placeholder="Full-time Trader (e.g. VIP Member, Analyst)"
-                  value={peranUser}
-                  onChange={(e) => setPeranUser(e.target.value)}
-                />
-              </div>
+                  {/* Rating Bintang */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
+                      Rating Bintang (1 - 5)
+                    </label>
+                    <div className="flex items-center gap-2 mt-1">
+                      {[1, 2, 3, 4, 5].map((starValue) => {
+                        const isActive = starValue <= rating
+                        return (
+                          <button
+                            key={starValue}
+                            type="button"
+                            onClick={() => setRating(starValue)}
+                            className="p-1 rounded text-neutral-500 hover:scale-110 active:scale-95 transition cursor-pointer"
+                          >
+                            <Star 
+                              size={24} 
+                              className={isActive ? 'text-yellow-500 fill-yellow-500' : 'text-neutral-800'} 
+                            />
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
 
-              {/* Foto User (Avatar URL) */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1 flex justify-between">
-                  <span>URL Foto Profil (Opsional)</span>
-                  <span className="text-neutral-600 font-medium">Bisa dikosongkan</span>
-                </label>
-                <div className="relative group">
-                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={15} />
-                  <input
-                    type="url"
-                    className="w-full rounded-2xl bg-neutral-900 p-3 pl-11 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
-                    placeholder="https://i.pravatar.cc/150?u=seed"
-                    value={fotoUser}
-                    onChange={(e) => setFotoUser(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Rating Bintang */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
-                  Rating Bintang (1 - 5)
-                </label>
-                <div className="flex items-center gap-2 mt-1">
-                  {[1, 2, 3, 4, 5].map((starValue) => {
-                    const isActive = starValue <= rating
-                    return (
-                      <button
-                        key={starValue}
-                        type="button"
-                        onClick={() => setRating(starValue)}
-                        className="p-1 rounded text-neutral-500 hover:scale-110 active:scale-95 transition cursor-pointer"
-                      >
-                        <Star
-                          size={24}
-                          className={isActive ? 'text-yellow-500 fill-yellow-500' : 'text-neutral-800'}
-                        />
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Teks Ulasan */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
-                  Isi Testimonial / Ulasan
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  className="w-full rounded-2xl bg-neutral-900 p-3 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all resize-none"
-                  placeholder="Tuliskan ulasan member secara detail di sini..."
-                  value={isiTesti}
-                  onChange={(e) => setIsiTesti(e.target.value)}
-                />
-              </div>
-
-              {/* Status Tampil Sakelar */}
-              <div className="flex items-center justify-between py-2 px-1">
-                <div className="text-left">
-                  <label className="text-xs font-bold text-white tracking-tight leading-none uppercase">Tampilkan di Landing Page</label>
-                  <p className="text-[10px] text-neutral-500 uppercase tracking-wide font-semibold mt-1">Jika dimatikan, ulasan akan diarsipkan.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setStatusTampil(!statusTampil)}
-                  className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${statusTampil ? 'bg-yellow-500' : 'bg-neutral-800'
-                    }`}
-                >
-                  <div
-                    className={`bg-black w-4 h-4 rounded-full shadow-md transition-transform duration-300 ${statusTampil ? 'translate-x-6' : 'translate-x-0'
+                  {/* Status Tampil Sakelar */}
+                  <div className="flex items-center justify-between py-2 px-1 bg-neutral-900/40 rounded-2xl border border-neutral-800 p-3">
+                    <div className="text-left">
+                      <label className="text-xs font-bold text-white tracking-tight leading-none uppercase">Tampilkan di Landing Page</label>
+                      <p className="text-[9px] text-neutral-500 uppercase tracking-wide font-semibold mt-1">Jika dimatikan, ulasan akan diarsipkan.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setStatusTampil(!statusTampil)}
+                      className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 shrink-0 ${
+                        statusTampil ? 'bg-yellow-500' : 'bg-neutral-800'
                       }`}
-                  />
-                </button>
+                    >
+                      <div 
+                        className={`bg-black w-4 h-4 rounded-full shadow-md transition-transform duration-300 ${
+                          statusTampil ? 'translate-x-6' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Kolom Kanan */}
+                <div className="space-y-4">
+                  {/* Foto User (Avatar URL) */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1 flex justify-between">
+                      <span>URL Foto Profil (Opsional)</span>
+                    </label>
+                    <div className="relative group">
+                      <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-yellow-500 transition-colors" size={15} />
+                      <input
+                        type="url"
+                        className="w-full rounded-2xl bg-neutral-900 p-3 pl-11 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all"
+                        placeholder="https://i.pravatar.cc/150?u=seed"
+                        value={fotoUser}
+                        onChange={(e) => setFotoUser(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Teks Ulasan */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-neutral-400 tracking-widest uppercase ml-1">
+                      Isi Testimonial / Ulasan
+                    </label>
+                    <textarea
+                      required
+                      rows={6}
+                      className="w-full rounded-2xl bg-neutral-900 p-3 text-xs text-white border border-neutral-800 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 focus:outline-none transition-all resize-none animate-in"
+                      placeholder="Tuliskan ulasan member secara detail di sini..."
+                      value={isiTesti}
+                      onChange={(e) => setIsiTesti(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Footer Aksi */}
