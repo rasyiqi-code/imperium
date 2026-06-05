@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw
+  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, UserPlus, X
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
@@ -44,6 +44,12 @@ export default function AdminSettings() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordUpdating, setPasswordUpdating] = useState(false)
   const [activeSessionsCount, setActiveSessionsCount] = useState(1)
+  const [isAddAdminOpen, setIsAddAdminOpen] = useState(false)
+  const [newAdminEmail, setNewAdminEmail] = useState('')
+  const [newAdminPassword, setNewAdminPassword] = useState('')
+  const [newAdminName, setNewAdminName] = useState('')
+  const [newAdminWa, setNewAdminWa] = useState('')
+  const [isAddAdminProcessing, setIsAddAdminProcessing] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -219,6 +225,70 @@ export default function AdminSettings() {
     })
   }
 
+  const handleCreateAdmin = async () => {
+    if (!newAdminEmail || !newAdminPassword || !newAdminName) {
+      showAlert({
+        title: 'Formulir Belum Lengkap',
+        message: 'Email, password, dan nama lengkap wajib diisi!',
+        type: 'warning'
+      })
+      return
+    }
+
+    if (newAdminPassword.length < 6) {
+      showAlert({
+        title: 'Password Terlalu Pendek',
+        message: 'Password harus minimal 6 karakter.',
+        type: 'warning'
+      })
+      return
+    }
+
+    setIsAddAdminProcessing(true)
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'createAdminUser',
+          email: newAdminEmail,
+          password: newAdminPassword,
+          fullName: newAdminName,
+          whatsappNumber: newAdminWa
+        })
+      })
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        setIsAddAdminOpen(false)
+        setNewAdminEmail('')
+        setNewAdminPassword('')
+        setNewAdminName('')
+        setNewAdminWa('')
+        showAlert({
+          title: 'Admin Berhasil Dibuat',
+          message: 'Akun administrator baru berhasil didaftarkan!',
+          type: 'success'
+        })
+      } else {
+        showAlert({
+          title: 'Gagal Membuat Admin',
+          message: data.error || 'Terjadi kesalahan saat membuat admin baru.',
+          type: 'danger'
+        })
+      }
+    } catch (err: unknown) {
+      const error = err as Error
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${error.message}`,
+        type: 'danger'
+      })
+    } finally {
+      setIsAddAdminProcessing(false)
+    }
+  }
+
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
@@ -288,16 +358,115 @@ export default function AdminSettings() {
       <div className="max-w-4xl">
         {activeTab === 'general' && (
           <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Profile Header */}
-            <div className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 flex items-center gap-4 shadow-lg">
-              <div className="h-14 w-14 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-black text-xl uppercase leading-none shrink-0">
-                {adminEmail ? adminEmail.substring(0, 2) : 'AD'}
+            {/* Profile Header / Tambah Admin Baru */}
+            {isAddAdminOpen ? (
+              <div className="p-5 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 shadow-lg space-y-4 animate-in zoom-in-95 duration-200 text-left">
+                <div className="flex justify-between items-center pb-2 border-b border-neutral-900">
+                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Tambah Administrator Baru</h3>
+                  <button 
+                    onClick={() => {
+                      setIsAddAdminOpen(false)
+                      setNewAdminEmail('')
+                      setNewAdminPassword('')
+                      setNewAdminName('')
+                      setNewAdminWa('')
+                    }}
+                    className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      placeholder="Nama admin baru..."
+                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                      value={newAdminName}
+                      onChange={(e) => setNewAdminName(e.target.value)}
+                      disabled={isAddAdminProcessing}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Nomor WhatsApp</label>
+                    <input
+                      type="tel"
+                      placeholder="0812..."
+                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                      value={newAdminWa}
+                      onChange={(e) => setNewAdminWa(e.target.value)}
+                      disabled={isAddAdminProcessing}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Email Address</label>
+                    <input
+                      type="email"
+                      placeholder="email@imperium.com"
+                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
+                      value={newAdminEmail}
+                      onChange={(e) => setNewAdminEmail(e.target.value)}
+                      disabled={isAddAdminProcessing}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password</label>
+                    <input
+                      type="password"
+                      placeholder="Password (Min. 6 karakter)..."
+                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
+                      value={newAdminPassword}
+                      onChange={(e) => setNewAdminPassword(e.target.value)}
+                      disabled={isAddAdminProcessing}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setIsAddAdminOpen(false)
+                      setNewAdminEmail('')
+                      setNewAdminPassword('')
+                      setNewAdminName('')
+                      setNewAdminWa('')
+                    }}
+                    disabled={isAddAdminProcessing}
+                    className="px-4 py-2 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleCreateAdmin}
+                    disabled={isAddAdminProcessing || !newAdminEmail || !newAdminPassword || !newAdminName}
+                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                  >
+                    {isAddAdminProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Buat Admin'}
+                  </button>
+                </div>
               </div>
-              <div className="min-w-0">
-                <h2 className="text-xs font-black text-white leading-none">Super Admin</h2>
-                <p className="text-[10px] text-neutral-500 font-bold mt-2 tracking-tight truncate">{adminEmail || 'admin@imperium.com'}</p>
+            ) : (
+              <div className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 flex items-center justify-between gap-4 shadow-lg">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 bg-yellow-500 rounded-xl flex items-center justify-center text-black font-black text-xl uppercase leading-none shrink-0">
+                    {adminEmail ? adminEmail.substring(0, 2) : 'AD'}
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-xs font-black text-white leading-none">Super Admin</h2>
+                    <p className="text-[10px] text-neutral-500 font-bold mt-2 tracking-tight truncate">{adminEmail || 'admin@imperium.com'}</p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => setIsAddAdminOpen(true)}
+                  className="px-4 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer flex items-center gap-1.5 shadow-lg shadow-yellow-500/10"
+                >
+                  <UserPlus size={12} /> Tambah Admin
+                </button>
               </div>
-            </div>
+            )}
 
             {/* Keamanan Admin */}
             <div className="space-y-3">

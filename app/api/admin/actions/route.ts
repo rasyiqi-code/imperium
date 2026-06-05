@@ -15,7 +15,7 @@ import {
   updateDiscordSettings
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
-import { deleteUser, updateUserPassword } from './handlers/users'
+import { deleteUser, updateUserPassword, createAdminUser } from './handlers/users'
 
 /**
  * Route Handler utama untuk seluruh aksi admin (POST).
@@ -54,6 +54,8 @@ export async function POST(request: Request) {
         return await deleteUser(body, user.id)
       case 'updateUserPassword':
         return await updateUserPassword(body)
+      case 'createAdminUser':
+        return await createAdminUser(body)
       case 'confirmPayment':
         return await confirmPayment(body)
       case 'rejectPayment':

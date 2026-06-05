@@ -84,3 +84,76 @@ export async function updateUserPassword(body: UpdatePasswordBody): Promise<Resp
     return NextResponse.json({ error: err.message || 'Terjadi kesalahan saat memperbarui password' }, { status: 500 })
   }
 }
+
+interface CreateAdminBody {
+  email?: string
+  password?: string
+  fullName?: string
+  whatsappNumber?: string
+}
+
+/**
+ * Membuat akun administrator baru secara langsung lewat sisi server menggunakan service role key.
+ */
+export async function createAdminUser(body: CreateAdminBody): Promise<Response> {
+  const { email, password, fullName, whatsappNumber } = body
+  if (!email || !password || !fullName) {
+    return NextResponse.json({ error: 'Email, password, dan nama lengkap wajib diisi!' }, { status: 400 })
+  }
+
+  if (password.length < 6) {
+    return NextResponse.json({ error: 'Password harus memiliki minimal 6 karakter!' }, { status: 400 })
+  }
+
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: 'Supabase admin client tidak terkonfigurasi. Pastikan SUPABASE_SERVICE_ROLE_KEY tersedia.' }, { status: 500 })
+  }
+
+  try {
+    // 1. Buat pengguna di Supabase Auth
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: fullName,
+        whatsapp_number: whatsappNumber || ''
+      }
+    })
+
+    if (authError) {
+      throw authError
+    }
+
+    const newUser = authData.user
+    if (!newUser) {
+      throw new Error('Gagal membuat user di Supabase Auth')
+    }
+
+    // 2. Update/upsert tabel profiles untuk menandai plan sebagai 'admin'
+    await prisma.profiles.upsert({
+      where: { id: newUser.id },
+      update: {
+        plan: 'admin',
+        plan_status: 'admin',
+        full_name: fullName,
+        whatsapp_number: whatsappNumber || ''
+      },
+      create: {
+        id: newUser.id,
+        email: email,
+        full_name: fullName,
+        plan: 'admin',
+        plan_status: 'admin',
+        whatsapp_number: whatsappNumber || ''
+      }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error: unknown) {
+    const err = error as Error
+    console.error('Gagal membuat admin baru:', err)
+    return NextResponse.json({ error: err.message || 'Terjadi kesalahan saat membuat admin baru' }, { status: 500 })
+  }
+}
+
