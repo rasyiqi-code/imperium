@@ -123,7 +123,7 @@ export default function MemberDetailModal({
                 <input
                   type="text"
                   placeholder="Minimal 6 karakter..."
-                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-1.5 text-xs font-bold text-white placeholder-neutral-750 font-mono"
+                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-1 text-xs font-bold text-white placeholder-neutral-750 font-mono"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   disabled={isLocalProcessing}
@@ -131,7 +131,7 @@ export default function MemberDetailModal({
                 <button
                   onClick={handlePasswordSubmit}
                   disabled={isLocalProcessing || newPassword.length < 6}
-                  className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                  className="px-4 py-1 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
                 >
                   {isLocalProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
                 </button>
@@ -147,7 +147,7 @@ export default function MemberDetailModal({
               <button 
                 onClick={() => onUpgrade(member)}
                 disabled={isProcessing}
-                className={`w-full py-2.2 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`w-full py-1.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   member.plan === 'vip' 
                   ? 'bg-neutral-900 border border-neutral-800 hover:border-yellow-500/20 text-yellow-500 hover:bg-neutral-900' 
                   : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-black shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/25'
@@ -167,14 +167,14 @@ export default function MemberDetailModal({
                 <button 
                   onClick={() => onDeactivate(member)}
                   disabled={isProcessing}
-                  className="w-full py-2.2 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-1.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isProcessing ? <RefreshCw className="animate-spin" size={13} /> : <UserMinus size={13} />} Set Kedaluwarsa
                 </button>
               ) : (
                 <button 
                   disabled
-                  className="w-full py-2.2 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
+                  className="w-full py-1.5 bg-neutral-900/40 text-neutral-600 border border-neutral-800/40 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 cursor-not-allowed opacity-40"
                 >
                   <UserMinus size={13} /> Set Kedaluwarsa
                 </button>
@@ -191,7 +191,7 @@ export default function MemberDetailModal({
                 }`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full py-2.2 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full py-1.5 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-center text-[10px] font-black tracking-wider text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <MessageSquare size={13} /> Chat WhatsApp
               </a>
@@ -200,7 +200,7 @@ export default function MemberDetailModal({
               <button 
                 onClick={() => onDelete(member.id)} 
                 disabled={isProcessing}
-                className="w-full py-2.2 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-1.5 bg-red-500/5 text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Trash2 size={13} /> Hapus Akun
               </button>
@@ -208,7 +208,7 @@ export default function MemberDetailModal({
               {/* Tombol 5: Setel Password Baru (Lebar Penuh) */}
               <button 
                 onClick={() => setIsPasswordFormOpen(!isPasswordFormOpen)}
-                className={`col-span-2 w-full py-2.2 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
+                className={`col-span-2 w-full py-1.5 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
                   isPasswordFormOpen
                   ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/35 shadow-lg shadow-yellow-500/5'
                   : 'bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 text-neutral-400 hover:text-white'
