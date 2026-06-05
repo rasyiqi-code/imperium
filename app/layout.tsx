@@ -7,7 +7,11 @@ import fs from "fs";
 import path from "path";
 import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import dynamic from "next/dynamic";
+
+const FloatingWhatsApp = dynamic(() => import("@/components/FloatingWhatsApp"), {
+  ssr: false,
+});
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
