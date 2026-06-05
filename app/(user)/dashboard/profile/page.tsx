@@ -2,19 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { User, Mail, Edit3, Save, X, LogOut, RefreshCw, Gem, Calendar, Key } from 'lucide-react'
+import { User, Mail, Edit3, Save, X, LogOut, RefreshCw } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
+import ProfileVipStatusCard from '@/components/profile/ProfileVipStatusCard'
+import ProfilePasswordForm from '@/components/profile/ProfilePasswordForm'
 
 export default function ProfilePage() {
   const { showAlert, showConfirm } = useModal()
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [updating, setUpdating] = useState(false)
-  const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [passwordUpdating, setPasswordUpdating] = useState(false)
   
   const [profile, setProfile] = useState({
     id_user_auth: '',
@@ -131,28 +129,10 @@ export default function ProfilePage() {
     }
   }
 
-  const handlePasswordUpdate = async () => {
-    if (newPassword.length < 6) {
-      showAlert({
-        title: 'Password Terlalu Pendek',
-        message: 'Password baru harus minimal 6 karakter.',
-        type: 'warning'
-      })
-      return
-    }
-    if (newPassword !== confirmPassword) {
-      showAlert({
-        title: 'Password Tidak Cocok',
-        message: 'Konfirmasi password tidak cocok dengan password baru.',
-        type: 'warning'
-      })
-      return
-    }
-
-    setPasswordUpdating(true)
+  const handlePasswordUpdate = async (newPass: string): Promise<boolean> => {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password: newPass
       })
 
       if (error) {
@@ -161,15 +141,14 @@ export default function ProfilePage() {
           message: error.message || 'Terjadi kesalahan saat memperbarui password.',
           type: 'danger'
         })
+        return false
       } else {
-        setNewPassword('')
-        setConfirmPassword('')
-        setIsPasswordFormOpen(false)
         showAlert({
           title: 'Password Diperbarui',
           message: 'Password Anda berhasil diperbarui!',
           type: 'success'
         })
+        return true
       }
     } catch (err: unknown) {
       const error = err as Error
@@ -178,8 +157,7 @@ export default function ProfilePage() {
         message: `Gagal: ${error.message}`,
         type: 'danger'
       })
-    } finally {
-      setPasswordUpdating(false)
+      return false
     }
   }
 
@@ -222,35 +200,7 @@ export default function ProfilePage() {
           </div>
 
           {/* VIP Card */}
-          <div className={`p-4 rounded-2xl border flex items-center justify-between transition-all duration-500 ${
-            profile.status_vip === 'VIP Member' 
-            ? 'bg-yellow-500/10 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.05)]' 
-            : 'bg-neutral-900/50 border-neutral-800'
-          }`}>
-            <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                profile.status_vip === 'VIP Member' ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/20' : 'bg-neutral-800 text-neutral-500'
-              }`}>
-                <Gem size={18} />
-              </div>
-              <div>
-                <div className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase">Membership</div>
-                <div className={`text-xs font-extrabold tracking-tight ${profile.status_vip === 'VIP Member' ? 'text-yellow-400' : 'text-white'}`}>
-                  {profile.status_vip}
-                </div>
-              </div>
-            </div>
-            {profile.status_vip === 'VIP Member' && profile.masa_aktif && (
-              <div className="text-right">
-                <div className="text-[9px] font-bold tracking-widest text-neutral-500 uppercase flex items-center justify-end gap-1">
-                  <Calendar size={9} /> Expired
-                </div>
-                <div className="text-[10px] font-bold text-white mt-0.5">
-                  {new Date(profile.masa_aktif).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-              </div>
-            )}
-          </div>
+          <ProfileVipStatusCard statusVip={profile.status_vip} masaAktif={profile.masa_aktif} />
 
           {/* Tombol Logout */}
           {!isEditing && (
@@ -357,64 +307,7 @@ export default function ProfilePage() {
           <div className="border-t border-neutral-800/60 my-3" />
 
           {/* Section Keamanan / Ganti Password */}
-          <div className="space-y-3">
-            <h3 className="text-[10px] font-bold text-yellow-500/80 uppercase tracking-widest">Keamanan Akun</h3>
-            
-            {isPasswordFormOpen ? (
-              <div className="bg-neutral-950/45 border border-neutral-800/80 rounded-2xl p-4 space-y-3.5 animate-in zoom-in-95 duration-200">
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password Baru</label>
-                  <input
-                    type="password"
-                    placeholder="Masukkan password baru (Min. 6 karakter)..."
-                    className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={passwordUpdating}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Konfirmasi Password Baru</label>
-                  <input
-                    type="password"
-                    placeholder="Ulangi password baru..."
-                    className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={passwordUpdating}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3 mt-1">
-                  <button
-                    onClick={() => {
-                      setIsPasswordFormOpen(false)
-                      setNewPassword('')
-                      setConfirmPassword('')
-                    }}
-                    disabled={passwordUpdating}
-                    className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={handlePasswordUpdate}
-                    disabled={passwordUpdating || newPassword.length < 6 || confirmPassword.length < 6}
-                    className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
-                  >
-                    {passwordUpdating ? <RefreshCw className="animate-spin" size={13} /> : 'Simpan Password'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsPasswordFormOpen(true)}
-                className="w-full py-3 bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 rounded-xl text-[10px] font-black tracking-[0.15em] uppercase text-neutral-400 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Key size={13} /> Ganti Password Akun
-              </button>
-            )}
-          </div>
+          <ProfilePasswordForm onUpdatePassword={handlePasswordUpdate} />
 
           {/* Pembatas / Divider */}
           <div className="border-t border-neutral-800/60 my-3" />

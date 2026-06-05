@@ -1,10 +1,8 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw, UserPlus, X
+  Bell, Lock, Globe, LogOut, Smartphone, Mail, UserPlus
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
@@ -14,6 +12,9 @@ import PaymentChannelsList from '@/components/admin/settings/PaymentChannelsList
 import ResendSettingsForm from '@/components/admin/settings/ResendSettingsForm'
 import MidtransSettingsForm from '@/components/admin/settings/MidtransSettingsForm'
 import DiscordSettingsForm from '@/components/admin/settings/DiscordSettingsForm'
+import AddAdminForm from '@/components/admin/settings/AddAdminForm'
+import UpdateEmailForm from '@/components/admin/settings/UpdateEmailForm'
+import UpdatePasswordForm from '@/components/admin/settings/UpdatePasswordForm'
 
 export default function AdminSettings() {
   const { showAlert, showConfirm } = useModal()
@@ -40,19 +41,9 @@ export default function AdminSettings() {
   const [discordRedirectUri, setDiscordRedirectUri] = useState('')
   const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend'>('general')
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [passwordUpdating, setPasswordUpdating] = useState(false)
   const [activeSessionsCount, setActiveSessionsCount] = useState(1)
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false)
-  const [newAdminEmail, setNewAdminEmail] = useState('')
-  const [newAdminPassword, setNewAdminPassword] = useState('')
-  const [newAdminName, setNewAdminName] = useState('')
-  const [newAdminWa, setNewAdminWa] = useState('')
-  const [isAddAdminProcessing, setIsAddAdminProcessing] = useState(false)
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false)
-  const [newAdminEmailState, setNewAdminEmailState] = useState('')
-  const [emailUpdating, setEmailUpdating] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -121,28 +112,10 @@ export default function AdminSettings() {
     })
   }
 
-  const handlePasswordUpdate = async () => {
-    if (newPassword.length < 6) {
-      showAlert({
-        title: 'Password Terlalu Pendek',
-        message: 'Password baru harus minimal 6 karakter.',
-        type: 'warning'
-      })
-      return
-    }
-    if (newPassword !== confirmPassword) {
-      showAlert({
-        title: 'Password Tidak Cocok',
-        message: 'Konfirmasi password tidak cocok dengan password baru.',
-        type: 'warning'
-      })
-      return
-    }
-
-    setPasswordUpdating(true)
+  const handlePasswordUpdate = async (newPass: string): Promise<boolean> => {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password: newPass
       })
 
       if (error) {
@@ -151,15 +124,14 @@ export default function AdminSettings() {
           message: error.message || 'Terjadi kesalahan saat memperbarui password.',
           type: 'danger'
         })
+        return false
       } else {
-        setNewPassword('')
-        setConfirmPassword('')
-        setIsPasswordFormOpen(false)
         showAlert({
           title: 'Password Diperbarui',
           message: 'Password admin berhasil diperbarui!',
           type: 'success'
         })
+        return true
       }
     } catch (err: unknown) {
       const error = err as Error
@@ -168,8 +140,7 @@ export default function AdminSettings() {
         message: `Gagal: ${error.message}`,
         type: 'danger'
       })
-    } finally {
-      setPasswordUpdating(false)
+      return false
     }
   }
 
@@ -228,57 +199,35 @@ export default function AdminSettings() {
     })
   }
 
-  const handleCreateAdmin = async () => {
-    if (!newAdminEmail || !newAdminPassword || !newAdminName) {
-      showAlert({
-        title: 'Formulir Belum Lengkap',
-        message: 'Email, password, dan nama lengkap wajib diisi!',
-        type: 'warning'
-      })
-      return
-    }
-
-    if (newAdminPassword.length < 6) {
-      showAlert({
-        title: 'Password Terlalu Pendek',
-        message: 'Password harus minimal 6 karakter.',
-        type: 'warning'
-      })
-      return
-    }
-
-    setIsAddAdminProcessing(true)
+  const handleCreateAdmin = async (email: string, pass: string, name: string, wa: string): Promise<boolean> => {
     try {
       const res = await fetch('/api/admin/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'createAdminUser',
-          email: newAdminEmail,
-          password: newAdminPassword,
-          fullName: newAdminName,
-          whatsappNumber: newAdminWa
+          email,
+          password: pass,
+          fullName: name,
+          whatsappNumber: wa
         })
       })
       const data = await res.json()
 
       if (res.ok && data.success) {
-        setIsAddAdminOpen(false)
-        setNewAdminEmail('')
-        setNewAdminPassword('')
-        setNewAdminName('')
-        setNewAdminWa('')
         showAlert({
           title: 'Admin Berhasil Dibuat',
           message: 'Akun administrator baru berhasil didaftarkan!',
           type: 'success'
         })
+        return true
       } else {
         showAlert({
           title: 'Gagal Membuat Admin',
           message: data.error || 'Terjadi kesalahan saat membuat admin baru.',
           type: 'danger'
         })
+        return false
       }
     } catch (err: unknown) {
       const error = err as Error
@@ -287,22 +236,11 @@ export default function AdminSettings() {
         message: `Gagal: ${error.message}`,
         type: 'danger'
       })
-    } finally {
-      setIsAddAdminProcessing(false)
+      return false
     }
   }
 
-  const handleEmailUpdate = async () => {
-    if (!newAdminEmailState) {
-      showAlert({
-        title: 'Email Kosong',
-        message: 'Email baru tidak boleh kosong!',
-        type: 'warning'
-      })
-      return
-    }
-
-    setEmailUpdating(true)
+  const handleEmailUpdate = async (newEmail: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
@@ -311,7 +249,7 @@ export default function AdminSettings() {
           message: 'Sesi Anda telah habis. Silakan login kembali.',
           type: 'danger'
         })
-        return
+        return false
       }
 
       const res = await fetch('/api/admin/actions', {
@@ -320,25 +258,26 @@ export default function AdminSettings() {
         body: JSON.stringify({
           action: 'updateAdminEmail',
           adminUserId: user.id,
-          newEmail: newAdminEmailState
+          newEmail
         })
       })
       const data = await res.json()
 
       if (res.ok && data.success) {
-        setAdminEmail(newAdminEmailState)
-        setIsEmailFormOpen(false)
+        setAdminEmail(newEmail)
         showAlert({
           title: 'Email Diperbarui',
           message: 'Email admin berhasil diperbarui!',
           type: 'success'
         })
+        return true
       } else {
         showAlert({
           title: 'Gagal Mengubah Email',
           message: data.error || 'Terjadi kesalahan saat memperbarui email.',
           type: 'danger'
         })
+        return false
       }
     } catch (err: unknown) {
       const error = err as Error
@@ -347,8 +286,7 @@ export default function AdminSettings() {
         message: `Gagal: ${error.message}`,
         type: 'danger'
       })
-    } finally {
-      setEmailUpdating(false)
+      return false
     }
   }
 
@@ -423,93 +361,10 @@ export default function AdminSettings() {
           <div className="space-y-6 animate-in fade-in duration-200">
             {/* Profile Header / Tambah Admin Baru */}
             {isAddAdminOpen ? (
-              <div className="p-5 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 shadow-lg space-y-4 animate-in zoom-in-95 duration-200 text-left">
-                <div className="flex justify-between items-center pb-2 border-b border-neutral-900">
-                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Tambah Administrator Baru</h3>
-                  <button 
-                    onClick={() => {
-                      setIsAddAdminOpen(false)
-                      setNewAdminEmail('')
-                      setNewAdminPassword('')
-                      setNewAdminName('')
-                      setNewAdminWa('')
-                    }}
-                    className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Nama Lengkap</label>
-                    <input
-                      type="text"
-                      placeholder="Nama admin baru..."
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
-                      value={newAdminName}
-                      onChange={(e) => setNewAdminName(e.target.value)}
-                      disabled={isAddAdminProcessing}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Nomor WhatsApp</label>
-                    <input
-                      type="tel"
-                      placeholder="0812..."
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
-                      value={newAdminWa}
-                      onChange={(e) => setNewAdminWa(e.target.value)}
-                      disabled={isAddAdminProcessing}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="email@imperium.com"
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
-                      value={newAdminEmail}
-                      onChange={(e) => setNewAdminEmail(e.target.value)}
-                      disabled={isAddAdminProcessing}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password</label>
-                    <input
-                      type="password"
-                      placeholder="Password (Min. 6 karakter)..."
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
-                      value={newAdminPassword}
-                      onChange={(e) => setNewAdminPassword(e.target.value)}
-                      disabled={isAddAdminProcessing}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    onClick={() => {
-                      setIsAddAdminOpen(false)
-                      setNewAdminEmail('')
-                      setNewAdminPassword('')
-                      setNewAdminName('')
-                      setNewAdminWa('')
-                    }}
-                    disabled={isAddAdminProcessing}
-                    className="px-4 py-2 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    onClick={handleCreateAdmin}
-                    disabled={isAddAdminProcessing || !newAdminEmail || !newAdminPassword || !newAdminName}
-                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-                  >
-                    {isAddAdminProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Buat Admin'}
-                  </button>
-                </div>
-              </div>
+              <AddAdminForm 
+                onClose={() => setIsAddAdminOpen(false)} 
+                onCreateAdmin={handleCreateAdmin} 
+              />
             ) : (
               <div className="p-6 rounded-2xl bg-neutral-950/30 backdrop-blur-md border border-neutral-800 flex items-center justify-between gap-4 shadow-lg">
                 <div className="flex items-center gap-4">
@@ -536,94 +391,22 @@ export default function AdminSettings() {
               <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Keamanan Admin</h3>
               <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-900/60 shadow-lg">
                 {isEmailFormOpen ? (
-                  <div className="p-4 bg-neutral-900/25 border border-neutral-900 rounded-2xl m-3 space-y-3.5 animate-in zoom-in-95 duration-200 text-left">
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Email Baru</label>
-                      <input
-                        type="email"
-                        placeholder="Masukkan email baru..."
-                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all"
-                        value={newAdminEmailState}
-                        onChange={(e) => setNewAdminEmailState(e.target.value)}
-                        disabled={emailUpdating}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 mt-1">
-                      <button
-                        onClick={() => {
-                          setIsEmailFormOpen(false)
-                          setNewAdminEmailState('')
-                        }}
-                        disabled={emailUpdating}
-                        className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer text-center"
-                      >
-                        Batal
-                      </button>
-                      <button
-                        onClick={handleEmailUpdate}
-                        disabled={emailUpdating || !newAdminEmailState || newAdminEmailState === adminEmail}
-                        className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed text-center flex items-center justify-center gap-1.5"
-                      >
-                        {emailUpdating ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
-                      </button>
-                    </div>
-                  </div>
+                  <UpdateEmailForm 
+                    currentEmail={adminEmail} 
+                    onClose={() => setIsEmailFormOpen(false)} 
+                    onUpdateEmail={handleEmailUpdate} 
+                  />
                 ) : (
-                  <div onClick={() => {
-                    setNewAdminEmailState(adminEmail)
-                    setIsEmailFormOpen(true)
-                  }} className="cursor-pointer">
+                  <div onClick={() => setIsEmailFormOpen(true)} className="cursor-pointer">
                     <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} isLink linkText="Ubah" />
                   </div>
                 )}
                 
                 {isPasswordFormOpen ? (
-                  <div className="p-4 bg-neutral-900/25 border border-neutral-900 rounded-2xl m-3 space-y-3.5 animate-in zoom-in-95 duration-200 text-left">
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password Baru</label>
-                      <input
-                        type="password"
-                        placeholder="Masukkan password baru (Min. 6 karakter)..."
-                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        disabled={passwordUpdating}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Konfirmasi Password Baru</label>
-                      <input
-                        type="password"
-                        placeholder="Ulangi password baru..."
-                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        disabled={passwordUpdating}
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 mt-1">
-                      <button
-                        onClick={() => {
-                          setIsPasswordFormOpen(false)
-                          setNewPassword('')
-                          setConfirmPassword('')
-                        }}
-                        disabled={passwordUpdating}
-                        className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer text-center"
-                      >
-                        Batal
-                      </button>
-                      <button
-                        onClick={handlePasswordUpdate}
-                        disabled={passwordUpdating || newPassword.length < 6 || confirmPassword.length < 6}
-                        className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed text-center flex items-center justify-center gap-1.5"
-                      >
-                        {passwordUpdating ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
-                      </button>
-                    </div>
-                  </div>
+                  <UpdatePasswordForm 
+                    onClose={() => setIsPasswordFormOpen(false)} 
+                    onUpdatePassword={handlePasswordUpdate} 
+                  />
                 ) : (
                   <div onClick={() => setIsPasswordFormOpen(true)} className="cursor-pointer">
                     <SettingItem icon={<Lock size={14}/>} title="Update Password" value="Amankan akun secara berkala" isLink />

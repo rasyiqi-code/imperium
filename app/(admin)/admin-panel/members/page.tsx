@@ -1,28 +1,16 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { 
-  RefreshCw, Eye, Trash2, Search, CheckSquare, Square, Download
-} from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
 import MemberDetailModal from '@/components/admin/MemberDetailModal'
+import { exportToCSV } from '@/lib/utils/csv'
 
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  whatsapp_number: string | null;
-  plan: string | null;
-  plan_status: string | null;
-  created_at: string;
-  vip_activated_at?: string | null;
-  vip_expired_at?: string | null;
-  vip_plan_name?: string | null;
-  id_discord_user?: string | null;
-  vip_status_aktif?: string | null;
-  discord_status?: string | null;
-}
+import MemberFilterBar from '@/components/admin/members/MemberFilterBar'
+import MemberDesktopTable from '@/components/admin/members/MemberDesktopTable'
+import MemberMobileCardList from '@/components/admin/members/MemberMobileCardList'
+import { Profile } from '@/components/admin/members/types'
 
 export default function ManageMembers() {
   const { showAlert, showConfirm } = useModal()
@@ -86,9 +74,20 @@ export default function ManageMembers() {
     setIsProcessing(false)
   }
 
-  // Unduh CSV dari data yang ter-render
-  const exportToCSV = () => {
-    const headers = ['Email', 'Nama Lengkap', 'No WhatsApp', 'Paket', 'Status', 'Tanggal Daftar', 'Paket VIP Aktif', 'Tanggal Upgrade VIP', 'Tanggal Expired VIP']
+  // Unduh CSV menggunakan helper modul csv.ts
+  const handleExportCSV = () => {
+    const headers = [
+      'Email', 
+      'Nama Lengkap', 
+      'No WhatsApp', 
+      'Paket', 
+      'Status', 
+      'Tanggal Daftar', 
+      'Paket VIP Aktif', 
+      'Tanggal Upgrade VIP', 
+      'Tanggal Expired VIP'
+    ]
+    
     const rows = filteredMembers.map(m => [
       m.email,
       m.full_name || 'Anonymous',
@@ -101,20 +100,7 @@ export default function ManageMembers() {
       m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleString('id-ID') : '-'
     ])
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(','))
-    ].join('\n')
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', `members_export_${new Date().getTime()}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    exportToCSV(`members_export_${new Date().getTime()}.csv`, headers, rows)
   }
 
   useEffect(() => {
@@ -291,193 +277,36 @@ export default function ManageMembers() {
       </div>
 
       {/* Search & Bulk Action Bar */}
-      <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 p-3 md:p-5 rounded-2xl shadow-lg">
-        <div className="flex flex-col gap-3">
-          {/* Baris Pencarian: input + tombol selalu sejajar */}
-          <div className="flex gap-2 items-center">
-            <div className="relative flex-1 min-w-0 flex items-center bg-neutral-900/20 border border-neutral-800 focus-within:border-yellow-500/50 focus-within:ring-4 focus-within:ring-yellow-500/5 transition-all duration-300 rounded-xl px-3 md:px-4 py-2.5">
-              <Search className="text-neutral-500 mr-2 md:mr-3 shrink-0" size={16} />
-              <input 
-                type="text" placeholder="Cari member..." 
-                className="w-full bg-transparent text-xs font-bold tracking-wider outline-none text-white placeholder-neutral-600"
-                value={search} onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            {selectedIds.length > 0 && (
-              <button 
-                onClick={() => deleteMembers(selectedIds)} 
-                className="flex items-center justify-center gap-1.5 shrink-0 px-3 md:px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-[10px] md:text-xs font-bold tracking-widest hover:bg-red-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in-95 cursor-pointer"
-              >
-                <Trash2 size={14} /> <span className="hidden md:inline">Hapus</span> ({selectedIds.length})
-              </button>
-            )}
-            <button onClick={refreshData} className="shrink-0 p-2.5 bg-neutral-900/80 border border-neutral-800 text-yellow-500 rounded-xl active:scale-95 transition-all cursor-pointer">
-              <RefreshCw size={16} className={isProcessing ? 'animate-spin' : ''} />
-            </button>
-          </div>
-
-          {/* Filter Plan & CSV Export: selalu sejajar */}
-          <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-neutral-900/80">
-            <div className="flex gap-1.5">
-              {(['all', 'vip', 'free'] as const).map((plan) => (
-                <button
-                  key={plan}
-                  onClick={() => setSelectedPlan(plan)}
-                  className={`px-3 md:px-3.5 py-1.5 rounded-lg text-[10px] font-black capitalize tracking-wider border cursor-pointer transition-all duration-200 ${
-                    selectedPlan === plan
-                    ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 shadow-md shadow-yellow-500/5'
-                    : 'bg-neutral-900/50 text-neutral-500 border-neutral-800 hover:text-neutral-400'
-                  }`}
-                >
-                  {plan}
-                </button>
-              ))}
-            </div>
-            
-            <button
-              onClick={exportToCSV}
-              className="flex items-center gap-1.5 shrink-0 px-3 md:px-3.5 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700 rounded-lg text-[10px] font-black tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
-            >
-              <Download size={12} /> Export CSV
-            </button>
-          </div>
-        </div>
-      </div>
+      <MemberFilterBar 
+        search={search}
+        onSearchChange={setSearch}
+        selectedIdsLength={selectedIds.length}
+        onBulkDelete={() => deleteMembers(selectedIds)}
+        onRefresh={refreshData}
+        isProcessing={isProcessing}
+        selectedPlan={selectedPlan}
+        onPlanChange={setSelectedPlan}
+        onExportCSV={handleExportCSV}
+      />
 
       <main className="w-full">
         {/* Mobile Card View */}
-        <div className="grid grid-cols-1 gap-3 md:hidden">
-          {filteredMembers.map(m => (
-            <div key={m.id} className={`p-4 rounded-xl border transition-all duration-300 ${selectedIds.includes(m.id) ? 'bg-yellow-500/5 border-yellow-500/30' : 'bg-neutral-950/20 backdrop-blur-md border-neutral-800 hover:border-neutral-800'}`}>
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex gap-3">
-                  <button onClick={() => toggleSelectOne(m.id)} className={selectedIds.includes(m.id) ? 'text-yellow-500' : 'text-neutral-600'}>
-                    {selectedIds.includes(m.id) ? <CheckSquare size={20} /> : <Square size={20} />}
-                  </button>
-                  <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-sm font-bold truncate max-w-40 text-white">{m.full_name || 'Anonymous'}</span>
-                    <span className="text-[10px] text-neutral-500 font-bold tracking-wider truncate max-w-40 leading-none mt-1">{m.email}</span>
-                    <div className="text-[9px] text-neutral-500 font-bold leading-none space-y-0.5 mt-2.5">
-                      <p>Daftar: <span className="text-neutral-300">{m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</span></p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg tracking-widest border ${
-                    m.plan === 'vip' 
-                    ? 'bg-yellow-500/5 text-yellow-500 border-yellow-500/15 uppercase' 
-                    : 'bg-neutral-900/80 text-neutral-500 border-neutral-800 uppercase'
-                  }`}>
-                    {m.plan || 'FREE'}
-                  </span>
-                  {m.discord_status === 'joined' && (
-                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/15 uppercase tracking-wider leading-none">
-                      Discord: Join
-                    </span>
-                  )}
-                  {m.discord_status === 'kicked' && (
-                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/15 uppercase tracking-wider leading-none">
-                      Discord: Kick
-                    </span>
-                  )}
-                  {m.discord_status === 'not_joined' && (
-                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/15 uppercase tracking-wider leading-none">
-                      Discord: Hubung
-                    </span>
-                  )}
-                </div>
-              </div>
-              <button onClick={() => setSelectedMember(m)} className="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl text-xs font-bold transition-all duration-300 text-white cursor-pointer">Detail Member</button>
-            </div>
-          ))}
-        </div>
+        <MemberMobileCardList 
+          members={filteredMembers}
+          selectedIds={selectedIds}
+          onToggleSelectOne={toggleSelectOne}
+          onSelectMember={setSelectedMember}
+        />
 
         {/* Desktop Table View */}
-        <div className="hidden md:block bg-neutral-950/30 backdrop-blur-md border border-neutral-800/80 rounded-2xl overflow-hidden shadow-2xl">
-          <table className="w-full text-left">
-            <thead className="bg-neutral-950/50 text-[10px] font-black capitalize text-neutral-500 border-b border-neutral-900 tracking-wider">
-              <tr>
-                <th className="px-6 py-2.5 w-10 text-center">
-                  <button onClick={toggleSelectAll} className="cursor-pointer">{selectedIds.length === filteredMembers.length ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
-                </th>
-                <th className="px-6 py-2.5">Info Member</th>
-                <th className="px-6 py-2.5">Tanggal Daftar</th>
-                <th className="px-6 py-2.5">Paket VIP</th>
-                <th className="px-6 py-2.5">Mulai VIP</th>
-                <th className="px-6 py-2.5">Expired VIP</th>
-                <th className="px-6 py-2.5">Status Discord</th>
-                <th className="px-6 py-2.5 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-900 text-xs font-medium">
-              {filteredMembers.map(m => (
-                <tr key={m.id} className={selectedIds.includes(m.id) ? 'bg-yellow-500/5' : 'hover:bg-neutral-900/25 transition-all duration-300 group'}>
-                  <td className="px-6 py-2.5 text-center">
-                    <button onClick={() => toggleSelectOne(m.id)} className="cursor-pointer">{selectedIds.includes(m.id) ? <CheckSquare size={18} className="text-yellow-500" /> : <Square size={18} className="text-neutral-600" />}</button>
-                  </td>
-                  <td className="px-6 py-2.5 text-left">
-                    <div className="font-bold text-white group-hover:text-yellow-500 transition-colors font-sans">{m.full_name || 'Anonymous'}</div>
-                    <div className="text-[10px] text-neutral-500 font-bold mt-0.5 tracking-tight">{m.email}</div>
-                  </td>
-                  <td className="px-6 py-2.5 text-left text-[11px] font-bold text-neutral-400 tracking-wider">
-                    {m.created_at ? new Date(m.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
-                  </td>
-                  {/* Paket VIP */}
-                  <td className="px-6 py-2.5 text-left">
-                    {m.plan === 'vip' ? (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/15 uppercase tracking-widest self-start leading-none">
-                        {m.vip_plan_name || 'VIP'}
-                      </span>
-                    ) : (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest self-start leading-none font-bold">
-                        FREE
-                      </span>
-                    )}
-                  </td>
-                  {/* Mulai VIP */}
-                  <td className="px-6 py-2.5 text-left text-[11px] font-bold text-neutral-400 tracking-wider">
-                    {m.plan === 'vip' && m.vip_activated_at ? new Date(m.vip_activated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
-                  </td>
-                  {/* Expired VIP */}
-                  <td className="px-6 py-2.5 text-left text-[11px] font-bold text-yellow-500/80 tracking-wider">
-                    {m.plan === 'vip' && m.vip_expired_at ? new Date(m.vip_expired_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
-                  </td>
-                  {/* Status Discord */}
-                  <td className="px-6 py-2.5 text-left">
-                    {m.discord_status === 'joined' && (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/15 uppercase tracking-widest leading-none font-bold">
-                        Bergabung
-                      </span>
-                    )}
-                    {m.discord_status === 'kicked' && (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/15 uppercase tracking-widest leading-none font-bold">
-                        Di-kick / Keluar
-                      </span>
-                    )}
-                    {m.discord_status === 'not_joined' && (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/15 uppercase tracking-widest leading-none font-bold">
-                        Belum Join
-                      </span>
-                    )}
-                    {m.discord_status === 'no_discord' && (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800 uppercase tracking-widest leading-none font-bold">
-                        Belum Hubung
-                      </span>
-                    )}
-                    {m.discord_status === 'error' && (
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/15 uppercase tracking-widest leading-none font-bold">
-                        Error API
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-2.5 text-right">
-                    <button onClick={() => setSelectedMember(m)} className="p-2 bg-neutral-900/60 border border-neutral-800 hover:border-yellow-500/30 hover:text-yellow-500 rounded-xl transition-all duration-300 cursor-pointer"><Eye size={18} /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <MemberDesktopTable 
+          members={filteredMembers}
+          selectedIds={selectedIds}
+          filteredMembersLength={filteredMembers.length}
+          onToggleSelectAll={toggleSelectAll}
+          onToggleSelectOne={toggleSelectOne}
+          onSelectMember={setSelectedMember}
+        />
 
         {/* Load More Button */}
         {hasMore && (
