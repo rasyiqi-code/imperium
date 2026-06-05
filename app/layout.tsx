@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 import { Plus_Jakarta_Sans, Lora, Cormorant_Garamond } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -125,6 +126,7 @@ export default function RootLayout({
           </ModalProvider>
         </div>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
