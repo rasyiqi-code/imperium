@@ -26,10 +26,10 @@ export default function MindsetSelection() {
         </div>
 
         {/* GRID DUA KARTU KOMPARATIF */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-3xl mx-auto">
           
           {/* KARTU 1 (KIRI): Yang Berani Bertindak (Centang Biru, Aksen Cyan/Biru) */}
-          <div className="relative group rounded-3xl border border-[#00d9ff]/30 bg-[#070707] overflow-hidden aspect-[4/5] sm:aspect-[4/5] md:aspect-[3/4] transition-all duration-500 hover:border-[#00d9ff]/70 hover:shadow-[0_0_40px_rgba(0,217,255,0.12)] cursor-pointer">
+          <div className="relative group rounded-3xl border border-[#00d9ff]/30 bg-[#070707] overflow-hidden aspect-[4/5] transition-all duration-500 hover:border-[#00d9ff]/70 hover:shadow-[0_0_40px_rgba(0,217,255,0.12)] cursor-pointer">
             {/* Badge Verified Centang Biru di Atas Tengah */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
               <svg className="w-8 h-8 text-[#00d9ff] fill-current drop-shadow-[0_0_8px_rgba(0,217,255,0.6)]" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ export default function MindsetSelection() {
 
             {/* Konten Teks Overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-20">
-              <p className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white leading-snug">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-snug">
                 Tapi keberanian mengambil risiko{" "}
                 <span className="underline decoration-[#00d9ff] decoration-2 underline-offset-4">
                   adalah fondasi awal menuju kesuksesan.
@@ -61,7 +61,7 @@ export default function MindsetSelection() {
           </div>
 
           {/* KARTU 2 (KANAN): Yang Ragu & Skeptis (Tanpa Badge, Aksen Purple/Pink) */}
-          <div className="relative group rounded-3xl border border-purple-500/25 bg-[#070707] overflow-hidden aspect-[4/5] sm:aspect-[4/5] md:aspect-[3/4] transition-all duration-500 hover:border-purple-500/50 hover:shadow-[0_0_35px_rgba(168,85,247,0.08)] cursor-pointer">
+          <div className="relative group rounded-3xl border border-purple-500/25 bg-[#070707] overflow-hidden aspect-[4/5] transition-all duration-500 hover:border-purple-500/50 hover:shadow-[0_0_35px_rgba(168,85,247,0.08)] cursor-pointer">
             {/* Gambar Background Ragu */}
             <Image
               src="/path_skeptic.png"
@@ -76,7 +76,7 @@ export default function MindsetSelection() {
             
             {/* Konten Teks Overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-20">
-              <p className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-neutral-200 leading-snug">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-neutral-200 leading-snug">
                 Pengetahuan yang kamu pelajari tidak pernah membuatmu gagal.
               </p>
             </div>
