@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, LogIn, RefreshCw } from 'lucide-react'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,17 +15,37 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const captchaRef = useRef<HCaptcha>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setErrorMsg('')
 
+    let token = ''
+    try {
+      // Jalankan verifikasi captcha secara asinkronus (invisible)
+      const captchaResponse = await captchaRef.current?.execute({ async: true })
+      token = captchaResponse?.response || ''
+    } catch (err) {
+      console.error('Error executing captcha:', err)
+    }
+
+    if (!token) {
+      setErrorMsg('Gagal: Selesaikan verifikasi captcha terlebih dahulu.')
+      setLoading(false)
+      return
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          captchaToken: token
+        }
       })
+
 
       if (error) throw error
 
@@ -73,9 +94,11 @@ export default function LoginPage() {
       }
 
       setErrorMsg(friendlyMessage)
+      captchaRef.current?.resetCaptcha() // Reset captcha jika login gagal
       setLoading(false)
     }
   }
+
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-neutral-950 text-white font-sans">
@@ -170,6 +193,14 @@ export default function LoginPage() {
                   </>
                 )}
               </button>
+              {/* Komponen hCaptcha invisible untuk proteksi bot */}
+              <HCaptcha
+                ref={captchaRef}
+                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+                size="invisible"
+                onVerify={(token) => console.log('Captcha terverifikasi:', token)}
+                onExpire={() => captchaRef.current?.resetCaptcha()}
+              />
             </form>
 
             <div className="mt-6 text-center pt-5 border-t border-neutral-800">
