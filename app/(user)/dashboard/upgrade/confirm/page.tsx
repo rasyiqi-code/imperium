@@ -12,6 +12,7 @@ import { User } from '@supabase/supabase-js'
 import { PaketVIP, MemberVIP } from '@/lib/types'
 import { useModal } from '@/components/ModalProvider'
 import Loader from '@/components/Loader'
+import { calculateProratedPrice } from '@/lib/payment/helpers'
 
 function ConfirmContent() {
   const router = useRouter()
@@ -80,31 +81,24 @@ function ConfirmContent() {
   }, [planParam])
 
   const getProratedPrice = useCallback((paketHarga: number) => {
-    if (upgradeMode !== 'proration' || !currentMember) return paketHarga
-
-    const { status_aktif, tanggal_berakhir, dibuat_pada, created_at, harga_bayar } = currentMember
-    if ((status_aktif === 'aktif' || status_aktif === 'vip') && tanggal_berakhir) {
-      const today = new Date()
-      const expiry = new Date(tanggal_berakhir)
-
-      if (expiry > today) {
-        const created = dibuat_pada 
-          ? new Date(dibuat_pada) 
-          : (created_at ? new Date(created_at) : new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000))
-
-        let totalDays = Math.ceil((expiry.getTime() - created.getTime()) / (24 * 60 * 60 * 1000))
-        if (totalDays <= 0) totalDays = 30
-
-        let remainingDays = Math.ceil((expiry.getTime() - today.getTime()) / (24 * 60 * 60 * 1000))
-        if (remainingDays < 0) remainingDays = 0
-
-        const oldPaidAmount = Number(harga_bayar) || 0
-        const remainingValue = oldPaidAmount * (remainingDays / totalDays)
-
-        return Math.max(10000, paketHarga - remainingValue)
-      }
-    }
-    return paketHarga
+    return calculateProratedPrice(
+      currentMember
+        ? {
+            created_at: currentMember.dibuat_pada
+              ? new Date(currentMember.dibuat_pada)
+              : currentMember.created_at
+              ? new Date(currentMember.created_at)
+              : null,
+            status_aktif: currentMember.status_aktif,
+            tanggal_berakhir: currentMember.tanggal_berakhir
+              ? new Date(currentMember.tanggal_berakhir)
+              : null,
+            harga_bayar: currentMember.harga_bayar,
+          }
+        : null,
+      paketHarga,
+      upgradeMode
+    )
   }, [upgradeMode, currentMember])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
