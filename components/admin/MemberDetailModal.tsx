@@ -113,31 +113,6 @@ export default function MemberDetailModal({
               </>
             )}
           </div>
-
-          {isPasswordFormOpen && (
-            <div className="p-3 rounded-2xl bg-neutral-900/25 border border-neutral-800/80 space-y-2 animate-in slide-in-from-top-2 duration-200">
-              <p className="text-[9px] text-neutral-500 font-bold leading-relaxed">
-                Masukkan password baru di bawah ini. Password akan diupdate langsung di Supabase Auth tanpa perlu konfirmasi email ke pengguna.
-              </p>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Minimal 6 karakter..."
-                  className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-1 text-xs font-bold text-white placeholder-neutral-750 font-mono"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  disabled={isLocalProcessing}
-                />
-                <button
-                  onClick={handlePasswordSubmit}
-                  disabled={isLocalProcessing || newPassword.length < 6}
-                  className="px-4 py-1 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
-                >
-                  {isLocalProcessing ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
-                </button>
-              </div>
-            </div>
-          )}
           
           {/* Grid Tombol Aksi */}
           <div className="pt-3.5 border-t border-neutral-900">
@@ -205,17 +180,44 @@ export default function MemberDetailModal({
                 <Trash2 size={13} /> Hapus Akun
               </button>
 
-              {/* Tombol 5: Setel Password Baru (Lebar Penuh) */}
-              <button 
-                onClick={() => setIsPasswordFormOpen(!isPasswordFormOpen)}
-                className={`col-span-2 w-full py-1.5 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border ${
-                  isPasswordFormOpen
-                  ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/35 shadow-lg shadow-yellow-500/5'
-                  : 'bg-neutral-900/60 hover:bg-neutral-800/60 border border-neutral-800 text-neutral-400 hover:text-white'
-                }`}
-              >
-                <Key size={13} /> {isPasswordFormOpen ? 'Tutup Set Password' : 'Setel Password Baru'}
-              </button>
+              {/* Tombol 5 / Form Setel Password Baru Inline (Lebar Penuh) */}
+              {isPasswordFormOpen ? (
+                <div className="col-span-2 flex gap-1.5 items-center bg-neutral-900/25 border border-neutral-800/80 rounded-xl p-1 w-full animate-in zoom-in-95 duration-200">
+                  <input
+                    type="text"
+                    placeholder="Password baru (Min. 6 karakter)..."
+                    className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-lg px-2.5 py-1 text-[11px] font-bold text-white placeholder-neutral-700 font-mono"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={isLocalProcessing}
+                    autoFocus
+                  />
+                  <button
+                    onClick={handlePasswordSubmit}
+                    disabled={isLocalProcessing || newPassword.length < 6}
+                    className="px-2.5 py-1 bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                  >
+                    {isLocalProcessing ? <RefreshCw className="animate-spin" size={10} /> : 'Simpan'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsPasswordFormOpen(false)
+                      setNewPassword('')
+                    }}
+                    disabled={isLocalProcessing}
+                    className="px-2.5 py-1 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white text-[9px] font-black uppercase tracking-wider rounded-lg transition-all duration-300 active:scale-95 cursor-pointer shrink-0"
+                  >
+                    Batal
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setIsPasswordFormOpen(true)}
+                  className="col-span-2 w-full py-1.5 rounded-xl font-black text-[10px] tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border bg-neutral-900/60 hover:bg-neutral-800/60 border-neutral-800 text-neutral-400 hover:text-white"
+                >
+                  <Key size={13} /> Setel Password Baru
+                </button>
+              )}
 
             </div>
           </div>
