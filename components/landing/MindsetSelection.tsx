@@ -7,7 +7,7 @@ export default function MindsetSelection() {
       {/* Ambient glow tipis di latar belakang */}
       <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.015] rounded-full blur-[140px] pointer-events-none z-0" />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-6">
+      <div className="relative z-10 mx-auto max-w-5xl px-8 sm:px-12 md:px-16">
         
         {/* HEADER DENGAN GARIS PEMBATAS */}
         <div className="w-full flex items-center justify-center gap-4 mb-4">
@@ -19,17 +19,17 @@ export default function MindsetSelection() {
         </div>
 
         {/* JUDUL UTAMA */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="text-center mb-16 md:mb-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
             di Dunia ini Ada 2 Tipe Orang,
           </h2>
         </div>
 
         {/* GRID DUA KARTU KOMPARATIF */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-4xl mx-auto">
           
           {/* KARTU 1 (KIRI): Yang Berani Bertindak (Centang Biru, Aksen Cyan/Biru) */}
-          <div className="relative group rounded-3xl border border-[#00d9ff]/30 bg-[#070707] pb-12 transition-all duration-500 hover:border-[#00d9ff]/70 hover:shadow-[0_0_40px_rgba(0,217,255,0.12)] cursor-pointer">
+          <div className="relative group cursor-pointer aspect-[4/3]">
             {/* Badge Verified Centang Biru di Atas Tengah */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
               <svg className="w-8 h-8 text-[#00d9ff] fill-current drop-shadow-[0_0_8px_rgba(0,217,255,0.6)]" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@ export default function MindsetSelection() {
             </div>
 
             {/* Kontainer Gambar */}
-            <div className="relative w-full aspect-[4/3] rounded-t-[22px] overflow-hidden">
+            <div className="relative w-full h-full rounded-3xl border border-[#00d9ff]/30 overflow-hidden bg-[#070707] transition-all duration-500 group-hover:border-[#00d9ff]/70 group-hover:shadow-[0_0_40px_rgba(0,217,255,0.12)]">
               <Image
                 src="/path_action_v2.png"
                 alt="Orang Yang Mau Melompat"
@@ -49,23 +49,23 @@ export default function MindsetSelection() {
               />
               {/* Overlay Gradasi Gelap yang Tebal di Bawah */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+            </div>
 
-              {/* Konten Teks Overlay dengan Kontainer Glassmorphism (Separuh di gambar, separuh di luar) */}
-              <div className="absolute bottom-0 translate-y-1/2 left-4 right-4 p-4 md:p-5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-md z-20 transition-all duration-300 group-hover:bg-black/85 group-hover:border-[#00d9ff]/30 shadow-xl">
-                <p className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white leading-snug">
-                  Keberanian melangkah{" "}
-                  <span className="text-[#00d9ff] underline decoration-[#00d9ff] decoration-2 underline-offset-4 font-extrabold">
-                    adalah awal dari segala arah.
-                  </span>
-                </p>
-              </div>
+            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu) */}
+            <div className="absolute -bottom-6 -left-6 z-20 w-[85%] sm:w-[80%] p-4 md:p-5 rounded-2xl bg-[#1a1506]/95 border border-[#d4af37]/45 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#251e09] group-hover:border-[#d4af37]">
+              <p className="text-xs sm:text-sm md:text-base font-bold tracking-tight text-white leading-snug">
+                Keberanian melangkah{" "}
+                <span className="text-[#00d9ff] underline decoration-[#00d9ff] decoration-2 underline-offset-4 font-extrabold">
+                  adalah awal dari segala arah.
+                </span>
+              </p>
             </div>
           </div>
 
           {/* KARTU 2 (KANAN): Yang Ragu & Skeptis (Tanpa Badge, Aksen Purple/Pink) */}
-          <div className="relative group rounded-3xl border border-purple-500/25 bg-[#070707] pb-12 transition-all duration-500 hover:border-purple-500/50 hover:shadow-[0_0_35px_rgba(168,85,247,0.08)] cursor-pointer">
+          <div className="relative group cursor-pointer aspect-[4/3]">
             {/* Kontainer Gambar */}
-            <div className="relative w-full aspect-[4/3] rounded-t-[22px] overflow-hidden">
+            <div className="relative w-full h-full rounded-3xl border border-purple-500/25 overflow-hidden bg-[#070707] transition-all duration-500 group-hover:border-purple-500/50 group-hover:shadow-[0_0_35px_rgba(168,85,247,0.08)]">
               <Image
                 src="/path_skeptic_v2.png"
                 alt="Orang Yang Mau Berdiam Diri"
@@ -76,16 +76,16 @@ export default function MindsetSelection() {
               />
               {/* Overlay Gradasi Gelap yang Tebal di Bawah */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-              
-              {/* Konten Teks Overlay dengan Kontainer Glassmorphism (Separuh di gambar, separuh di luar) */}
-              <div className="absolute bottom-0 translate-y-1/2 left-4 right-4 p-4 md:p-5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-md z-20 transition-all duration-300 group-hover:bg-black/85 group-hover:border-purple-500/30 shadow-xl">
-                <p className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-neutral-200 leading-snug">
-                  Ilmu yang dipelajari{" "}
-                  <span className="text-purple-300 font-extrabold">
-                    takkan pernah menjadi rugi.
-                  </span>
-                </p>
-              </div>
+            </div>
+            
+            {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu) */}
+            <div className="absolute -bottom-6 -left-6 z-20 w-[85%] sm:w-[80%] p-4 md:p-5 rounded-2xl bg-[#0e0e0e]/95 border border-white/10 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#161616] group-hover:border-white/20">
+              <p className="text-xs sm:text-sm md:text-base font-bold tracking-tight text-neutral-200 leading-snug">
+                Ilmu yang dipelajari{" "}
+                <span className="text-purple-300 font-extrabold">
+                  takkan pernah menjadi rugi.
+                </span>
+              </p>
             </div>
           </div>
 
