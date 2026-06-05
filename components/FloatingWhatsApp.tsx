@@ -1,15 +1,30 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
-interface FloatingWhatsAppProps {
-  whatsappNumber: string
-}
-
-export default function FloatingWhatsApp({ whatsappNumber }: FloatingWhatsAppProps) {
+export default function FloatingWhatsApp() {
   const pathname = usePathname()
   const [showTooltip, setShowTooltip] = useState(false)
+  const [whatsappNumber, setWhatsappNumber] = useState('62812345678')
+
+  useEffect(() => {
+    async function fetchSupportConfig() {
+      try {
+        const res = await fetch('/api/support')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.whatsappNumber) {
+            setWhatsappNumber(data.whatsappNumber)
+          }
+        }
+      } catch (err) {
+        console.error('Gagal mengambil nomor WhatsApp admin dari API:', err)
+      }
+    }
+
+    fetchSupportConfig()
+  }, [])
 
   // Jangan tampilkan jika nomor tidak ada
   if (!whatsappNumber) return null
