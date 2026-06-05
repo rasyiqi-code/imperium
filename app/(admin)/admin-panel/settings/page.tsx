@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail
+  Bell, Lock, Globe, LogOut, Smartphone, Mail, RefreshCw
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
@@ -39,6 +39,10 @@ export default function AdminSettings() {
   const [discordFreeInviteLink, setDiscordFreeInviteLink] = useState('')
   const [discordRedirectUri, setDiscordRedirectUri] = useState('')
   const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend'>('general')
+  const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordUpdating, setPasswordUpdating] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -104,33 +108,56 @@ export default function AdminSettings() {
     })
   }
 
-  const handleResetPassword = () => {
-    if (!adminEmail) return
-    showConfirm({
-      title: 'Reset Password',
-      message: `Kirim link ganti password ke ${adminEmail}?`,
-      type: 'info',
-      confirmText: 'Kirim',
-      cancelText: 'Batal',
-      onConfirm: async () => {
-        const { error } = await supabase.auth.resetPasswordForEmail(adminEmail, {
-          redirectTo: `${window.location.origin}/admin-panel/settings`,
+  const handlePasswordUpdate = async () => {
+    if (newPassword.length < 6) {
+      showAlert({
+        title: 'Password Terlalu Pendek',
+        message: 'Password baru harus minimal 6 karakter.',
+        type: 'warning'
+      })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      showAlert({
+        title: 'Password Tidak Cocok',
+        message: 'Konfirmasi password tidak cocok dengan password baru.',
+        type: 'warning'
+      })
+      return
+    }
+
+    setPasswordUpdating(true)
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        showAlert({
+          title: 'Gagal Mengubah Password',
+          message: error.message || 'Terjadi kesalahan saat memperbarui password.',
+          type: 'danger'
         })
-        if (error) {
-          showAlert({
-            title: 'Gagal Reset Password',
-            message: error.message,
-            type: 'danger'
-          })
-        } else {
-          showAlert({
-            title: 'Berhasil',
-            message: 'Link reset password sudah dikirim ke email!',
-            type: 'success'
-          })
-        }
+      } else {
+        setNewPassword('')
+        setConfirmPassword('')
+        setIsPasswordFormOpen(false)
+        showAlert({
+          title: 'Password Diperbarui',
+          message: 'Password admin berhasil diperbarui!',
+          type: 'success'
+        })
       }
-    })
+    } catch (err: unknown) {
+      const error = err as Error
+      showAlert({
+        title: 'Error',
+        message: `Gagal: ${error.message}`,
+        type: 'danger'
+      })
+    } finally {
+      setPasswordUpdating(false)
+    }
   }
 
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
@@ -218,9 +245,59 @@ export default function AdminSettings() {
               <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Keamanan Admin</h3>
               <div className="bg-neutral-950/30 backdrop-blur-md border border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-900/60 shadow-lg">
                 <SettingItem icon={<Mail size={14}/>} title="Email Utama" value={adminEmail} />
-                <div onClick={handleResetPassword} className="cursor-pointer">
-                  <SettingItem icon={<Lock size={14}/>} title="Update Password" value="Amankan akun secara berkala" isLink />
-                </div>
+                
+                {isPasswordFormOpen ? (
+                  <div className="p-4 bg-neutral-900/25 border border-neutral-900 rounded-2xl m-3 space-y-3.5 animate-in zoom-in-95 duration-200 text-left">
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Password Baru</label>
+                      <input
+                        type="password"
+                        placeholder="Masukkan password baru (Min. 6 karakter)..."
+                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        disabled={passwordUpdating}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[9px] font-bold text-neutral-400 tracking-widest uppercase">Konfirmasi Password Baru</label>
+                      <input
+                        type="password"
+                        placeholder="Ulangi password baru..."
+                        className="w-full bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 p-2.5 rounded-xl text-white text-xs outline-none font-bold focus:ring-2 ring-yellow-500/20 transition-all font-mono"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={passwordUpdating}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                      <button
+                        onClick={() => {
+                          setIsPasswordFormOpen(false)
+                          setNewPassword('')
+                          setConfirmPassword('')
+                        }}
+                        disabled={passwordUpdating}
+                        className="w-full bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer text-center"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        onClick={handlePasswordUpdate}
+                        disabled={passwordUpdating || newPassword.length < 6 || confirmPassword.length < 6}
+                        className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:bg-neutral-850 text-black disabled:text-neutral-500 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 cursor-pointer disabled:cursor-not-allowed text-center flex items-center justify-center gap-1.5"
+                      >
+                        {passwordUpdating ? <RefreshCw className="animate-spin" size={12} /> : 'Simpan'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div onClick={() => setIsPasswordFormOpen(true)} className="cursor-pointer">
+                    <SettingItem icon={<Lock size={14}/>} title="Update Password" value="Amankan akun secara berkala" isLink />
+                  </div>
+                )}
+
                 <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" />
               </div>
             </div>
