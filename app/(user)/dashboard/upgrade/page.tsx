@@ -95,13 +95,10 @@ export default function UpgradePage() {
     <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-10 pb-40 animate-in fade-in duration-700">
       
       {/* Header */}
-      <div className="text-center space-y-3">
+      <div className="text-center">
         <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
           UPGRADE <span className="text-yellow-500">VIP</span>
         </h1>
-        <p className="text-neutral-500 text-sm md:text-base max-w-md mx-auto font-medium">
-          Dapatkan akses sinyal harian dan belajar Crypto secara profesional bersama komunitas eksklusif.
-        </p>
       </div>
 
       {/* Grid Pricing: Responsif 1 kol (mobile) / 2 kol (PC) */}

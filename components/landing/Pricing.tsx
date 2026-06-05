@@ -56,16 +56,13 @@ export default function Pricing() {
       <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
         
         {/* JUDUL UTAMA: Gaya Editorial Majalah (Sans-serif Tipis + Serif Miring Emas) */}
-        <div className="mx-auto max-w-3xl mb-16 text-center">
-          <h2 className="mb-6 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 leading-tight tracking-tight">
+        <div className="mx-auto max-w-3xl mb-12 text-center">
+          <h2 className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-neutral-300 leading-tight tracking-tight">
             Membership{" "}
-            <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.1)]">
+            <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
               Imperium Crypto
             </span>
           </h2>
-          <p className="mx-auto max-w-xl text-sm md:text-base leading-relaxed text-neutral-455 text-center">
-            Dapatkan akses sinyal harian dan belajar Crypto secara profesional bersama komunitas eksklusif.
-          </p>
         </div>
 
         {/* KARTU PRICING TERPISAH (Gaya Luxury Card, rounded-2xl, gap-6/8) */}
