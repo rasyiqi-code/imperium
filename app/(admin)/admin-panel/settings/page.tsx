@@ -125,7 +125,7 @@ export default function AdminSettings() {
     try {
       const { error } = await supabase.auth.updateUser({
         password: newPass,
-        currentPassword: currentPass
+        current_password: currentPass
       })
 
       if (error) {
