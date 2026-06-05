@@ -25,6 +25,20 @@ function ResetPasswordContent() {
   // Verifikasi token pemulihan saat komponen dimuat
   useEffect(() => {
     let active = true
+
+    // Dengarkan perubahan auth state (sangat penting untuk menangkap event PASSWORD_RECOVERY dari hash URL)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!active) return
+
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsTokenValid(true)
+        setVerifying(false)
+      } else if (session) {
+        setIsTokenValid(true)
+        setVerifying(false)
+      }
+    })
+
     async function verifyResetToken() {
       try {
         const code = searchParams.get('code')
@@ -32,31 +46,50 @@ function ResetPasswordContent() {
           // Alur PKCE: Tukar kode dari query param dengan sesi aktif
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) {
-            console.error('Gagal menukar kode sesi:', error)
-            if (active) setIsTokenValid(false)
+            console.error('Gagal menukar kode sesi (PKCE):', error)
           } else {
-            if (active) setIsTokenValid(true)
+            if (active) {
+              setIsTokenValid(true)
+              setVerifying(false)
+            }
+            return
+          }
+        }
+
+        // Cek sesi aktif langsung
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          if (active) {
+            setIsTokenValid(true)
+            setVerifying(false)
           }
         } else {
-          // Alur Implicit: Cek apakah sesi pemulihan sudah disetel di client
-          const { data: { session } } = await supabase.auth.getSession()
-          if (session) {
-            if (active) setIsTokenValid(true)
-          } else {
-            if (active) setIsTokenValid(false)
-          }
+          // Beri delay 1 detik agar Supabase SDK memiliki waktu memproses hash fragment URL jika ada
+          setTimeout(async () => {
+            if (!active) return
+            const { data: { session: delayedSession } } = await supabase.auth.getSession()
+            if (delayedSession) {
+              setIsTokenValid(true)
+            } else {
+              setIsTokenValid(false)
+            }
+            setVerifying(false)
+          }, 1000)
         }
       } catch (err) {
         console.error('Kesalahan verifikasi token:', err)
-        if (active) setIsTokenValid(false)
-      } finally {
-        if (active) setVerifying(false)
+        if (active) {
+          setIsTokenValid(false)
+          setVerifying(false)
+        }
       }
     }
 
     verifyResetToken()
+
     return () => {
       active = false
+      subscription.unsubscribe()
     }
   }, [searchParams])
 
