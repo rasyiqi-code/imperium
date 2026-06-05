@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
                 </Link>
               ) : (
                 <Link 
-                  href="/#pricing" 
+                  href="/register" 
                   className="bg-[#d4af37] hover:bg-[#b8962e] text-black px-4.5 py-1.5 rounded-full font-black text-[10px] uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(212,175,55,0.15)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.3)] active:scale-95 cursor-pointer block"
                 >
                   Gabung Sekarang
@@ -100,7 +100,7 @@ const Navbar: React.FC = () => {
                 </Link>
               ) : (
                 <Link 
-                  href="/#pricing" 
+                  href="/register" 
                   title="Gabung Sekarang"
                   className="flex items-center justify-center bg-[#d4af37] hover:bg-[#b8962e] text-black h-8 w-8 rounded-full transition-all shadow-[0_4px_12px_rgba(212,175,55,0.2)] active:scale-90 cursor-pointer"
                 >
