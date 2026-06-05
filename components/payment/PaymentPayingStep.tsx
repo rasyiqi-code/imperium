@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { Clock, ExternalLink, Loader2 } from 'lucide-react'
 import PaymentInstructions from './PaymentInstructions'
-import { formatRupiah } from '@/lib/payment'
+import { formatRupiah } from '@/lib/payment/helpers'
+
 
 export interface ChargeResult {
   orderId: string

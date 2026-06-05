@@ -6,7 +6,8 @@ import PaymentSelectStep, { PaymentMethod } from './PaymentSelectStep'
 import PaymentPayingStep, { ChargeResult } from './PaymentPayingStep'
 import PaymentSuccessStep from './PaymentSuccessStep'
 import PaymentErrorStep from './PaymentErrorStep'
-import { formatRupiah, getExpiryCountdown } from '@/lib/payment'
+import { formatRupiah, getExpiryCountdown } from '@/lib/payment/helpers'
+
 
 interface PaymentModalProps {
   isOpen: boolean

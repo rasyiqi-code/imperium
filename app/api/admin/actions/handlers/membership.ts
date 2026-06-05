@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
-import { calculateProratedPrice } from '@/lib/payment'
+import { calculateProratedPrice } from '@/lib/payment/helpers'
 import { getVipActivationEmailHtml } from '@/lib/emailTemplates'
 import { getAdminSettings } from '@/lib/adminSettings'
 

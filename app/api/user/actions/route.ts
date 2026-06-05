@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabaseServerClient'
 import { prisma } from '@/lib/prisma'
-import { calculateProratedPrice } from '@/lib/payment'
+import { calculateProratedPrice } from '@/lib/payment/helpers'
 import { getAdminSettings } from '@/lib/adminSettings'
 
 export async function POST(request: Request) {
