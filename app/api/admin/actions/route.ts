@@ -15,7 +15,7 @@ import {
   updateDiscordSettings
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
-import { deleteUser } from './handlers/users'
+import { deleteUser, updateUserPassword } from './handlers/users'
 
 /**
  * Route Handler utama untuk seluruh aksi admin (POST).
@@ -52,6 +52,8 @@ export async function POST(request: Request) {
         return await deactivateVip(body)
       case 'deleteUser':
         return await deleteUser(body, user.id)
+      case 'updateUserPassword':
+        return await updateUserPassword(body)
       case 'confirmPayment':
         return await confirmPayment(body)
       case 'rejectPayment':

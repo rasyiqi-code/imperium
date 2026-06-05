@@ -244,6 +244,33 @@ export default function ManageMembers() {
     })
   }
 
+  async function handleUpdatePassword(userId: string, newPassword: string): Promise<boolean> {
+    try {
+      const res = await fetch('/api/admin/actions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateUserPassword', userId, newPassword })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal mengubah password')
+
+      showAlert({
+        title: 'Berhasil',
+        message: 'Password member berhasil diperbarui!',
+        type: 'success'
+      })
+      return true
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
+      showAlert({
+        title: 'Gagal',
+        message: `Error: ${errMsg}`,
+        type: 'danger'
+      })
+      return false
+    }
+  }
+
   const filteredMembers = members.filter(m => 
     m.email.toLowerCase().includes(search.toLowerCase()) || 
     (m.full_name?.toLowerCase() || '').includes(search.toLowerCase())
@@ -481,6 +508,7 @@ export default function ManageMembers() {
           onUpgrade={handleUpgrade}
           onDeactivate={handleDeactivate}
           onDelete={(id) => deleteMembers([id])}
+          onUpdatePassword={handleUpdatePassword}
         />
       )}
     </div>
