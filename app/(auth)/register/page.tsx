@@ -29,6 +29,8 @@ export default function RegisterPage() {
       email,
       password,
       options: {
+        // Arahkan ke endpoint PKCE callback setelah link konfirmasi diklik
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: nama,
           whatsapp_number: whatsapp,
