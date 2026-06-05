@@ -24,6 +24,14 @@ export default function RegisterPage() {
     setLoading(true)
     setMessage('')
 
+    const siteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
+    if (!siteKey) {
+      console.error('hCaptcha Error: NEXT_PUBLIC_HCAPTCHA_SITE_KEY tidak terdefinisi di environment variables.')
+      setMessage('Gagal mendaftar: Konfigurasi Captcha belum lengkap di server (NEXT_PUBLIC_HCAPTCHA_SITE_KEY belum di-load). Harap restart server dev.')
+      setLoading(false)
+      return
+    }
+
     let token = ''
     try {
       // Jalankan verifikasi captcha secara asinkronus (invisible)
@@ -38,6 +46,7 @@ export default function RegisterPage() {
       setLoading(false)
       return
     }
+
 
     // 1. SignUp ke Supabase Auth dengan menyertakan token captcha
     // Trigger "on_auth_user_created" di database akan otomatis bikin baris di tabel profiles

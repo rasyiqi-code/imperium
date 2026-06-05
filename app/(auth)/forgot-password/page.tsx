@@ -20,6 +20,14 @@ export default function ForgotPasswordPage() {
     setErrorMsg('')
     setSuccessMsg('')
 
+    const siteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
+    if (!siteKey) {
+      console.error('hCaptcha Error: NEXT_PUBLIC_HCAPTCHA_SITE_KEY tidak terdefinisi di environment variables.')
+      setErrorMsg('Gagal mengirim: Konfigurasi Captcha belum lengkap di server (NEXT_PUBLIC_HCAPTCHA_SITE_KEY belum di-load). Harap restart server dev.')
+      setLoading(false)
+      return
+    }
+
     let token = ''
     try {
       // Jalankan verifikasi captcha secara asinkronus (invisible)
@@ -34,6 +42,7 @@ export default function ForgotPasswordPage() {
       setLoading(false)
       return
     }
+
 
     try {
       // Mengirim email pemulihan kata sandi menggunakan Supabase Auth (Client-side) dengan menyertakan token captcha
