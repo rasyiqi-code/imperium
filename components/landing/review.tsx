@@ -10,6 +10,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+// ... reviews statis tetap dipertahankan sebagai fallback bawaan
 const reviews = [
   {
     name: "Sultan Crypto",
@@ -55,7 +56,49 @@ const reviews = [
   }
 ];
 
+interface ReviewData {
+  name: string;
+  role: string;
+  image: string;
+  text: string;
+  rating: number;
+}
+
+interface TestimonialDbData {
+  nama_user: string;
+  peran_user: string | null;
+  foto_user: string | null;
+  isi_testi: string;
+  rating: number | null;
+}
+
 export default function Reviews() {
+  const [displayReviews, setDisplayReviews] = React.useState<ReviewData[]>(reviews);
+
+  React.useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const res = await fetch('/api/testimonials');
+        if (res.ok) {
+          const data: TestimonialDbData[] = await res.json();
+          if (data && data.length > 0) {
+            const mapped: ReviewData[] = data.map((t) => ({
+              name: t.nama_user,
+              role: t.peran_user || 'Member',
+              image: t.foto_user || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(t.nama_user)}`,
+              text: t.isi_testi,
+              rating: t.rating || 5
+            }));
+            setDisplayReviews(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal mem-fetch testimonial dinamis, menggunakan fallback:", err);
+      }
+    }
+    fetchTestimonials();
+  }, []);
+
   return (
     <section className="bg-[#0b0b0b] pt-12 pb-0 md:pt-16 md:pb-0 overflow-hidden relative">
       {/* Ambient glow tipis */}
@@ -99,7 +142,7 @@ export default function Reviews() {
             }}
             className="pb-12!" 
           >
-            {reviews.map((review, index) => (
+            {displayReviews.map((review, index) => (
               <SwiperSlide key={index} className="h-auto flex">
                 {/* Kartu Testimoni: Rounded-2xl, Luxury Glassmorphism, Elevate Hover & Shadow */}
                 <div className="p-6 md:p-7 w-full rounded-2xl bg-gradient-to-b from-[#121212]/90 to-[#0c0c0c]/90 border border-white/[0.06] flex flex-col justify-between transition-all duration-500 hover:border-[#d4af37]/35 hover:bg-gradient-to-b hover:from-[#151515]/95 hover:to-[#0e0e0e]/95 hover:shadow-[0_15px_35px_rgba(212,175,55,0.04)] hover:-translate-y-1.5 text-left relative overflow-hidden group/card">
@@ -139,7 +182,7 @@ export default function Reviews() {
                             alt={review.name}
                             fill
                             sizes="40px"
-                            className="object-cover filter grayscale group-hover/card:grayscale-0 transition-all duration-500"
+                            className="object-cover filter grayscale group-hover/card:grayscale-0 transition-all duration-500 animate-in fade-in"
                           />
                         </div>
                       </div>
@@ -163,7 +206,7 @@ export default function Reviews() {
         <div className="mt-8 md:mt-10 text-center">
           <div className="inline-flex items-center gap-3.5 p-2.5 px-4 rounded-full bg-[#121212]/60 backdrop-blur-md border border-white/[0.06] shadow-[0_10px_25px_rgba(0,0,0,0.3)]">
             <div className="flex -space-x-2.5">
-              {reviews.slice(0, 5).map((rev, i) => (
+              {displayReviews.slice(0, 5).map((rev, i) => (
                 <div key={i} className="h-7 w-7 rounded-full border border-black overflow-hidden relative bg-neutral-850">
                   <Image src={rev.image} alt="avatar" fill sizes="28px" className="object-cover" />
                 </div>

@@ -16,6 +16,14 @@ import {
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
 import { deleteUser, updateUserPassword, createAdminUser, updateAdminEmail } from './handlers/users'
+import {
+  getTestimonials,
+  addTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+  toggleTestimonialStatus
+} from './handlers/testimonial'
+
 
 /**
  * Route Handler utama untuk seluruh aksi admin (POST).
@@ -96,6 +104,16 @@ export async function POST(request: Request) {
         return await getAdminSettingsHandler(user.id)
       case 'getSupportData':
         return await getSupportData()
+      case 'getTestimonials':
+        return await getTestimonials()
+      case 'addTestimonial':
+        return await addTestimonial(body)
+      case 'updateTestimonial':
+        return await updateTestimonial(body)
+      case 'deleteTestimonial':
+        return await deleteTestimonial(body)
+      case 'toggleTestimonialStatus':
+        return await toggleTestimonialStatus(body)
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
     }

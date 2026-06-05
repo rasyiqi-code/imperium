@@ -14,7 +14,8 @@ import {
   MoreHorizontal,
   HelpCircle,
   LogOut,
-  FileText
+  FileText,
+  MessageSquare
 } from 'lucide-react'
 
 export default function AdminNav() {
@@ -45,8 +46,12 @@ export default function AdminNav() {
     })
   }
 
-  // Cek apakah halaman aktif berada di support, settings, atau pages
-  const isMoreActive = pathname === '/admin-panel/support' || pathname === '/admin-panel/settings' || pathname === '/admin-panel/pages'
+  // Cek apakah halaman aktif berada di support, settings, pages, atau testimonials
+  const isMoreActive = 
+    pathname === '/admin-panel/support' || 
+    pathname === '/admin-panel/settings' || 
+    pathname === '/admin-panel/pages' || 
+    pathname === '/admin-panel/testimonials'
 
   return (
     <>
@@ -124,6 +129,23 @@ export default function AdminNav() {
         <h3 className="text-[9px] font-black uppercase tracking-widest text-neutral-500 mb-4 px-1">Pintasan Menu Tambahan</h3>
         
         <div className="space-y-2">
+          {/* Link ke Testimonials */}
+          <Link 
+            href="/admin-panel/testimonials" 
+            onClick={() => setIsDrawerOpen(false)}
+            className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
+              pathname === '/admin-panel/testimonials'
+              ? 'border-yellow-500/30 bg-yellow-500/5 text-yellow-500'
+              : 'border-neutral-900 bg-neutral-900/10 text-white hover:bg-neutral-900/30'
+            }`}
+          >
+            <div className="text-yellow-500"><MessageSquare size={18} /></div>
+            <div className="text-left">
+              <p className="text-xs font-black uppercase">Testimonials</p>
+              <p className="text-[9px] text-neutral-500 font-bold uppercase mt-0.5 leading-none">Kelola Ulasan & Rating Member</p>
+            </div>
+          </Link>
+
           {/* Link ke Support Manager */}
           <Link 
             href="/admin-panel/support" 

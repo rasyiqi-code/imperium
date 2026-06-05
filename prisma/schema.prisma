@@ -153,3 +153,17 @@ model support_faqs {
 
   @@schema("public")
 }
+
+model testimonials {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_user     String
+  foto_user     String?
+  peran_user    String?   @default("Member")
+  isi_testi     String
+  rating        Int?      @default(5)
+  status_tampil Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
