@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       case 'getPricingPlans':
         return await getPricingPlans()
       case 'getAdminSettings':
-        return await getAdminSettingsHandler()
+        return await getAdminSettingsHandler(user.id)
       case 'getSupportData':
         return await getSupportData()
       default:

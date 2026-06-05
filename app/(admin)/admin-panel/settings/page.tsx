@@ -43,6 +43,7 @@ export default function AdminSettings() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordUpdating, setPasswordUpdating] = useState(false)
+  const [activeSessionsCount, setActiveSessionsCount] = useState(1)
 
   useEffect(() => {
     let active = true
@@ -61,6 +62,9 @@ export default function AdminSettings() {
         if (!active) return
         if (res.ok && data.settings) {
           const settings = data.settings
+          if (typeof data.activeSessionsCount === 'number') {
+            setActiveSessionsCount(data.activeSessionsCount)
+          }
           setResendApiKey(settings.resend_api_key || '')
           setResendSenderEmail(settings.resend_sender_email || '')
           setMidtransClientKey(settings.midtrans_client_key || '')
@@ -196,6 +200,7 @@ export default function AdminSettings() {
               type: 'danger'
             })
           } else {
+            setActiveSessionsCount(1)
             showAlert({
               title: 'Logout Berhasil',
               message: 'Berhasil keluar dari semua perangkat lainnya.',
@@ -353,7 +358,7 @@ export default function AdminSettings() {
                 )}
 
                 <div onClick={handleManageDevices} className="cursor-pointer">
-                  <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value="1 Perangkat Aktif" isLink linkText="Kelola" />
+                  <SettingItem icon={<Smartphone size={14}/>} title="Device Terdaftar" value={`${activeSessionsCount} Perangkat Aktif`} isLink linkText="Kelola" />
                 </div>
               </div>
             </div>

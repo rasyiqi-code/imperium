@@ -151,10 +151,19 @@ export async function updateEnabledPayments(body: SettingsBody): Promise<Respons
 /**
  * Mengambil seluruh setelan admin sistem.
  */
-export async function getAdminSettingsHandler(): Promise<Response> {
+export async function getAdminSettingsHandler(adminUserId: string): Promise<Response> {
   // Ambil pengaturan admin sistem via cache (force refresh agar admin selalu melihat data terbaru)
-  const settings = await getCachedSettings(true)
-  return NextResponse.json({ success: true, settings })
+  const [settings, sessionResult] = await Promise.all([
+    getCachedSettings(true),
+    prisma.$queryRawUnsafe<{ count: number }[]>(
+      `SELECT count(*)::int as count FROM auth.sessions WHERE user_id = $1::uuid`,
+      adminUserId
+    ).catch(() => [{ count: 1 }]) // Fallback jika query gagal
+  ])
+  
+  const activeSessionsCount = sessionResult[0]?.count ?? 1
+
+  return NextResponse.json({ success: true, settings, activeSessionsCount })
 }
 
 /**
