@@ -81,9 +81,9 @@ export default function MindsetSelection() {
             {/* Konten Teks Overlay di Sudut Kiri Bawah (Melampaui batas kiri dan bawah kartu - rounded-none) */}
             <div className="absolute -bottom-4 -left-4 z-20 w-[80%] sm:w-[75%] p-3 md:p-3.5 rounded-none bg-[#0e0e0e]/95 border border-white/10 backdrop-blur-md shadow-2xl transition-all duration-300 group-hover:bg-[#161616] group-hover:border-white/20">
               <p className="text-xs sm:text-sm md:text-base font-bold tracking-tight text-neutral-200 leading-snug">
-                Ilmu yang dipelajari{" "}
+                {"Menunggu waktu yang 'sempurna' "}
                 <span className="text-purple-300 font-extrabold">
-                  takkan pernah menjadi rugi.
+                  yang sebenarnya tidak pernah datang.
                 </span>
               </p>
             </div>
@@ -93,6 +93,9 @@ export default function MindsetSelection() {
 
         {/* BOTTOM CTA: bergabung lah bersama kami di imperiumcrypto.id fondasi awal langkahmu */}
         <div className="text-center mt-12 md:mt-16 relative z-20">
+          <p className="text-sm sm:text-base text-neutral-400 mb-2 italic">
+            {"\"Ilmu yang dipelajari takkan pernah menjadi rugi.\""}
+          </p>
           <p className="text-sm sm:text-base md:text-lg text-neutral-400 font-medium">
             Bergabunglah bersama kami di{" "}
             <span className="text-[#d4af37] font-bold tracking-wide hover:underline cursor-pointer">
