@@ -14,6 +14,7 @@ import PaymentChannelsList from '@/components/admin/settings/PaymentChannelsList
 import ResendSettingsForm from '@/components/admin/settings/ResendSettingsForm'
 import MidtransSettingsForm from '@/components/admin/settings/MidtransSettingsForm'
 import DiscordSettingsForm from '@/components/admin/settings/DiscordSettingsForm'
+import MarketApiSettingsForm from '@/components/admin/settings/MarketApiSettingsForm'
 import AddAdminForm from '@/components/admin/settings/AddAdminForm'
 import UpdateEmailForm from '@/components/admin/settings/UpdateEmailForm'
 import UpdatePasswordForm from '@/components/admin/settings/UpdatePasswordForm'
@@ -41,7 +42,10 @@ export default function AdminSettings() {
   const [discordVipRoleId, setDiscordVipRoleId] = useState('')
   const [discordFreeInviteLink, setDiscordFreeInviteLink] = useState('')
   const [discordRedirectUri, setDiscordRedirectUri] = useState('')
-  const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend'>('general')
+  // State untuk API key data pasar
+  const [freecryptoapiKey, setFreecryptoapiKey] = useState('')
+  const [coinmarketcapApiKey, setCoinmarketcapApiKey] = useState('')
+  const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend' | 'market'>('general')
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
   const [activeSessionsCount, setActiveSessionsCount] = useState(1)
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false)
@@ -83,6 +87,9 @@ export default function AdminSettings() {
           setDiscordVipRoleId(settings.discord_vip_role_id || '')
           setDiscordFreeInviteLink(settings.discord_free_invite_link || '')
           setDiscordRedirectUri(settings.discord_redirect_uri || '')
+          // Inisialisasi API key pasar
+          setFreecryptoapiKey(settings.freecryptoapi_key || '')
+          setCoinmarketcapApiKey(settings.coinmarketcap_api_key || '')
         }
       } catch (err) {
         console.error('Gagal mengambil settings:', err)
@@ -355,6 +362,16 @@ export default function AdminSettings() {
         >
           Kredensial Resend
         </button>
+        <button
+          onClick={() => setActiveTab('market')}
+          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+            activeTab === 'market'
+              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+          }`}
+        >
+          API Data Pasar
+        </button>
       </div>
 
       {/* Tab Contents */}
@@ -481,6 +498,16 @@ export default function AdminSettings() {
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Resend Email</h3>
             <ResendSettingsForm initialApiKey={resendApiKey} initialSenderEmail={resendSenderEmail} />
+          </div>
+        )}
+
+        {activeTab === 'market' && (
+          <div className="space-y-3 animate-in fade-in duration-200">
+            <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Konfigurasi API Data Pasar</h3>
+            <MarketApiSettingsForm
+              initialFreecryptoapiKey={freecryptoapiKey}
+              initialCoinmarketcapApiKey={coinmarketcapApiKey}
+            />
           </div>
         )}
       </div>

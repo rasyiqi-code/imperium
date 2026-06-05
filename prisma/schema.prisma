@@ -51,6 +51,8 @@ model admin_settings {
   discord_vip_role_id       String?
   discord_free_invite_link  String?
   discord_redirect_uri      String?
+  freecryptoapi_key         String?
+  coinmarketcap_api_key     String?
 
   @@schema("public")
 

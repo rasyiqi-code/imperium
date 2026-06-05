@@ -12,7 +12,8 @@ import {
   syncMidtransPaymentMethods,
   updateEnabledPayments,
   getAdminSettingsHandler,
-  updateDiscordSettings
+  updateDiscordSettings,
+  updateMarketApiSettings
 } from './handlers/settings'
 import { updateSupportConfig, addFaq, deleteFaq, getSupportData } from './handlers/support'
 import { deleteUser, updateUserPassword, createAdminUser, updateAdminEmail } from './handlers/users'
@@ -88,6 +89,8 @@ export async function POST(request: Request) {
         return await updateMidtransSettings(body)
       case 'updateDiscordSettings':
         return await updateDiscordSettings(body)
+      case 'updateMarketApiSettings':
+        return await updateMarketApiSettings(body)
       case 'syncMidtransPaymentMethods':
         return await syncMidtransPaymentMethods()
       case 'updateEnabledPayments':

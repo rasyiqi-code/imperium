@@ -22,6 +22,9 @@ interface SettingsBody {
   vipRoleId?: string
   freeInviteLink?: string
   redirectUri?: string
+  // API key untuk integrasi data pasar
+  freecryptoapiKey?: string
+  coinmarketcapApiKey?: string
 }
 
 /**
@@ -187,6 +190,27 @@ export async function updateDiscordSettings(body: SettingsBody): Promise<Respons
   })
 
   // Invalidasi cache agar perubahan langsung terasa
+  invalidateAdminSettingsCache()
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Memperbarui API key untuk integrasi data pasar (FreeCryptoAPI & CoinMarketCap).
+ */
+export async function updateMarketApiSettings(body: SettingsBody): Promise<Response> {
+  const { freecryptoapiKey, coinmarketcapApiKey } = body
+
+  // Simpan API key pasar ke database melalui Prisma
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: {
+      freecryptoapi_key: freecryptoapiKey !== undefined ? (freecryptoapiKey || null) : undefined,
+      coinmarketcap_api_key: coinmarketcapApiKey !== undefined ? (coinmarketcapApiKey || null) : undefined,
+    }
+  })
+
+  // Invalidasi cache agar perubahan langsung terasa di seluruh sistem
   invalidateAdminSettingsCache()
 
   return NextResponse.json({ success: true })
