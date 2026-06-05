@@ -101,7 +101,7 @@ export default function UpgradePage() {
       </div>
 
       {pendingPayment && (
-        <div className="flex gap-3.5 p-4.5 bg-yellow-500/5 rounded-2xl border border-yellow-500/15 text-left items-start text-xs font-medium text-yellow-550 leading-relaxed max-w-lg mx-auto shadow-md">
+        <div className="w-full flex gap-3.5 p-4.5 bg-yellow-500/10 rounded-2xl text-left items-start text-xs font-medium text-yellow-550 leading-relaxed shadow-lg">
           <Info size={16} className="text-yellow-500 shrink-0 mt-0.5 animate-pulse" />
           <div className="space-y-0.5">
             <p className="font-black text-white text-[11px] uppercase tracking-wider">Menunggu Verifikasi Manual</p>
