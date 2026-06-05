@@ -68,21 +68,25 @@ async function fetchFromFreeCryptoApi(apiKey: string): Promise<CoinData[]> {
       )
       if (!res.ok) throw new Error(`FCA HTTP ${res.status} untuk ${coin.symbol}`)
       const json = await res.json()
-      if (json.status === false) throw new Error(`FCA error: ${json.error}`)
-
-      // FreeCryptoAPI: json.data[SYMBOL] atau json.data langsung
-      const data = json?.data?.[coin.symbol] ?? json?.data ?? json
+      // Respons FCA: { status: "success", symbols: [{ symbol, last, daily_change_percentage, ... }] }
+      if (json.status !== 'success' || !Array.isArray(json.symbols) || json.symbols.length === 0) {
+        throw new Error(`FCA error atau data kosong untuk ${coin.symbol}: ${json.error ?? json.status}`)
+      }
+      const data = json.symbols[0]
+      const price = parseFloat(data.last ?? '0')
+      const change = parseFloat(data.daily_change_percentage ?? '0')
       return {
         symbol: coin.symbol,
         pair: coin.pair,
         icon: coin.icon,
         cmcSlug: coin.cmcSlug,
         cmcId: coin.cmcId,
-        price: formatPrice(data.price ?? 0),
-        priceRaw: Number(data.price ?? 0),
-        change24h: Number(data.change_24h ?? data.percent_change_24h ?? 0),
-        marketCap: formatLarge(data.market_cap ?? data.marketCap ?? 0),
-        volume24h: formatLarge(data.volume ?? data.volume_24h ?? 0),
+        price: formatPrice(price),
+        priceRaw: price,
+        change24h: change,
+        // FCA tidak memberikan market cap dan volume — gunakan tanda —
+        marketCap: '—',
+        volume24h: '—',
         source: 'freecryptoapi',
         updatedAt: new Date().toISOString(),
       }
