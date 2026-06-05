@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { X, ArrowLeft, Loader2 } from 'lucide-react'
 import PaymentSelectStep, { PaymentMethod } from './PaymentSelectStep'
 import PaymentPayingStep, { ChargeResult } from './PaymentPayingStep'
@@ -28,6 +29,7 @@ export default function PaymentModal({
   originalHarga,
   onSuccess,
 }: PaymentModalProps) {
+  const router = useRouter()
   const [step, setStep] = useState<'loading' | 'select' | 'paying' | 'success' | 'error'>('loading')
   const [methods, setMethods] = useState<PaymentMethod[]>([])
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null)
@@ -253,6 +255,10 @@ export default function PaymentModal({
               loading={loading}
               selectedMethod={selectedMethod}
               onPay={handlePay}
+              onManualPay={() => {
+                onClose()
+                router.push(`/dashboard/upgrade/confirm?plan=${paketId}`)
+              }}
             />
           )}
 
