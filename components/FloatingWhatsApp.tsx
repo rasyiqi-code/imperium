@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 export default function FloatingWhatsApp() {
   const pathname = usePathname()
   const [showTooltip, setShowTooltip] = useState(false)
-  const [whatsappNumber, setWhatsappNumber] = useState('62812345678')
+  const [whatsappNumber, setWhatsappNumber] = useState('85251999696')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -14,21 +14,8 @@ export default function FloatingWhatsApp() {
       setMounted(true)
     }, 0)
 
-    async function fetchSupportConfig() {
-      try {
-        const res = await fetch('/api/support')
-        if (res.ok) {
-          const data = await res.json()
-          if (data.whatsappNumber) {
-            setWhatsappNumber(data.whatsappNumber)
-          }
-        }
-      } catch (err) {
-        console.error('Gagal mengambil nomor WhatsApp admin dari API:', err)
-      }
-    }
-
-    fetchSupportConfig()
+    // Catatan: Sesuai permintaan, nomor WhatsApp melayang diarahkan ke nomor khusus +852 5199 9696
+    // sehingga tidak mengambil data nomor admin secara dinamis dari API support.
 
     return () => clearTimeout(timer)
   }, [])
