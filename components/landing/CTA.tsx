@@ -12,17 +12,12 @@ export default function CTA() {
       <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-8">
         
         {/* Title */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-light text-neutral-300 tracking-tight leading-tight uppercase">
-          Siap Menguasai Pasar Crypto? <br />
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-neutral-300 tracking-tight leading-relaxed max-w-2xl mx-auto">
+          {"\"Jika seseorang mengosongkan dompetnya ke dalam kepalanya, "}
           <span className="block mt-2 font-serif-editorial italic text-[#d4af37] font-normal drop-shadow-[0_2px_15px_rgba(212,175,55,0.15)]">
-            Mulai Perjalanan VIP Anda Sekarang
+            {"tidak ada seorang pun yang bisa mengambilnya.\""}
           </span>
         </h2>
-
-        {/* Subtitle */}
-        <p className="mx-auto max-w-xl text-sm md:text-base leading-relaxed text-neutral-400 font-medium">
-          Dapatkan akses instan ke sinyal pasar presisi, e-book premium, dan komunitas diskusi privat bersama ratusan trader elit lainnya.
-        </p>
 
         {/* CTA Button */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs mx-auto sm:max-w-none">
