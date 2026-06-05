@@ -7,6 +7,7 @@ import Navbar from '@/components/landing/Navbar';
 import Pricing from '@/components/landing/Pricing';
 import FAQ from '@/components/landing/FAQ';
 import CTA from '@/components/landing/CTA';
+import MindsetSelection from '@/components/landing/MindsetSelection';
 import dynamic from 'next/dynamic';
 
 // Import komponen ulasan secara dinamis guna memisahkan library Swiper yang berat dari bundle awal
@@ -111,6 +112,7 @@ export default function Home() {
       <AboutImperium />
       <ProblemStatement />
       <TrustPositioning />
+      <MindsetSelection />
       <Pricing />
       <Reviews />
       <FAQ />
