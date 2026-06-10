@@ -6,6 +6,7 @@ import { useModal } from '@/components/ModalProvider'
 
 interface PaymentChannelsListProps {
   initialEnabledPayments: string[]
+  useSnap?: boolean
 }
 
 const PAYMENT_METHODS = [
@@ -24,7 +25,7 @@ const PAYMENT_METHODS = [
   { id: 'kredivo', label: 'Kredivo' },
 ]
 
-export default function PaymentChannelsList({ initialEnabledPayments }: PaymentChannelsListProps) {
+export default function PaymentChannelsList({ initialEnabledPayments, useSnap }: PaymentChannelsListProps) {
   const { showAlert } = useModal()
   const [enabledPayments, setEnabledPayments] = useState<string[]>(initialEnabledPayments)
   const [syncing, setSyncing] = useState(false)
@@ -90,21 +91,27 @@ export default function PaymentChannelsList({ initialEnabledPayments }: PaymentC
             </p>
           </div>
         </div>
-        <button
-          onClick={handleSync}
-          disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl text-[10px] font-black tracking-wider hover:bg-yellow-500/20 disabled:opacity-50 transition-all duration-300 cursor-pointer"
-        >
-          {syncing ? (
-            <>
-              <RefreshCw size={12} className="animate-spin" /> Syncing...
-            </>
-          ) : (
-            <>
-              <Zap size={12} /> Sync dari Midtrans
-            </>
-          )}
-        </button>
+        {!useSnap ? (
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="flex items-center gap-2 px-4 py-2.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl text-[10px] font-black tracking-wider hover:bg-yellow-500/20 disabled:opacity-50 transition-all duration-300 cursor-pointer"
+          >
+            {syncing ? (
+              <>
+                <RefreshCw size={12} className="animate-spin" /> Syncing...
+              </>
+            ) : (
+              <>
+                <Zap size={12} /> Sync dari Midtrans
+              </>
+            )}
+          </button>
+        ) : (
+          <span className="px-3 py-1.5 bg-neutral-900 border border-neutral-800 text-neutral-400 rounded-lg text-[9px] font-black uppercase tracking-wider">
+            Snap API Active
+          </span>
+        )}
       </div>
 
       <div className="space-y-2 pt-3 border-t border-neutral-900/60 max-h-[250px] overflow-y-auto scrollbar-thin pr-1">
@@ -132,10 +139,18 @@ export default function PaymentChannelsList({ initialEnabledPayments }: PaymentC
         })}
       </div>
 
-      {enabledPayments.length === 0 && (
+      {enabledPayments.length === 0 ? (
         <p className="text-[9px] text-neutral-500 font-medium text-center pt-2">
-          Tip: Aktifkan metode pembayaran di atas secara manual jika akun Production Anda tidak mendukung sinkronisasi otomatis.
+          {useSnap 
+            ? "Tip: Aktifkan metode pembayaran di atas secara manual sesuai dengan yang Anda inginkan."
+            : "Tip: Gunakan tombol sync atau aktifkan secara manual jika akun Production belum mendukung sinkronisasi otomatis."}
         </p>
+      ) : (
+        useSnap && (
+          <p className="text-[9px] text-neutral-500 font-medium text-center pt-2">
+            Tip: Mode Snap API aktif. Pastikan opsi yang Anda centang di atas sudah diaktifkan di Dashboard MAP Midtrans Anda.
+          </p>
+        )
       )}
     </div>
   )

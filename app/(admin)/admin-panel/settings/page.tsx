@@ -465,7 +465,7 @@ export default function AdminSettings() {
         {activeTab === 'payments' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Metode Pembayaran Aktif</h3>
-            <PaymentChannelsList initialEnabledPayments={enabledPayments} />
+            <PaymentChannelsList initialEnabledPayments={enabledPayments} useSnap={midtransUseSnap} />
           </div>
         )}
 
