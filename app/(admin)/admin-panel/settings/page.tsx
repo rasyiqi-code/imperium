@@ -109,6 +109,12 @@ export default function AdminSettings() {
     }
   }, [])
 
+  useEffect(() => {
+    if (midtransUseSnap && activeTab === 'payments') {
+      setActiveTab('general')
+    }
+  }, [midtransUseSnap, activeTab])
+
   const handleLogout = () => {
     showConfirm({
       title: 'Keluar Admin Panel',
@@ -325,16 +331,18 @@ export default function AdminSettings() {
         >
           Umum & Sistem
         </button>
-        <button
-          onClick={() => setActiveTab('payments')}
-          className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'payments'
-              ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
-          }`}
-        >
-          Metode Pembayaran
-        </button>
+        {!midtransUseSnap && (
+          <button
+            onClick={() => setActiveTab('payments')}
+            className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+              activeTab === 'payments'
+                ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
+                : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
+            }`}
+          >
+            Metode Pembayaran
+          </button>
+        )}
         <button
           onClick={() => setActiveTab('midtrans')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
