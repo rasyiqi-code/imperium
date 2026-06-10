@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'paketId dan paymentType wajib diisi' }, { status: 400 });
     }
 
-    if (!VALID_TYPES.includes(paymentType) && paymentType !== 'snap') {
+    if (!VALID_TYPES.includes(paymentType)) {
       return NextResponse.json({ error: 'Metode pembayaran tidak valid' }, { status: 400 });
     }
 
@@ -100,17 +100,13 @@ export async function POST(request: Request) {
     const authString = Buffer.from(serverKey + ':').toString('base64');
 
     if (useSnap) {
-      // --- LOGIKA SNAP API (REDIRECT) ---
       // Petakan tipe pembayaran ke format enabled_payments Midtrans Snap
-      const mapPaymentTypeToSnap = (pType: string): string | null => {
+      const mapPaymentTypeToSnap = (pType: string): string => {
         if (['bca', 'bni', 'bri', 'cimb', 'permata'].includes(pType)) {
           return `${pType}_va`;
         }
         if (pType === 'mandiri') {
           return 'mandiri_va';
-        }
-        if (pType === 'snap') {
-          return null; // snap tidak memerlukan filter enabled_payments agar semuanya muncul
         }
         return pType; // qris, gopay, shopeepay, alfamart, indomaret, akulaku, kredivo
       };
@@ -119,9 +115,7 @@ export async function POST(request: Request) {
         ? 'https://app.midtrans.com/snap/v1/transactions'
         : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-      const snapPaymentMethod = mapPaymentTypeToSnap(paymentType);
-
-      const snapPayload: any = {
+      const snapPayload = {
         transaction_details: {
           order_id: orderId,
           gross_amount: Number(finalAmount),
@@ -138,16 +132,12 @@ export async function POST(request: Request) {
             quantity: 1,
           },
         ],
+        enabled_payments: [mapPaymentTypeToSnap(paymentType)],
         callbacks: {
           finish: callbackUrl,
         },
         custom_field1: user.id,
       };
-
-      // Hanya batasi metode pembayaran jika method yang dipilih spesifik (bukan 'snap' umum)
-      if (snapPaymentMethod) {
-        snapPayload.enabled_payments = [snapPaymentMethod];
-      }
 
       const snapRes = await fetch(snapBaseUrl, {
         method: 'POST',

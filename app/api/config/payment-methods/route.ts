@@ -37,17 +37,10 @@ export async function GET() {
     // Ambil metode pembayaran aktif dari cache (menghindari query berulang)
     const settings = await getAdminSettings();
 
-    // Jika mode Snap API diaktifkan, kembalikan satu opsi pembayaran instan serbaguna
+    // Jika mode Snap API diaktifkan, kembalikan seluruh daftar metode pembayaran bawaan (ALL_PAYMENT_METHODS)
     if (settings?.midtrans_use_snap === true) {
       return NextResponse.json({
-        methods: [
-          {
-            id: 'snap',
-            label: 'Pembayaran Instan',
-            sublabel: 'QRIS · Virtual Account · E-Wallet · Kartu Kredit',
-            category: 'ewallet'
-          }
-        ],
+        methods: ALL_PAYMENT_METHODS,
         needsSync: false
       });
     }
