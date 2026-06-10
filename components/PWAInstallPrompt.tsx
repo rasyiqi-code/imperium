@@ -19,17 +19,27 @@ export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false)
 
   useEffect(() => {
-    // Periksa apakah user pernah menolak prompt ini di sesi sekarang
+    // 1. Periksa apakah sudah terinstal (dari localStorage atau mode standalone)
+    if (typeof window !== 'undefined') {
+      const isInstalled = localStorage.getItem('pwa-installed') === 'true'
+      if (isInstalled) return
+
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      if (isStandalone) {
+        localStorage.setItem('pwa-installed', 'true')
+        return
+      }
+    }
+
+    // 2. Periksa apakah user pernah menolak prompt ini di sesi sekarang
     const isDismissed = sessionStorage.getItem('pwa-install-dismissed') === 'true'
     if (isDismissed) return
 
-    // Coba deteksi jika aplikasi dijalankan dalam mode standalone (sudah terinstal)
-    if (typeof window !== 'undefined') {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-      if (isStandalone) return
-    }
-
     const handleBeforeInstallPrompt = (e: Event) => {
+      // Cek ulang status agar tidak terjadi race condition atau terpapar event ganda
+      if (localStorage.getItem('pwa-installed') === 'true') return
+      if (sessionStorage.getItem('pwa-install-dismissed') === 'true') return
+
       // Cegah prompt bawaan browser muncul secara otomatis
       e.preventDefault()
       // Simpan event untuk dipicu nanti
@@ -38,10 +48,18 @@ export default function PWAInstallPrompt() {
       setShowPrompt(true)
     }
 
+    const handleAppInstalled = () => {
+      localStorage.setItem('pwa-installed', 'true')
+      setShowPrompt(false)
+      setDeferredPrompt(null)
+    }
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
     }
   }, [])
 
@@ -54,6 +72,13 @@ export default function PWAInstallPrompt() {
     // Tunggu respon pengguna
     const { outcome } = await deferredPrompt.userChoice
     console.log(`PWA: User choice outcome is ${outcome}`)
+
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa-installed', 'true')
+    } else {
+      // Jika user membatalkan di tengah jalan, anggap sebagai ditutup untuk sesi ini
+      sessionStorage.setItem('pwa-install-dismissed', 'true')
+    }
 
     // Bersihkan state prompt
     setDeferredPrompt(null)
