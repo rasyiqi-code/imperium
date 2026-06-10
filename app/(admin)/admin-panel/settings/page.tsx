@@ -47,6 +47,7 @@ export default function AdminSettings() {
   const [freecryptoapiKey, setFreecryptoapiKey] = useState('')
   const [coinmarketcapApiKey, setCoinmarketcapApiKey] = useState('')
   const [activeTab, setActiveTab] = useState<'general' | 'payments' | 'midtrans' | 'discord' | 'resend' | 'market'>('general')
+  const currentTab = (midtransUseSnap && activeTab === 'payments') ? 'general' : activeTab
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
   const [activeSessionsCount, setActiveSessionsCount] = useState(1)
   const [isAddAdminOpen, setIsAddAdminOpen] = useState(false)
@@ -108,12 +109,6 @@ export default function AdminSettings() {
       clearTimeout(timer)
     }
   }, [])
-
-  useEffect(() => {
-    if (midtransUseSnap && activeTab === 'payments') {
-      setActiveTab('general')
-    }
-  }, [midtransUseSnap, activeTab])
 
   const handleLogout = () => {
     showConfirm({
@@ -324,7 +319,7 @@ export default function AdminSettings() {
         <button
           onClick={() => setActiveTab('general')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'general'
+            currentTab === 'general'
               ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
           }`}
@@ -335,7 +330,7 @@ export default function AdminSettings() {
           <button
             onClick={() => setActiveTab('payments')}
             className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-              activeTab === 'payments'
+              currentTab === 'payments'
                 ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
                 : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
             }`}
@@ -346,7 +341,7 @@ export default function AdminSettings() {
         <button
           onClick={() => setActiveTab('midtrans')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'midtrans'
+            currentTab === 'midtrans'
               ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
           }`}
@@ -356,7 +351,7 @@ export default function AdminSettings() {
         <button
           onClick={() => setActiveTab('discord')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'discord'
+            currentTab === 'discord'
               ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
           }`}
@@ -366,7 +361,7 @@ export default function AdminSettings() {
         <button
           onClick={() => setActiveTab('resend')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'resend'
+            currentTab === 'resend'
               ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
           }`}
@@ -376,7 +371,7 @@ export default function AdminSettings() {
         <button
           onClick={() => setActiveTab('market')}
           className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            activeTab === 'market'
+            currentTab === 'market'
               ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/10'
               : 'text-neutral-400 hover:text-white hover:bg-neutral-900/50'
           }`}
@@ -387,7 +382,7 @@ export default function AdminSettings() {
 
       {/* Tab Contents */}
       <div className="max-w-4xl">
-        {activeTab === 'general' && (
+        {currentTab === 'general' && (
           <div className="space-y-6 animate-in fade-in duration-200">
             {/* Profile Header / Tambah Admin Baru */}
             {isAddAdminOpen ? (
@@ -470,14 +465,14 @@ export default function AdminSettings() {
           </div>
         )}
 
-        {activeTab === 'payments' && (
+        {currentTab === 'payments' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Metode Pembayaran Aktif</h3>
             <PaymentChannelsList initialEnabledPayments={enabledPayments} />
           </div>
         )}
 
-        {activeTab === 'midtrans' && (
+        {currentTab === 'midtrans' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Kredensial Midtrans</h3>
             <MidtransSettingsForm 
@@ -491,7 +486,7 @@ export default function AdminSettings() {
           </div>
         )}
 
-        {activeTab === 'discord' && (
+        {currentTab === 'discord' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Kredensial Discord</h3>
             <DiscordSettingsForm 
@@ -506,14 +501,14 @@ export default function AdminSettings() {
           </div>
         )}
 
-        {activeTab === 'resend' && (
+        {currentTab === 'resend' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Integrasi Resend Email</h3>
             <ResendSettingsForm initialApiKey={resendApiKey} initialSenderEmail={resendSenderEmail} />
           </div>
         )}
 
-        {activeTab === 'market' && (
+        {currentTab === 'market' && (
           <div className="space-y-3 animate-in fade-in duration-200">
             <h3 className="text-xs font-black text-neutral-500 tracking-widest px-1">Konfigurasi API Data Pasar</h3>
             <MarketApiSettingsForm

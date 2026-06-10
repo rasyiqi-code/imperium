@@ -114,9 +114,10 @@ export default function UpgradePage() {
         } else {
           throw new Error('Url redirect pembayaran Snap tidak ditemukan')
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Payment error:", err)
-        alert(err.message || 'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.')
+        const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.'
+        alert(errMsg)
       } finally {
         setLoadingPayment(false)
       }
