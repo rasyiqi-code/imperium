@@ -100,17 +100,6 @@ export async function POST(request: Request) {
     const authString = Buffer.from(serverKey + ':').toString('base64');
 
     if (useSnap) {
-      // Petakan tipe pembayaran ke format enabled_payments Midtrans Snap
-      const mapPaymentTypeToSnap = (pType: string): string => {
-        if (['bca', 'bni', 'bri', 'cimb', 'permata'].includes(pType)) {
-          return `${pType}_va`;
-        }
-        if (pType === 'mandiri') {
-          return 'mandiri_va';
-        }
-        return pType; // qris, gopay, shopeepay, alfamart, indomaret, akulaku, kredivo
-      };
-
       const snapBaseUrl = isProduction
         ? 'https://app.midtrans.com/snap/v1/transactions'
         : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
@@ -132,7 +121,6 @@ export async function POST(request: Request) {
             quantity: 1,
           },
         ],
-        enabled_payments: [mapPaymentTypeToSnap(paymentType)],
         callbacks: {
           finish: callbackUrl,
         },
