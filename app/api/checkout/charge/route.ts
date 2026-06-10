@@ -15,12 +15,8 @@ export async function POST(request: Request) {
   try {
     const { paketId, paymentType } = await request.json();
 
-    if (!paketId || !paymentType) {
-      return NextResponse.json({ error: 'paketId dan paymentType wajib diisi' }, { status: 400 });
-    }
-
-    if (!VALID_TYPES.includes(paymentType)) {
-      return NextResponse.json({ error: 'Metode pembayaran tidak valid' }, { status: 400 });
+    if (!paketId) {
+      return NextResponse.json({ error: 'paketId wajib diisi' }, { status: 400 });
     }
 
     // 1. Authenticate user
@@ -64,6 +60,16 @@ export async function POST(request: Request) {
 
     if (!serverKey) {
       return NextResponse.json({ error: 'Midtrans belum dikonfigurasi' }, { status: 500 });
+    }
+
+    // Jika tidak menggunakan Snap, paymentType wajib ada dan harus valid
+    if (!useSnap) {
+      if (!paymentType) {
+        return NextResponse.json({ error: 'paymentType wajib diisi' }, { status: 400 });
+      }
+      if (!VALID_TYPES.includes(paymentType)) {
+        return NextResponse.json({ error: 'Metode pembayaran tidak valid' }, { status: 400 });
+      }
     }
 
     // Ambil info membership aktif saat ini (berguna untuk kalkulasi proration)

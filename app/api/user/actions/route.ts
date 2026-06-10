@@ -172,6 +172,7 @@ export async function POST(request: Request) {
           paketList,
           memberData,
           upgradeMode: configData?.midtrans_upgrade_mode || 'stacking',
+          midtransUseSnap: configData?.midtrans_use_snap === true,
           pendingPayment
         })
       }

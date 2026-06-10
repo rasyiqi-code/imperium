@@ -17,6 +17,8 @@ export default function UpgradePage() {
   const [upgradeMode, setUpgradeMode] = useState('stacking')
   const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
   const [pendingPayment, setPendingPayment] = useState<Payment | null>(null)
+  const [midtransUseSnap, setMidtransUseSnap] = useState(false)
+  const [loadingPayment, setLoadingPayment] = useState(false)
 
   useEffect(() => {
     async function loadPaket() {
@@ -38,9 +40,11 @@ export default function UpgradePage() {
             const packages = allPackages.filter(p => Number(p.harga) > 0)
             const memberData = data.memberData
             const upMode = data.upgradeMode
+            const useSnap = data.midtransUseSnap
             const pendingPay = data.pendingPayment
 
             setUpgradeMode(upMode)
+            setMidtransUseSnap(!!useSnap)
             if (memberData) {
               setCurrentMember(memberData)
             }
@@ -84,6 +88,41 @@ export default function UpgradePage() {
       paketHarga,
       upgradeMode
     )
+  }
+
+  const handlePaymentClick = async () => {
+    if (!selectedId) return
+
+    if (midtransUseSnap) {
+      setLoadingPayment(true)
+      try {
+        const res = await fetch('/api/checkout/charge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paketId: selectedId,
+            paymentType: 'qris' // Dummy paymentType untuk fallback
+          })
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.error || 'Gagal memproses pembayaran')
+        }
+
+        if (data.type === 'redirect' && data.redirectUrl) {
+          window.location.href = data.redirectUrl
+        } else {
+          throw new Error('Url redirect pembayaran Snap tidak ditemukan')
+        }
+      } catch (err: any) {
+        console.error("Payment error:", err)
+        alert(err.message || 'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.')
+      } finally {
+        setLoadingPayment(false)
+      }
+    } else {
+      setShowPayment(true)
+    }
   }
 
   const selectedPaket = paketList.find((p) => p.id === selectedId)
@@ -136,12 +175,14 @@ export default function UpgradePage() {
       <div className="flex flex-col items-center gap-6 pt-4">
         <div className="w-full max-w-md space-y-4 text-center">
           <button 
-            onClick={() => setShowPayment(true)}
-            disabled={!selectedId || !!pendingPayment}
+            onClick={handlePaymentClick}
+            disabled={!selectedId || !!pendingPayment || loadingPayment}
             className="w-full bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black py-5 rounded-4xl font-black shadow-2xl shadow-yellow-500/20 flex items-center justify-center gap-3 transition-all active:scale-95 tracking-tight text-sm cursor-pointer"
           >
             {pendingPayment ? (
               <>Verifikasi Sedang Diproses</>
+            ) : loadingPayment ? (
+              <>Memproses Pembayaran...</>
             ) : (
               <><CreditCard size={20}/> Bayar Sekarang</>
             )}
