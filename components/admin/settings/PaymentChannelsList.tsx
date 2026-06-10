@@ -107,34 +107,34 @@ export default function PaymentChannelsList({ initialEnabledPayments }: PaymentC
         </button>
       </div>
 
-      {enabledPayments.length > 0 ? (
-        <div className="space-y-2 pt-3 border-t border-neutral-900/60 max-h-[250px] overflow-y-auto scrollbar-thin pr-1">
-          {PAYMENT_METHODS.map((method) => {
-            const isActive = enabledPayments.includes(method.id)
-            return (
-              <div key={method.id} className="flex items-center justify-between py-1.5">
-                <span className={`text-[11px] font-bold ${isActive ? 'text-white' : 'text-neutral-600'}`}>
-                  {method.label}
-                </span>
-                <button
-                  onClick={() => handleToggle(method.id, isActive)}
-                  className={`w-10 h-5 rounded-full relative transition-all duration-300 ${
-                    isActive ? 'bg-yellow-500' : 'bg-neutral-800 border border-neutral-700'
+      <div className="space-y-2 pt-3 border-t border-neutral-900/60 max-h-[250px] overflow-y-auto scrollbar-thin pr-1">
+        {PAYMENT_METHODS.map((method) => {
+          const isActive = enabledPayments.includes(method.id)
+          return (
+            <div key={method.id} className="flex items-center justify-between py-1.5">
+              <span className={`text-[11px] font-bold ${isActive ? 'text-white' : 'text-neutral-600'}`}>
+                {method.label}
+              </span>
+              <button
+                onClick={() => handleToggle(method.id, isActive)}
+                className={`w-10 h-5 rounded-full relative transition-all duration-300 ${
+                  isActive ? 'bg-yellow-500' : 'bg-neutral-800 border border-neutral-700'
+                }`}
+              >
+                <div
+                  className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${
+                    isActive ? 'left-6' : 'left-1'
                   }`}
-                >
-                  <div
-                    className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${
-                      isActive ? 'left-6' : 'left-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <p className="text-[10px] text-neutral-600 font-bold text-center py-3">
-          Tekan &quot;Sync dari Midtrans&quot; untuk mendeteksi metode pembayaran yang aktif
+                />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+
+      {enabledPayments.length === 0 && (
+        <p className="text-[9px] text-neutral-500 font-medium text-center pt-2">
+          Tip: Aktifkan metode pembayaran di atas secara manual jika akun Production Anda tidak mendukung sinkronisasi otomatis.
         </p>
       )}
     </div>
