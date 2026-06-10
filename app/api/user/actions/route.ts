@@ -155,7 +155,12 @@ export async function POST(request: Request) {
           prisma.data_pembayaran.findFirst({
             where: {
               id_user_auth: user.id,
-              status_pembayaran: 'pending'
+              status_pembayaran: 'pending',
+              NOT: {
+                bukti_transfer: {
+                  startsWith: 'IMP-'
+                }
+              }
             },
             orderBy: {
               created_at: 'desc'
