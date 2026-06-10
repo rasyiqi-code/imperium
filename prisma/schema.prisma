@@ -44,6 +44,7 @@ model admin_settings {
   midtrans_is_production Boolean? @default(false)
   midtrans_enabled_payments Json?   @default("[]") @db.JsonB
   midtrans_upgrade_mode     String?   @default("stacking")
+  midtrans_use_snap         Boolean?  @default(false)
   discord_application_id   String?
   discord_client_secret     String?
   discord_bot_token         String?

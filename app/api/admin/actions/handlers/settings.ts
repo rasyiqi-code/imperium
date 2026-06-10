@@ -12,6 +12,7 @@ interface SettingsBody {
   clientKey?: string
   serverKey?: string
   publicKey?: string
+  useSnap?: boolean
   isProduction?: boolean
   upgradeMode?: string
   enabledPayments?: string[]
@@ -71,7 +72,7 @@ export async function updateResendSettings(body: SettingsBody): Promise<Response
  * Memperbarui pengaturan kredensial Midtrans.
  */
 export async function updateMidtransSettings(body: SettingsBody): Promise<Response> {
-  const { clientKey, serverKey, publicKey, isProduction, upgradeMode } = body
+  const { clientKey, serverKey, publicKey, useSnap, isProduction, upgradeMode } = body
   
   // Simpan setelan Midtrans lewat Prisma
   await prisma.admin_settings.update({
@@ -80,6 +81,7 @@ export async function updateMidtransSettings(body: SettingsBody): Promise<Respon
       midtrans_client_key: clientKey || null,
       midtrans_server_key: serverKey || null,
       midtrans_public_key: publicKey || null,
+      midtrans_use_snap: useSnap !== undefined ? Boolean(useSnap) : undefined,
       midtrans_is_production: Boolean(isProduction),
       midtrans_upgrade_mode: upgradeMode || 'stacking'
     }

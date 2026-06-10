@@ -10,6 +10,7 @@ interface MidtransSettingsFormProps {
   initialPublicKey: string
   initialIsProduction: boolean
   initialUpgradeMode: string
+  initialUseSnap: boolean
 }
 
 export default function MidtransSettingsForm({
@@ -18,6 +19,7 @@ export default function MidtransSettingsForm({
   initialPublicKey,
   initialIsProduction,
   initialUpgradeMode,
+  initialUseSnap,
 }: MidtransSettingsFormProps) {
   const { showAlert } = useModal()
   const [midtransClientKey, setMidtransClientKey] = useState(initialClientKey)
@@ -25,6 +27,7 @@ export default function MidtransSettingsForm({
   const [midtransPublicKey, setMidtransPublicKey] = useState(initialPublicKey)
   const [midtransIsProduction, setMidtransIsProduction] = useState(initialIsProduction)
   const [midtransUpgradeMode, setMidtransUpgradeMode] = useState(initialUpgradeMode)
+  const [midtransUseSnap, setMidtransUseSnap] = useState(initialUseSnap)
   const [savingMidtrans, setSavingMidtrans] = useState(false)
 
   // State untuk visibilitas & penguncian Server Key
@@ -45,6 +48,7 @@ export default function MidtransSettingsForm({
           publicKey: midtransPublicKey,
           isProduction: midtransIsProduction,
           upgradeMode: midtransUpgradeMode,
+          useSnap: midtransUseSnap,
         }),
       })
       const data = await res.json()
@@ -131,6 +135,26 @@ export default function MidtransSettingsForm({
           onChange={(e) => setMidtransPublicKey(e.target.value)}
           className="w-full bg-neutral-900/20 border border-neutral-800 rounded-xl p-3.5 text-xs font-mono outline-none focus:border-yellow-500/50 focus:ring-4 focus:ring-yellow-500/5 text-white transition-all duration-300"
         />
+      </div>
+
+      <div className="flex items-center justify-between pt-3 border-t border-neutral-900/60">
+        <div className="text-left">
+          <p className="text-xs font-black text-white">Gunakan Snap API (Redirect)</p>
+          <p className="text-[9px] text-neutral-500 font-bold mt-1">Aktifkan untuk menggunakan popup/halaman pembayaran resmi Midtrans (berguna selama pengajuan izin Core API)</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setMidtransUseSnap(!midtransUseSnap)}
+          className={`w-10 h-5 rounded-full relative transition-all duration-300 ${
+            midtransUseSnap ? 'bg-yellow-500' : 'bg-neutral-800 border border-neutral-700'
+          }`}
+        >
+          <div
+            className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${
+              midtransUseSnap ? 'left-6' : 'left-1'
+            }`}
+          />
+        </button>
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-neutral-900/60">

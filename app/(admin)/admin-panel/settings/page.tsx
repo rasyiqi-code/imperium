@@ -33,6 +33,7 @@ export default function AdminSettings() {
   const [midtransPublicKey, setMidtransPublicKey] = useState('')
   const [midtransIsProduction, setMidtransIsProduction] = useState(false)
   const [midtransUpgradeMode, setMidtransUpgradeMode] = useState('stacking')
+  const [midtransUseSnap, setMidtransUseSnap] = useState(false)
   const [enabledPayments, setEnabledPayments] = useState<string[]>([])
 
   const [discordApplicationId, setDiscordApplicationId] = useState('')
@@ -78,6 +79,7 @@ export default function AdminSettings() {
           setMidtransPublicKey(settings.midtrans_public_key || '')
           setMidtransIsProduction(!!settings.midtrans_is_production)
           setMidtransUpgradeMode(settings.midtrans_upgrade_mode || 'stacking')
+          setMidtransUseSnap(!!settings.midtrans_use_snap)
           setEnabledPayments(Array.isArray(settings.midtrans_enabled_payments) ? settings.midtrans_enabled_payments : [])
 
           setDiscordApplicationId(settings.discord_application_id || '')
@@ -476,6 +478,7 @@ export default function AdminSettings() {
               initialPublicKey={midtransPublicKey}
               initialIsProduction={midtransIsProduction}
               initialUpgradeMode={midtransUpgradeMode}
+              initialUseSnap={midtransUseSnap}
             />
           </div>
         )}

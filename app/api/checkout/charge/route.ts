@@ -52,13 +52,15 @@ export async function POST(request: Request) {
       select: {
         midtrans_server_key: true,
         midtrans_is_production: true,
-        midtrans_upgrade_mode: true
+        midtrans_upgrade_mode: true,
+        midtrans_use_snap: true
       }
     });
 
     const isProduction = settings?.midtrans_is_production === true;
     const serverKey = settings?.midtrans_server_key || '';
     const upgradeMode = settings?.midtrans_upgrade_mode || 'stacking';
+    const useSnap = settings?.midtrans_use_snap === true;
 
     if (!serverKey) {
       return NextResponse.json({ error: 'Midtrans belum dikonfigurasi' }, { status: 500 });
@@ -95,51 +97,122 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Gagal memproses transaksi' }, { status: 500 });
     }
 
-    // 6. Build charge payload
-    const payload = buildChargePayload(
-      orderId,
-      Number(finalAmount),
-      paymentType as PaymentType,
-      user.user_metadata?.full_name || 'Member Imperium',
-      user.email || '',
-      paket.nama_paket,
-      callbackUrl,
-    );
-    payload.custom_field1 = user.id;
-
-    // 7. Call Midtrans Core API
-    const midtransBaseUrl = isProduction
-      ? 'https://api.midtrans.com/v2'
-      : 'https://api.sandbox.midtrans.com/v2';
-
     const authString = Buffer.from(serverKey + ':').toString('base64');
 
-    const chargeRes = await fetch(`${midtransBaseUrl}/charge`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: `Basic ${authString}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    if (useSnap) {
+      // --- LOGIKA SNAP API (REDIRECT) ---
+      // Petakan tipe pembayaran ke format enabled_payments Midtrans Snap
+      const mapPaymentTypeToSnap = (pType: string): string => {
+        if (['bca', 'bni', 'bri', 'cimb', 'permata'].includes(pType)) {
+          return `${pType}_va`;
+        }
+        if (pType === 'mandiri') {
+          return 'mandiri_va';
+        }
+        return pType; // qris, gopay, shopeepay, alfamart, indomaret, akulaku, kredivo
+      };
 
-    const chargeResult = (await chargeRes.json()) as MidtransChargeResponse;
+      const snapBaseUrl = isProduction
+        ? 'https://app.midtrans.com/snap/v1/transactions'
+        : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-    if (chargeResult.status_code && !['200', '201'].includes(chargeResult.status_code)) {
-      console.error('Midtrans Charge Error:', chargeResult);
-      await prisma.data_pembayaran.deleteMany({
-        where: { bukti_transfer: orderId }
+      const snapPayload = {
+        transaction_details: {
+          order_id: orderId,
+          gross_amount: Number(finalAmount),
+        },
+        customer_details: {
+          first_name: user.user_metadata?.full_name || 'Member Imperium',
+          email: user.email || '',
+        },
+        item_details: [
+          {
+            id: orderId,
+            name: paket.nama_paket,
+            price: Number(finalAmount),
+            quantity: 1,
+          },
+        ],
+        enabled_payments: [mapPaymentTypeToSnap(paymentType)],
+        callbacks: {
+          finish: callbackUrl,
+        },
+        custom_field1: user.id,
+      };
+
+      const snapRes = await fetch(snapBaseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Basic ${authString}`,
+        },
+        body: JSON.stringify(snapPayload),
       });
-      return NextResponse.json(
-        { error: chargeResult.status_message || 'Gagal membuat transaksi' },
-        { status: 400 },
-      );
-    }
 
-    // 8. Parse and return
-    const parsed = parseChargeResponse(chargeResult, paymentType as PaymentType);
-    return NextResponse.json(parsed);
+      const snapResult = await snapRes.json();
+
+      if (!snapRes.ok || !snapResult.token) {
+        console.error('Midtrans Snap Error:', snapResult);
+        await prisma.data_pembayaran.deleteMany({
+          where: { bukti_transfer: orderId }
+        });
+        return NextResponse.json(
+          { error: snapResult.error_messages?.[0] || 'Gagal membuat transaksi Snap' },
+          { status: 400 },
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        type: 'redirect',
+        redirectUrl: snapResult.redirect_url,
+        orderId,
+        grossAmount: finalAmount,
+      });
+    } else {
+      // --- LOGIKA CORE API STANDAR (DIRECT CHARGE) ---
+      const payload = buildChargePayload(
+        orderId,
+        Number(finalAmount),
+        paymentType as PaymentType,
+        user.user_metadata?.full_name || 'Member Imperium',
+        user.email || '',
+        paket.nama_paket,
+        callbackUrl,
+      );
+      payload.custom_field1 = user.id;
+
+      const midtransBaseUrl = isProduction
+        ? 'https://api.midtrans.com/v2'
+        : 'https://api.sandbox.midtrans.com/v2';
+
+      const chargeRes = await fetch(`${midtransBaseUrl}/charge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Basic ${authString}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const chargeResult = (await chargeRes.json()) as MidtransChargeResponse;
+
+      if (chargeResult.status_code && !['200', '201'].includes(chargeResult.status_code)) {
+        console.error('Midtrans Charge Error:', chargeResult);
+        await prisma.data_pembayaran.deleteMany({
+          where: { bukti_transfer: orderId }
+        });
+        return NextResponse.json(
+          { error: chargeResult.status_message || 'Gagal membuat transaksi' },
+          { status: 400 },
+        );
+      }
+
+      const parsed = parseChargeResponse(chargeResult, paymentType as PaymentType);
+      return NextResponse.json(parsed);
+    }
   } catch (error: unknown) {
     const err = error as Error;
     console.error('Charge Error:', err);
