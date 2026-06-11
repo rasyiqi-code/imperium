@@ -200,11 +200,12 @@ export default function UpgradePage() {
 
           {userRole !== 'admin' && userRole !== 'vip' && currentMember?.status_aktif !== 'aktif' && currentMember?.status_aktif !== 'vip' && (
             <div className="pt-2 text-center">
+              <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mr-1">Atau</span>
               <Link 
                 href="/dashboard/upgrade/confirm"
-                className="text-[10px] text-neutral-500 hover:text-yellow-500 font-bold uppercase tracking-wider transition-colors duration-300 underline underline-offset-4"
+                className="text-[10px] text-yellow-500 hover:text-yellow-400 font-black uppercase tracking-wider transition-colors duration-300 underline underline-offset-4"
               >
-                Atau Konfirmasi Manual Payment
+                Bayar Manual
               </Link>
             </div>
           )}
