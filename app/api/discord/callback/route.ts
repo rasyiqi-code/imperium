@@ -64,7 +64,9 @@ export async function GET(request: Request) {
     const botToken = settings?.discord_bot_token || process.env.DISCORD_BOT_TOKEN
     const vipGuildId = settings?.discord_vip_server_id || process.env.DISCORD_VIP_SERVER_ID || process.env.DISCORD_VIP_GUILD_ID
     const vipRoleId = settings?.discord_vip_role_id || process.env.DISCORD_VIP_ROLE_ID
-    const redirectUri = `${baseUrl}/api/discord/callback`
+    // Gunakan redirect URI dari konfigurasi database admin jika di-set.
+    // Jika tidak ada, gunakan fallback deteksi dinamis agar mempermudah local development.
+    const redirectUri = settings?.discord_redirect_uri || `${baseUrl}/api/discord/callback`
 
     // Wajib ada: clientId, clientSecret, botToken, vipGuildId, dan redirectUri
     if (!clientId || !clientSecret || !botToken || !vipGuildId || !redirectUri || vipGuildId.includes('PASTE_DISCORD_VIP_SERVER_ID_HERE')) {

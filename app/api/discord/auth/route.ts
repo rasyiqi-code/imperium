@@ -16,7 +16,10 @@ export async function GET(request: Request) {
   const host = request.headers.get('x-forwarded-host') || new URL(request.url).host
   const proto = request.headers.get('x-forwarded-proto') || new URL(request.url).protocol.replace(':', '')
   const currentOrigin = `${proto}://${host}`
-  const redirectUri = `${currentOrigin}/api/discord/callback`
+  
+  // Gunakan redirect URI dari konfigurasi database admin jika di-set.
+  // Jika tidak ada, gunakan fallback deteksi dinamis agar mempermudah local development.
+  const redirectUri = settings?.discord_redirect_uri || `${currentOrigin}/api/discord/callback`
 
   if (!clientId || !redirectUri) {
     console.error('Discord Auth Error: Application ID or Redirect URI is missing.')
