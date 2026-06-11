@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
   X, RefreshCw, MessageSquare, PlusCircle, UserMinus, Trash2, Mail, User, Smartphone, Key 
 } from 'lucide-react'
@@ -25,7 +25,7 @@ interface MemberDetailModalProps {
   member: Profile
   onClose: () => void
   isProcessing: boolean
-  onUpgrade: (member: Profile) => void
+  onUpgrade: (member: Profile, planId: string) => void
   onDeactivate: (member: Profile) => void
   onDelete: (memberId: string) => void
   onUpdatePassword: (memberId: string, newPassword: string) => Promise<boolean>
@@ -43,6 +43,31 @@ export default function MemberDetailModal({
   const [isPasswordFormOpen, setIsPasswordFormOpen] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [isLocalProcessing, setIsLocalProcessing] = useState(false)
+  const [plans, setPlans] = useState<{ id: string; nama_paket: string; harga: number }[]>([])
+  const [selectedPlanId, setSelectedPlanId] = useState<string>('')
+  const [showUpgradeDropdown, setShowUpgradeDropdown] = useState(false)
+
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        const res = await fetch('/api/admin/actions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getPricingPlans' })
+        })
+        const data = await res.json()
+        if (res.ok && data.plans) {
+          setPlans(data.plans)
+          if (data.plans.length > 0) {
+            setSelectedPlanId(data.plans[0].id)
+          }
+        }
+      } catch (err) {
+        console.error('Gagal memuat paket VIP:', err)
+      }
+    }
+    fetchPlans()
+  }, [])
 
   const handlePasswordSubmit = async () => {
     if (newPassword.length < 6) return
@@ -115,12 +140,51 @@ export default function MemberDetailModal({
           </div>
           
           {/* Grid Tombol Aksi */}
-          <div className="pt-3.5 border-t border-neutral-900">
+          <div className="pt-3.5 border-t border-neutral-900 space-y-3">
+            
+            {/* Form Pilihan Paket Upgrade Manual */}
+            {showUpgradeDropdown && (
+              <div className="p-3 bg-neutral-900/40 border border-neutral-850 rounded-2xl space-y-2 animate-in slide-in-from-top-2 duration-200">
+                <span className="text-[9px] font-black text-neutral-500 tracking-wider uppercase px-1">Pilih Paket VIP</span>
+                <div className="flex gap-2">
+                  <select
+                    value={selectedPlanId}
+                    onChange={(e) => setSelectedPlanId(e.target.value)}
+                    className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-yellow-500/50 outline-none rounded-xl px-3 py-2 text-xs font-bold text-white cursor-pointer"
+                  >
+                    {plans.map((p) => (
+                      <option key={p.id} value={p.id} className="bg-neutral-950 text-white font-bold">
+                        {p.nama_paket} (Rp {p.harga.toLocaleString('id-ID')})
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => {
+                      if (selectedPlanId) {
+                        onUpgrade(member, selectedPlanId)
+                        setShowUpgradeDropdown(false)
+                      }
+                    }}
+                    disabled={isProcessing || !selectedPlanId}
+                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer shrink-0 shadow-lg shadow-yellow-500/10"
+                  >
+                    Set VIP
+                  </button>
+                  <button
+                    onClick={() => setShowUpgradeDropdown(false)}
+                    className="px-3 py-2 bg-neutral-900 border border-neutral-850 hover:bg-neutral-800 text-neutral-400 hover:text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-300 active:scale-95 cursor-pointer shrink-0"
+                  >
+                    Batal
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-2">
               
               {/* Tombol 1: Upgrade / Perpanjang VIP */}
               <button 
-                onClick={() => onUpgrade(member)}
+                onClick={() => setShowUpgradeDropdown(true)}
                 disabled={isProcessing}
                 className={`w-full py-1.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   member.plan === 'vip' 

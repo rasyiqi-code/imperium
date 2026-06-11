@@ -159,13 +159,13 @@ export default function ManageMembers() {
     })
   }
 
-  async function handleUpgrade(member: Profile) {
+  async function handleUpgrade(member: Profile, planId: string) {
     setIsProcessing(true)
     try {
       const res = await fetch('/api/admin/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'upgradeManual', userId: member.id })
+        body: JSON.stringify({ action: 'upgradeManual', userId: member.id, planId })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal upgrade user')
