@@ -318,7 +318,7 @@ export default function AdminSettings() {
   if (loading) return <Loader label="Memuat Kredensial & Pengaturan..." />
 
   return (
-    <div className="p-3 md:p-8 space-y-4 md:space-y-6 max-w-5xl mx-auto pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
+    <div className="p-3 md:p-8 space-y-4 md:space-y-6 w-full pb-32 bg-transparent text-white font-sans text-left text-xs md:text-sm animate-in fade-in duration-300">
       
       {/* Title */}
       <div className="hidden md:block border-b border-neutral-800 pb-4 mb-6">
@@ -403,7 +403,7 @@ export default function AdminSettings() {
       </div>
 
       {/* Tab Contents */}
-      <div className="max-w-4xl">
+      <div className="w-full">
         {currentTab === 'general' && (
           <div className="space-y-6 animate-in fade-in duration-200">
             {/* Profile Header / Tambah Admin Baru */}
@@ -553,7 +553,7 @@ export default function AdminSettings() {
       </div>
 
       {/* Logout Button */}
-      <div className="pt-4 max-w-4xl">
+      <div className="pt-4 w-full">
         <button 
           onClick={handleLogout} 
           className="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold tracking-widest flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all active:scale-95 duration-300 cursor-pointer"
