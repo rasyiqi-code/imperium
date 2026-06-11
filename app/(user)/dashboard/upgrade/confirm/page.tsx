@@ -165,7 +165,7 @@ function ConfirmContent() {
         </button>
 
         <div className="space-y-1">
-          <h1 className="text-sm font-bold uppercase tracking-tight">Konfirmasi Pembayaran</h1>
+          <h1 className="text-sm font-bold uppercase tracking-tight">Manual Payment</h1>
           <p className="text-xs text-neutral-500 font-bold tracking-tight leading-none">Imperium Crypto VIP Portal</p>
         </div>
 
@@ -245,8 +245,45 @@ function ConfirmContent() {
       </button>
 
       <div className="space-y-1">
-        <h1 className="text-sm font-bold uppercase tracking-tight">Konfirmasi Pembayaran</h1>
+        <h1 className="text-sm font-bold uppercase tracking-tight">Manual Payment</h1>
         <p className="text-xs text-neutral-500 font-bold tracking-tight leading-none">Imperium Crypto VIP Portal</p>
+      </div>
+
+      {/* Detail Rekening Pembayaran Manual */}
+      <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+          <span className="text-xs font-bold text-neutral-400">Rekening Tujuan Transfer</span>
+          <span className="text-[9px] font-black text-yellow-500 tracking-widest bg-yellow-500/10 px-2.5 py-0.5 rounded-full border border-yellow-500/10 uppercase">BCA MANUAL</span>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="text-left space-y-1">
+            <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Bank</span>
+            <span className="text-xs font-bold text-white block">Bank Central Asia (BCA)</span>
+          </div>
+          <div className="text-left space-y-1">
+            <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Atas Nama</span>
+            <span className="text-xs font-bold text-white block">M Rasyiqi</span>
+          </div>
+          <div className="text-left space-y-1">
+            <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Nomor Rekening</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-yellow-500">3910382891</span>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText('3910382891')
+                  showAlert({
+                    title: 'Tersalin',
+                    message: 'Nomor rekening BCA berhasil disalin!',
+                    type: 'success'
+                  })
+                }}
+                className="text-[9px] font-black text-neutral-400 hover:text-white px-2 py-1 bg-neutral-800 border border-neutral-750 rounded-lg hover:border-neutral-700 transition-all active:scale-95 cursor-pointer leading-none"
+              >
+                Salin
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-3">

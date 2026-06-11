@@ -211,9 +211,12 @@ export default function PaymentAdmin() {
               {pay.bukti_transfer && pay.bukti_transfer.startsWith('IMP-') ? (
                 <span className="text-[10px] font-black text-neutral-500 tracking-widest">MIDTRANS ONLINE</span>
               ) : (
-                <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-[10px] font-black text-yellow-500 hover:underline leading-none">
-                  Bukti <ExternalLink size={12} />
-                </a>
+                <div className="flex items-center gap-3">
+                  <span className="text-[9px] font-black text-yellow-500 tracking-widest bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20 uppercase leading-none">MANUAL</span>
+                  <a href={pay.bukti_transfer} target="_blank" className="flex items-center gap-1.5 text-[10px] font-black text-neutral-400 hover:text-white hover:underline leading-none">
+                    Bukti <ExternalLink size={12} />
+                  </a>
+                </div>
               )}
             </div>
 
