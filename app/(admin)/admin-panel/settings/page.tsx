@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useModal } from '@/components/ModalProvider'
 import { 
-  Bell, Lock, Globe, LogOut, Smartphone, Mail, UserPlus
+  Bell, Lock, Globe, Smartphone, Mail, UserPlus
 } from 'lucide-react'
 import Loader from '@/components/Loader'
 
@@ -120,19 +120,6 @@ export default function AdminSettings() {
     }
   }, [])
 
-  const handleLogout = () => {
-    showConfirm({
-      title: 'Keluar Admin Panel',
-      message: 'Apakah Anda yakin ingin keluar dari Admin Panel?',
-      type: 'warning',
-      confirmText: 'Keluar',
-      cancelText: 'Batal',
-      onConfirm: async () => {
-        await supabase.auth.signOut()
-        window.location.href = '/login'
-      }
-    })
-  }
 
   const handlePasswordUpdate = async (newPass: string, currentPass: string): Promise<boolean> => {
     try {
@@ -552,15 +539,7 @@ export default function AdminSettings() {
         )}
       </div>
 
-      {/* Logout Button */}
-      <div className="pt-4 w-full">
-        <button 
-          onClick={handleLogout} 
-          className="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-xs font-bold tracking-widest flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all active:scale-95 duration-300 cursor-pointer"
-        >
-          <LogOut size={16} /> Keluar Aplikasi
-        </button>
-      </div>
+
     </div>
   )
 }
