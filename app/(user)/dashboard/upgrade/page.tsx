@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { PaketVIP, MemberVIP, Payment } from '@/lib/types'
 import PricingCard from '@/components/payment/PricingCard'
@@ -19,6 +20,7 @@ export default function UpgradePage() {
   const [pendingPayment, setPendingPayment] = useState<Payment | null>(null)
   const [midtransUseSnap, setMidtransUseSnap] = useState(false)
   const [loadingPayment, setLoadingPayment] = useState(false)
+  const [userRole, setUserRole] = useState<string>('loading')
 
   useEffect(() => {
     async function loadPaket() {
@@ -42,9 +44,11 @@ export default function UpgradePage() {
             const upMode = data.upgradeMode
             const useSnap = data.midtransUseSnap
             const pendingPay = data.pendingPayment
+            const role = data.userRole
 
             setUpgradeMode(upMode)
             setMidtransUseSnap(!!useSnap)
+            setUserRole(role || 'user')
             if (memberData) {
               setCurrentMember(memberData)
             }
@@ -193,6 +197,17 @@ export default function UpgradePage() {
             <ShieldCheck size={14} />
             <span className="text-[9px] font-black tracking-widest">Encrypted Payment by Midtrans</span>
           </div>
+
+          {userRole !== 'admin' && userRole !== 'vip' && currentMember?.status_aktif !== 'aktif' && currentMember?.status_aktif !== 'vip' && (
+            <div className="pt-2 text-center">
+              <Link 
+                href="/dashboard/upgrade/confirm"
+                className="text-[10px] text-neutral-500 hover:text-yellow-500 font-bold uppercase tracking-wider transition-colors duration-300 underline underline-offset-4"
+              >
+                Atau Konfirmasi Manual Payment
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 

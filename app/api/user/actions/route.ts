@@ -144,7 +144,7 @@ export async function POST(request: Request) {
       }
 
       case 'getUpgradeData': {
-        const [paketList, memberData, configData, pendingPayment] = await Promise.all([
+        const [paketList, memberData, configData, pendingPayment, profile] = await Promise.all([
           prisma.data_paket_vip.findMany({
             orderBy: { harga: 'asc' }
           }),
@@ -165,6 +165,10 @@ export async function POST(request: Request) {
             orderBy: {
               created_at: 'desc'
             }
+          }),
+          prisma.profiles.findUnique({
+            where: { id: user.id },
+            select: { plan: true }
           })
         ])
 
@@ -176,7 +180,8 @@ export async function POST(request: Request) {
           manualBankName: configData?.manual_bank_name || 'Bank Central Asia (BCA)',
           manualAccountNumber: configData?.manual_account_number || '3910382891',
           manualAccountName: configData?.manual_account_name || 'M Rasyiqi',
-          pendingPayment
+          pendingPayment,
+          userRole: profile?.plan || 'user'
         })
       }
 
