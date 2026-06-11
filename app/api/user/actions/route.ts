@@ -173,6 +173,9 @@ export async function POST(request: Request) {
           memberData,
           upgradeMode: configData?.midtrans_upgrade_mode || 'stacking',
           midtransUseSnap: configData?.midtrans_use_snap === true,
+          manualBankName: configData?.manual_bank_name || 'Bank Central Asia (BCA)',
+          manualAccountNumber: configData?.manual_account_number || '3910382891',
+          manualAccountName: configData?.manual_account_name || 'M Rasyiqi',
           pendingPayment
         })
       }

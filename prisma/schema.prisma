@@ -54,6 +54,9 @@ model admin_settings {
   discord_redirect_uri      String?
   freecryptoapi_key         String?
   coinmarketcap_api_key     String?
+  manual_bank_name          String?
+  manual_account_number     String?
+  manual_account_name       String?
 
   @@schema("public")
 

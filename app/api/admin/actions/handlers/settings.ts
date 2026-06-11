@@ -26,6 +26,10 @@ interface SettingsBody {
   // API key untuk integrasi data pasar
   freecryptoapiKey?: string
   coinmarketcapApiKey?: string
+  // Setelan rekening manual
+  manualBankName?: string
+  manualAccountNumber?: string
+  manualAccountName?: string
 }
 
 /**
@@ -209,6 +213,27 @@ export async function updateMarketApiSettings(body: SettingsBody): Promise<Respo
     data: {
       freecryptoapi_key: freecryptoapiKey !== undefined ? (freecryptoapiKey || null) : undefined,
       coinmarketcap_api_key: coinmarketcapApiKey !== undefined ? (coinmarketcapApiKey || null) : undefined,
+    }
+  })
+
+  // Invalidasi cache agar perubahan langsung terasa di seluruh sistem
+  invalidateAdminSettingsCache()
+
+  return NextResponse.json({ success: true })
+}
+
+/**
+ * Memperbarui pengaturan rekening bank pembayaran manual.
+ */
+export async function updateManualPaymentSettings(body: SettingsBody): Promise<Response> {
+  const { manualBankName, manualAccountNumber, manualAccountName } = body
+
+  await prisma.admin_settings.update({
+    where: { id: 1 },
+    data: {
+      manual_bank_name: manualBankName !== undefined ? (manualBankName || null) : undefined,
+      manual_account_number: manualAccountNumber !== undefined ? (manualAccountNumber || null) : undefined,
+      manual_account_name: manualAccountName !== undefined ? (manualAccountName || null) : undefined,
     }
   })
 

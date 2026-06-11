@@ -26,6 +26,11 @@ function ConfirmContent() {
   const [upgradeMode, setUpgradeMode] = useState('stacking')
   const [currentMember, setCurrentMember] = useState<MemberVIP | null>(null)
   const [pendingPayment, setPendingPayment] = useState<Payment | null>(null)
+  
+  // State rekening manual
+  const [manualBankName, setManualBankName] = useState('Bank Central Asia (BCA)')
+  const [manualAccountNumber, setManualAccountNumber] = useState('3910382891')
+  const [manualAccountName, setManualAccountName] = useState('M Rasyiqi')
 
   // Load Data dengan Guard
   useEffect(() => {
@@ -57,6 +62,10 @@ function ConfirmContent() {
             if (memberData) setCurrentMember(memberData)
             setUpgradeMode(upMode)
             if (pendingPay) setPendingPayment(pendingPay)
+            
+            if (data.manualBankName) setManualBankName(data.manualBankName)
+            if (data.manualAccountNumber) setManualAccountNumber(data.manualAccountNumber)
+            if (data.manualAccountName) setManualAccountName(data.manualAccountName)
 
             if (packages.length > 0) {
               setListPaket(packages)
@@ -253,29 +262,31 @@ function ConfirmContent() {
       <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
           <span className="text-xs font-bold text-neutral-400">Rekening Tujuan Transfer</span>
-          <span className="text-[9px] font-black text-yellow-500 tracking-widest bg-yellow-500/10 px-2.5 py-0.5 rounded-full border border-yellow-500/10 uppercase">BCA MANUAL</span>
+          <span className="text-[9px] font-black text-yellow-500 tracking-widest bg-yellow-500/10 px-2.5 py-0.5 rounded-full border border-yellow-500/10 uppercase">TRANSFER MANUAL</span>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="text-left space-y-1">
             <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Bank</span>
-            <span className="text-xs font-bold text-white block">Bank Central Asia (BCA)</span>
+            <span className="text-xs font-bold text-white block">{manualBankName}</span>
           </div>
           <div className="text-left space-y-1">
             <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Atas Nama</span>
-            <span className="text-xs font-bold text-white block">M Rasyiqi</span>
+            <span className="text-xs font-bold text-white block">{manualAccountName}</span>
           </div>
           <div className="text-left space-y-1">
             <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider block">Nomor Rekening</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-yellow-500">3910382891</span>
+              <span className="text-xs font-mono font-bold text-yellow-500">{manualAccountNumber}</span>
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText('3910382891')
-                  showAlert({
-                    title: 'Tersalin',
-                    message: 'Nomor rekening BCA berhasil disalin!',
-                    type: 'success'
-                  })
+                  if (manualAccountNumber) {
+                    navigator.clipboard.writeText(manualAccountNumber)
+                    showAlert({
+                      title: 'Tersalin',
+                      message: 'Nomor rekening berhasil disalin!',
+                      type: 'success'
+                    })
+                  }
                 }}
                 className="text-[9px] font-black text-neutral-400 hover:text-white px-2 py-1 bg-neutral-800 border border-neutral-750 rounded-lg hover:border-neutral-700 transition-all active:scale-95 cursor-pointer leading-none"
               >
