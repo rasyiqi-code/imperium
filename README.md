@@ -1,6 +1,6 @@
 # Imperium Crypto
 
-Imperium Crypto adalah platform web keanggotaan premium (VIP) dan edukasi investasi cryptocurrency berbasis data (*data-driven*). Platform ini dirancang menggunakan arsitektur modern Next.js yang mengintegrasikan gerbang pembayaran (**Midtrans BI SNAP**) dan bot otomatisasi server **Discord** untuk mengelola hak akses VIP secara *real-time*.
+Imperium Crypto adalah platform web keanggotaan premium (VIP) dan edukasi investasi cryptocurrency berbasis data (*data-driven*). Platform ini dirancang menggunakan arsitektur modern Next.js yang m[...]
 Crypto and Web3 ecosystem project
 
 ---
@@ -142,5 +142,12 @@ Tersedia beberapa skrip siap pakai untuk mempermudah administrasi dan pengujian 
 Untuk panduan mendalam tentang setup integrasi pihak ketiga, silakan baca dokumentasi berikut:
 1. **Panduan Lengkap Setup Discord**: [docs/discord-setup-recipe.md](docs/discord-setup-recipe.md)
 2. **Panduan Kredensial & RSA Key Midtrans**: [docs/midtrans-bi-snap.md](docs/midtrans-bi-snap.md)
-   
+    
 *This repository is currently being organized. More documentation will be added soon.*
+
+---
+
+## 📜 Lisensi
+
+Proyek ini dilindungi di bawah lisensi MIT. Untuk informasi lebih lanjut, silakan lihat file [LICENSE](LICENSE) di repositori ini.
+
