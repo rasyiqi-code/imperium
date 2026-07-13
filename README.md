@@ -1,5 +1,4 @@
 # Imperium Crypto
-# imperium
 
 Imperium Crypto adalah platform web keanggotaan premium (VIP) dan edukasi investasi cryptocurrency berbasis data (*data-driven*). Platform ini dirancang menggunakan arsitektur modern Next.js yang mengintegrasikan gerbang pembayaran (**Midtrans BI SNAP**) dan bot otomatisasi server **Discord** untuk mengelola hak akses VIP secara *real-time*.
 Crypto and Web3 ecosystem project
