@@ -149,5 +149,5 @@ Untuk panduan mendalam tentang setup integrasi pihak ketiga, silakan baca dokume
 
 ## 📜 Lisensi
 
-Proyek ini dilindungi di bawah lisensi MIT. Untuk informasi lebih lanjut, silakan lihat file [LICENSE](LICENSE) di repositori ini.
+Proyek ini dilindungi di bawah **Non-Commercial Use License (NCL) v1.0**. Penggunaan komersial, modifikasi untuk tujuan komersial, dan distribusi tanpa izin dilarang. Untuk informasi lebih lanjut dan pertanyaan penggunaan komersial, silakan lihat file [LICENSE](LICENSE) di repositori ini.
 
